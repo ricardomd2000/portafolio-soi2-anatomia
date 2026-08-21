@@ -1,0 +1,17 @@
+﻿# Entornos y temporales
+.fuse_hidden*
+.~lock.*#
+*.tmp
+*.log
+*.zip
+deploy-*.zip
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencias
+node_modules/
+.npm/
+.cache/

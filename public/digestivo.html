@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema Digestivo: Irrigación, Peritoneo y Estómago · SOI II · Semana 3</title>
+<style>
+:root{
+  --rojo:#c2410c; --rojo-osc:#9a3412; --rojo-cl:#ea7a45;
+  --azul:#a15b1e; --crema:#fdf7f2; --tinta:#2e2620; --gris:#6b6058;
+  --verde:#2e7d5b; --ambar:#c77d0a; --linea:#ecdfd4;
+  --sombra:0 4px 18px rgba(154,52,18,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--crema);color:var(--tinta);line-height:1.6;font-size:16.5px}
+header.top{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));color:#fff;padding:34px 20px 26px;text-align:center;position:relative}
+header.top h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:.3px}
+header.top p{margin:2px 0;opacity:.92;font-size:.95rem}
+.pill{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);padding:3px 12px;border-radius:999px;font-size:.8rem;margin-top:10px}
+.volver{position:absolute;left:14px;top:14px;color:#fff;font-size:.82rem;text-decoration:none;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+#estado{display:none}
+nav.fases{position:sticky;top:0;z-index:50;background:#fff;display:flex;box-shadow:0 2px 10px rgba(0,0,0,.06);flex-wrap:wrap}
+nav.fases button{flex:1 1 33%;min-width:120px;border:0;background:#fff;cursor:pointer;padding:14px 8px;font-size:.98rem;font-weight:600;color:var(--gris);border-bottom:3px solid transparent;transition:.15s}
+nav.fases button .n{display:block;font-size:.72rem;font-weight:700;opacity:.6}
+nav.fases button:hover{background:var(--crema)}
+nav.fases button.activa{color:var(--rojo);border-bottom-color:var(--rojo)}
+main{max-width:920px;margin:0 auto;padding:26px 18px 70px}
+.fase{display:none;animation:fade .35s}
+.fase.activa{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2.sec{font-size:1.35rem;color:var(--rojo-osc);border-left:5px solid var(--rojo);padding-left:12px;margin:34px 0 14px}
+h3{color:var(--azul);margin:22px 0 8px;font-size:1.1rem}
+.intro{color:var(--gris);margin-top:-6px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:var(--sombra)}
+.card.plano{box-shadow:none}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:6px;margin-bottom:8px}
+.tag.a{background:#fbeee4;color:var(--rojo-osc)}
+.tag.tiempo{background:#e9f4ee;color:var(--verde)}
+ul.limpia{list-style:none;padding-left:0;margin:8px 0}
+ul.limpia li{padding:5px 0 5px 26px;position:relative}
+ul.limpia li::before{content:"›";position:absolute;left:6px;color:var(--rojo);font-weight:700}
+.recursos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.recursos a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--rojo);color:var(--rojo);border-radius:10px;padding:11px 16px;text-decoration:none;font-weight:600;font-size:.92rem;cursor:pointer}
+.recursos a:hover{background:var(--rojo);color:#fff}
+.videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:12px 0}
+.vid{border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;position:relative;aspect-ratio:16/9}
+.vid img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:.2s}
+.vid:hover img{opacity:1}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid .play::after{content:"";width:0;height:0;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent;filter:drop-shadow(0 0 6px rgba(0,0,0,.5));margin-left:5px}
+.vid .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.82rem;padding:16px 10px 8px;font-weight:600}
+.vid iframe{width:100%;height:100%;border:0}
+.check label{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--rojo);flex:0 0 auto}
+.check .done{text-decoration:line-through;color:var(--gris)}
+.progreso{height:9px;background:#eee;border-radius:6px;overflow:hidden;margin:10px 0}
+.progreso i{display:block;height:100%;width:0;background:var(--verde);transition:.3s}
+.progtxt{font-size:.82rem;color:var(--gris)}
+.flujo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.9rem;margin:10px 0}
+.flujo span{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:6px 11px;font-weight:600}
+.flujo .fl{color:var(--rojo);font-weight:700}
+.gate{max-width:520px;margin:0 auto}
+.saludo{background:#e9f4ee;border:1px solid var(--verde);color:#1c5c40;padding:8px 14px;border-radius:10px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.saludo button{background:none;border:0;color:var(--rojo);cursor:pointer;font-size:.82rem;text-decoration:underline}
+#login{position:fixed;inset:0;z-index:300;background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));display:flex;align-items:center;justify-content:center;padding:20px}
+#login .box{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#login h2{margin:0 0 4px;color:var(--rojo-osc);font-size:1.3rem}
+#login label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+#login input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+#login input:focus{outline:none;border-color:var(--rojo)}
+#login .err{color:#b3202c;font-size:.83rem;min-height:18px;margin-top:6px}
+.quiz-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px 0}
+.controles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controles label{font-size:.85rem;color:var(--gris)}
+.controles select{padding:6px 10px;border:1px solid var(--linea);border-radius:8px;font-size:.9rem}
+.marcador{font-weight:700;color:var(--rojo-osc);font-size:.92rem}
+.pregunta{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px;margin:14px 0;box-shadow:var(--sombra)}
+.pregunta .qh{display:flex;justify-content:space-between;gap:10px;font-size:.75rem;color:var(--gris);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.pregunta .q{font-weight:600;margin-bottom:12px;font-size:1.02rem}
+.opts button{display:block;width:100%;text-align:left;border:1px solid var(--linea);background:#fff;border-radius:10px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:.96rem;transition:.12s;color:var(--tinta)}
+.opts button:hover:not(:disabled){border-color:var(--rojo);background:#fdf3ec}
+.opts button:disabled{cursor:default}
+.opts button.bien{background:#e7f6ee;border-color:var(--verde);color:#1c5c40;font-weight:600}
+.opts button.mal{background:#fdeceb;border-color:#b3202c;color:#7d1620}
+.fb{margin-top:10px;padding:11px 14px;border-radius:10px;font-size:.9rem;display:none}
+.fb.ok{background:#e7f6ee;color:#1c5c40;border:1px solid var(--verde)}
+.fb.no{background:#fdeceb;color:#7d1620;border:1px solid #e14b57}
+.fb b{display:block;margin-bottom:2px}
+.qacts{text-align:center;margin:22px 0}
+.btn{background:var(--rojo);color:#fff;border:0;border-radius:10px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;margin:4px}
+.btn.sec{background:#fff;color:var(--rojo);border:1px solid var(--rojo)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.resultado{display:none;text-align:center;background:#fff;border:2px solid var(--rojo);border-radius:14px;padding:24px;margin:16px 0;box-shadow:var(--sombra)}
+.resultado .score{font-size:2.4rem;font-weight:800;color:var(--rojo)}
+.nota{background:#fff7e8;border-left:4px solid var(--ambar);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0}
+.aviso{background:#fbeee4;border-left:4px solid var(--rojo);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.86rem;margin:12px 0;color:var(--rojo-osc)}
+.stars{display:flex;gap:6px;margin:2px 0 4px}
+.stars button{border:1px solid var(--linea);background:#fff;border-radius:8px;width:44px;height:40px;font-size:1.05rem;cursor:pointer;color:var(--gris);font-weight:700}
+.stars button.sel{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.enc label{display:block;font-weight:600;margin:14px 0 4px;font-size:.9rem}
+.enc textarea{width:100%;min-height:70px;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;font-size:.95rem;font-family:inherit;resize:vertical}
+.enc .ok{background:#e7f6ee;border:1px solid var(--verde);color:#1c5c40;padding:10px 14px;border-radius:10px;margin-top:12px;display:none}
+footer{text-align:center;color:var(--gris);font-size:.82rem;padding:26px 20px}
+.mini{font-size:.8rem;color:var(--gris)}
+.galDibujos{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:12px}
+.dib{background:#fff;border:1px solid var(--linea);border-radius:12px;overflow:hidden;box-shadow:var(--sombra);position:relative}
+.dib img{width:100%;height:180px;object-fit:cover;cursor:zoom-in;display:block;background:#f0eae7}
+.dib .meta{padding:9px 11px}
+.dib .meta .n{font-weight:600;font-size:.86rem;color:var(--rojo-osc)}
+.dib .meta .t{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.dib .votar{display:flex;align-items:center;gap:8px;margin-top:8px}
+.dib .votar button{border:1px solid var(--rojo);background:#fff;color:var(--rojo);border-radius:8px;padding:5px 12px;cursor:pointer;font-weight:600;font-size:.85rem}
+.dib .votar button.voted{background:var(--rojo);color:#fff}
+.dib .votar button:disabled{opacity:.55;cursor:default}
+.dib .votos{font-weight:800;color:var(--rojo-osc)}
+.dib .corona{position:absolute;top:8px;left:8px;background:#ffd35c;color:#7a5a00;border-radius:8px;padding:2px 8px;font-size:.74rem;font-weight:700}
+#fileDibujo{display:block;margin:10px 0}
+</style>
+</head>
+<body>
+
+<div id="login"><div class="box">
+  <h2>🩻 Sistema Digestivo: Abdomen</h2>
+  <p class="mini" style="margin:0 0 6px">SOI II · Semana 3 — Identifícate para comenzar.</p>
+  <label>Nombre completo</label>
+  <input id="inNombre" type="text" placeholder="Ej: María Fernanda Gómez" autocomplete="name">
+  <label>Correo institucional</label>
+  <input id="inCorreo" type="email" placeholder="tu.correo@unisabana.edu.co" autocomplete="email">
+  <div class="err" id="loginErr"></div>
+  <button class="btn" id="btnEntrar" style="width:100%">Entrar y comenzar</button>
+</div></div>
+
+<header class="top">
+  <a class="volver" href="portafolio.html">← Portafolio</a>
+  <span id="estado">Modo local</span>
+  <h1>Irrigación abdominal, Peritoneo y Estómago</h1>
+  <p>Laboratorio de Anatomía · SOI II · Semana 3 · Integración con caso de gastritis</p>
+  <p class="mini">Aorta abdominal, vena cava/porta, peritoneo y estómago</p>
+  <span class="pill">Prepárate → practica → repasa · preguntas nuevas cada vez</span>
+</header>
+
+<nav class="fases">
+  <button class="tab activa" data-f="prep"><span class="n">Fase 1 · Antes</span>🧠 Preparación</button>
+  <button class="tab" data-f="dur"><span class="n">Fase 2 · Laboratorio</span>🔬 Durante la práctica</button>
+  <button class="tab" data-f="rep"><span class="n">Fase 3 · Después</span>✅ Repaso y evaluación</button>
+</nav>
+
+<main>
+
+<!-- FASE 1 -->
+<section class="fase prep activa" id="prep">
+  <h2 class="sec">🧠 Antes de entrar al laboratorio</h2>
+  <p class="intro">Llega dominando la irrigación arterial del abdomen, el drenaje venoso (cava y porta), la organización del peritoneo y las partes del estómago.</p>
+
+  <div class="card">
+    <h3>Resultados de aprendizaje</h3>
+    <ul class="limpia">
+      <li>Identificar las ramas principales de la aorta abdominal: tronco celíaco y arterias mesentéricas superior e inferior.</li>
+      <li>Explicar la formación y el drenaje de la vena cava inferior y la vena porta.</li>
+      <li>Identificar las porciones y dependencias del peritoneo.</li>
+      <li>Reconocer las partes del estómago y su importancia clínica.</li>
+      <li>Integrar la anatomía del abdomen con el caso clínico de gastritis.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Materiales para el laboratorio</h3>
+    <ul class="limpia">
+      <li>Modelos anatómicos de abdomen y plataforma 3D (Anatomage).</li>
+      <li>Preparaciones cadavéricas (según disponibilidad).</li>
+      <li>Atlas físico impreso y cuaderno para dibujar/rotular.</li>
+      <li>Guantes, bata y EPP según norma del laboratorio.</li>
+    </ul>
+    <div class="nota"><b>Evidencia:</b> al final, cada grupo escoge un ítem de la guía práctica y sube un <b>video corto</b> demostrando su aprendizaje del tema.</div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos de apoyo (YouTube)</h3>
+    <p class="mini">Toca cada tarjeta para reproducir. Velos antes de venir.</p>
+    <div class="videos" id="vids-yt"></div>
+  </div>
+
+  <div class="card">
+    <h3>📚 Recursos Lecturio (requieren inicio de sesión institucional)</h3>
+    <p class="mini">Se abren en una pestaña nueva con tu usuario de la biblioteca.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+
+  <div class="card">
+    <h3>Roles del equipo</h3>
+    <ul class="limpia">
+      <li><b>Líder:</b> administra el tiempo y el orden de las estaciones.</li>
+      <li><b>Operador:</b> manipula modelos/preparaciones con cuidado.</li>
+      <li><b>Relator clínico:</b> conecta hallazgos con el caso de gastritis.</li>
+      <li><b>Documentalista:</b> graba el video de evidencia (estructuras/modelos).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section class="fase dur" id="dur">
+  <h2 class="sec">🔬 Durante la práctica</h2>
+  <p class="intro">Trabaja estación por estación. Marca cada estructura al identificarla con seguridad.</p>
+
+  <div class="card">
+    <span class="tag a">Estación A</span><span class="tag tiempo">Irrigación arterial</span>
+    <h3>Aorta abdominal y sus ramas</h3>
+    <div class="check" data-chk="A">
+      <label><input type="checkbox"> Aorta abdominal (desde los pilares del diafragma hasta L4)</label>
+      <label><input type="checkbox"> Tronco celíaco (T12): gástrica izquierda, esplénica y hepática común</label>
+      <label><input type="checkbox"> Hepática común → gastroduodenal y hepática propia (arteria cística, triángulo de Calot)</label>
+      <label><input type="checkbox"> Arterias gastroepiploicas (derecha e izquierda) en la curvatura mayor</label>
+      <label><input type="checkbox"> Arteria mesentérica superior (L1) y mesentérica inferior</label>
+      <label><input type="checkbox"> Ramas directas: renales (L2), gonadales, frénicas inferiores, lumbares</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">El tronco celíaco irriga el intestino <b>anterior</b> (estómago, hígado, bazo, páncreas); la mesentérica superior el intestino <b>medio</b> y la inferior el <b>posterior</b>.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación B</span><span class="tag tiempo">Drenaje venoso</span>
+    <h3>Vena cava inferior y vena porta</h3>
+    <div class="check" data-chk="B">
+      <label><input type="checkbox"> Vena cava inferior (a la derecha de la aorta)</label>
+      <label><input type="checkbox"> Afluentes directos de la VCI: venas renales, hepáticas, suprarrenal y gonadal derechas, frénicas</label>
+      <label><input type="checkbox"> Drenaje asimétrico: gonadal/suprarrenal izquierdas → vena renal izquierda</label>
+      <label><input type="checkbox"> Vena porta: unión de mesentérica superior + esplénica</label>
+      <label><input type="checkbox"> Afluentes de la porta (venas gástricas, mesentérica inferior)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">La sangre del tubo digestivo pasa <b>primero por el hígado</b> (sistema porta) antes de llegar a la VCI.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación C</span><span class="tag tiempo">Peritoneo</span>
+    <h3>Peritoneo, mesos y epiplones</h3>
+    <div class="check" data-chk="C">
+      <label><input type="checkbox"> Peritoneo visceral y parietal</label>
+      <label><input type="checkbox"> Órganos intraperitoneales vs retroperitoneales</label>
+      <label><input type="checkbox"> Mesenterio, mesocolon transverso y mesoapéndice</label>
+      <label><input type="checkbox"> Epiplón menor (hígado–curvatura menor) y epiplón mayor (curvatura mayor)</label>
+      <label><input type="checkbox"> Transcavidad de los epiplones (saco menor) e hiato omental (foramen de Winslow)</label>
+      <label><input type="checkbox"> Ligamento falciforme y compartimentos supracólico/infracólico</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación D</span><span class="tag tiempo">Estómago</span>
+    <h3>Partes y relaciones del estómago</h3>
+    <div class="check" data-chk="D">
+      <label><input type="checkbox"> Cardias, fondo, cuerpo y región pilórica (antro y canal pilórico)</label>
+      <label><input type="checkbox"> Curvatura menor (incisura angular) y curvatura mayor</label>
+      <label><input type="checkbox"> Esfínter pilórico</label>
+      <label><input type="checkbox"> Pliegues gástricos (rugosidades) y línea Z (unión esófago–estómago)</label>
+      <label><input type="checkbox"> Relaciones: hígado, bazo, páncreas, colon transverso, diafragma</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Integración con el caso (gastritis)</h3>
+    <p>Vincula la anatomía con el paciente con <b>dolor epigástrico</b> y gastritis:</p>
+    <div class="flujo"><span>Mucosa gástrica irritada</span><span class="fl">→</span><span>Inflamación</span><span class="fl">→</span><span>Dolor epigástrico</span><span class="fl">→</span><span>Referido por el plexo celíaco</span></div>
+    <div class="nota"><b>Conexiones:</b> la <b>curvatura menor</b> (irrigada por la gástrica izquierda) es sitio frecuente de úlceras; el dolor visceral del estómago se percibe en el <b>epigastrio</b> por su inervación del <b>plexo celíaco</b>; una úlcera de la pared posterior puede erosionar la <b>arteria esplénica/gastroduodenal</b> y sangrar.</div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section class="fase rep" id="rep">
+  <h2 class="sec">✅ Repaso y evaluación</h2>
+  <p class="intro">Pon a prueba lo aprendido. <b>Cada ronda muestra preguntas distintas.</b></p>
+
+  <div class="card" style="border:2px solid var(--rojo)">
+    <h3 style="margin-top:0">🎨 Galería obligatoria · Dibujo del tronco celíaco</h3>
+    <p style="margin-top:0">Sube la foto de <b>tu dibujo del tronco celíaco</b> y sus ramas (gástrica izquierda, esplénica y hepática común). <b>Es obligatorio.</b> Todos podrán verlo y votar por su favorito.</p>
+    <input type="file" id="fileDibujo" accept="image/*">
+    <div class="err" id="dibErr" style="color:var(--rojo);font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnSubir">📤 Subir mi dibujo</button>
+    <span id="subiendo" class="mini" style="display:none">Subiendo…</span>
+    <div style="margin:12px 0 0"><span class="mini" id="galInfo"></span></div>
+    <div class="galDibujos" id="galDibujos"></div>
+  </div>
+
+  <div class="card" id="docCasoPanel" style="display:none;border:2px dashed #0a4f66;background:#eef7fb">
+    <h3 style="margin-top:0">🧑‍🏫 Control docente · Caso clínico «Laura»</h3>
+    <p style="margin-top:0" id="casoSesEstado">—</p>
+    <button class="btn" id="btnCasoSesion">Abrir sesión del caso</button>
+    <a class="btn sec" href="paciente_digestivo.html" style="margin-left:8px">Abrir panel del caso →</a>
+  </div>
+
+  <div class="card" id="casoCard" style="display:none;border:2px solid #2e7d5b;background:#f0f9f4">
+    <h3 style="margin-top:0">🩺 Caso clínico en vivo · Paciente virtual «Laura»</h3>
+    <p style="margin-top:0">Tu docente abrió la sesión del caso de gastritis. Entrevista a la paciente, integra la anatomía del abdomen y plantea tu diagnóstico. Tus respuestas quedan registradas.</p>
+    <a class="btn" href="paciente_digestivo.html">Entrar al caso →</a>
+  </div>
+
+  <h3>📝 Banco de preguntas</h3>
+  <div id="zonaQuiz" style="display:none">
+    <div class="saludo" id="saludo"></div>
+    <div class="quiz-top">
+      <div class="controles">
+        <label for="numP">Preguntas por ronda:</label>
+        <select id="numP">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+          <option value="0">Todas</option>
+        </select>
+        <button class="btn sec" id="nuevaRonda">🔀 Nueva ronda</button>
+      </div>
+      <div class="marcador" id="marcador">0 / 0 · 0 aciertos</div>
+    </div>
+    <div id="quiz"></div>
+    <div class="qacts"><button class="btn" id="verResultado">Ver resultado de la ronda</button></div>
+    <div class="resultado" id="resultado"><div class="score" id="scoreTxt">0%</div><p id="scoreMsg"></p></div>
+    <div class="card" id="temasCard" style="display:none">
+      <h3 style="margin-top:0">📊 Tu apropiación por tema</h3>
+      <p class="mini">Se actualiza con cada pregunta; acumula todas tus rondas. Verde ≥80%, ámbar ≥60%, rojo &lt;60%.</p>
+      <div id="temasBox"></div>
+    </div>
+  </div>
+
+  <div class="card enc" id="encuesta">
+    <h3>🗳️ Encuesta de satisfacción y dudas</h3>
+    <p style="margin-top:0">Al terminar, cuéntanos cómo te fue. Solo lo ve tu docente.</p>
+    <label>¿Qué tan satisfecho/a quedaste con la práctica? <span class="mini">(1 = poco · 5 = mucho)</span></label>
+    <div class="stars" data-name="satisfaccion"></div>
+    <label>¿Qué tan útil te resultó para prepararte? <span class="mini">(1–5)</span></label>
+    <div class="stars" data-name="utilidad"></div>
+    <label>¿Qué dudas te quedaron?</label>
+    <textarea id="inDudas" placeholder="Escribe aquí tus dudas sobre la anatomía o la práctica…"></textarea>
+    <label>Comentarios o sugerencias</label>
+    <textarea id="inComentario" placeholder="¿Qué mejorarías?"></textarea>
+    <div class="err" id="encErr" style="color:#b3202c;font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnEncuesta">Enviar encuesta</button>
+    <div class="ok" id="encuestaMsg">¡Gracias! Tu respuesta quedó registrada. 🧡</div>
+  </div>
+
+  <div class="card">
+    <h3>🎫 Exit ticket</h3>
+    <ul class="limpia">
+      <li>Una estructura que hoy dejé de confundir: __________</li>
+      <li>La curvatura menor la irriga la arteria: __________</li>
+      <li>El dolor epigástrico del caso lo conecto con: __________</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>Recurso de estudio · Sistema digestivo: irrigación, peritoneo y estómago · SOI II Semana 3 · Uso educativo.</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA_DIG, DOMINIO_INSTITUCIONAL } from './supabase-config.js';
+const TABLA=TABLA_DIG;
+let sb=null, FB_OK=false;
+const badge=document.getElementById('estado');
+if(SUPABASE_URL && !SUPABASE_URL.includes('PEGA_AQUI')){
+  try{ sb=createClient(SUPABASE_URL, SUPABASE_KEY); FB_OK=true; badge.textContent='🟢 Conectado'; }
+  catch(e){ badge.textContent='Modo local'; console.warn('Supabase no inició:',e); }
+}
+
+/* Cierre de módulo (calendario académico) */
+const CIERRE_MODULO = new Date('2026-08-18T00:00:00-05:00'); // cerrado
+function moduloCerrado(){ return Date.now() >= CIERRE_MODULO.getTime(); }
+
+/* Caso clínico: la tarjeta aparece cuando el docente abre la sesión (o si eres docente) */
+let ES_DOCENTE=false;
+async function chkCaso(){
+  const casoCard=document.getElementById('casoCard'); if(!sb||!casoCard) return;
+  try{ const {data}=await sb.from('app_estado').select('abierta').eq('clave','paciente_digestivo').maybeSingle();
+    casoCard.style.display=(ES_DOCENTE||(data&&data.abierta))?'block':'none'; }catch(e){}
+}
+if(sb){ chkCaso(); sb.channel('caso-dig-reveal').on('postgres_changes',{event:'*',schema:'public',table:'app_estado'},chkCaso).subscribe(); }
+
+/* Rastreador de uso */
+const videosVistos=new Set();
+let baseSegundos=0, segundosSesion=0, checklistMarcados=0, checklistTotal=0;
+let visible=true;
+document.addEventListener('visibilitychange',()=>{visible=document.visibilityState==='visible';});
+setInterval(()=>{ if(visible) segundosSesion++; },1000);
+setInterval(()=>{ if(FB_OK && ESTUDIANTE) guardarAvance(); },30000);
+function registrarRecurso(id){ if(!videosVistos.has(id)){ videosVistos.add(id); if(ESTUDIANTE) guardarAvance(); } }
+function actualizarChecklist(){ const ins=document.querySelectorAll('.check input'); checklistTotal=ins.length; checklistMarcados=[...ins].filter(i=>i.checked).length; }
+
+/* Videos YouTube */
+const YT=[
+  {id:"H_Mqz1I1YZE",t:"Generalidades de la aorta abdominal"},
+  {id:"cZol_7jPJsM",t:"Tronco celíaco"},
+  {id:"w9pN7_sJd_4",t:"Vena cava y vena porta"}
+];
+function tarjetaVideo(v){
+  const d=document.createElement('div');d.className='vid';
+  d.innerHTML=`<img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${v.t}"><div class="play"></div><div class="lbl">${v.t}</div>`;
+  d.onclick=()=>{d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;d.style.cursor='default';registrarRecurso(v.id);};
+  return d;
+}
+YT.forEach(v=>document.getElementById('vids-yt').appendChild(tarjetaVideo(v)));
+
+/* Recursos Lecturio */
+const RECURSOS=[
+  {id:"peritoneo1",t:"Peritoneo — parte 1",url:"https://unisabana.lecturio.com/#/lecture/s/8204/34658?return=/search/Abdominal%20Cavity%20%20Peritoneum"},
+  {id:"peritoneo2",t:"Peritoneo — parte 2",url:"https://unisabana.lecturio.com/#/lecture/s/8204/34662?return=/search/Abdominal%20Cavity%20%20Peritoneum"},
+  {id:"estomago",t:"Estómago",url:"https://unisabana.lecturio.com/#/lecture/s/87814/252214?return=/search/stomach"}
+];
+const contRec=document.getElementById('recursos');
+RECURSOS.forEach(r=>{
+  const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.innerHTML='▶ '+r.t;
+  a.addEventListener('click',()=>registrarRecurso(r.id));
+  contRec.appendChild(a);
+});
+
+/* Banco de preguntas */
+const POOL=[
+ {id:1,cat:"arterias",q:"La aorta torácica pasa a llamarse aorta abdominal justo después de atravesar:",o:["El hiato esofágico","Los pilares del diafragma","El tronco celíaco","La carina"],c:1,e:"La aorta abdominal comienza tras pasar los pilares del diafragma y termina bifurcándose a nivel de L4."},
+ {id:2,cat:"arterias",q:"El tronco celíaco se origina a nivel de:",o:["T12","L2","L4","T8"],c:0,e:"El tronco celíaco nace a nivel de T12; la mesentérica superior en L1 y las renales en L2."},
+ {id:3,cat:"arterias",q:"Las tres ramas del tronco celíaco son:",o:["Gástrica izquierda, esplénica y hepática común","Renal, gonadal y lumbar","Mesentérica superior, inferior y renal","Cística, gastroduodenal y frénica"],c:0,e:"El tronco celíaco (en forma de T invertida) da la gástrica izquierda, la esplénica y la hepática común."},
+ {id:4,cat:"arterias",q:"La curvatura menor del estómago es irrigada principalmente por la arteria:",o:["Gastroepiploica derecha","Gástrica izquierda","Esplénica","Mesentérica superior"],c:1,e:"La gástrica izquierda (rama del tronco celíaco) irriga la curvatura menor y la porción inferior del esófago."},
+ {id:5,cat:"arterias",q:"La curvatura mayor del estómago recibe irrigación de las arterias:",o:["Gástricas cortas solamente","Gastroepiploicas (derecha e izquierda)","Renales","Frénicas inferiores"],c:1,e:"Las gastroepiploicas derecha (de la gastroduodenal) e izquierda (de la esplénica) se anastomosan en la curvatura mayor."},
+ {id:6,cat:"arterias",q:"La arteria hepática común se divide en:",o:["Gastroduodenal y hepática propia","Gástrica izquierda y esplénica","Cística y renal","Mesentérica superior e inferior"],c:0,e:"La hepática común se bifurca en la gastroduodenal y la hepática propia."},
+ {id:7,cat:"arterias",q:"La arteria cística, que irriga la vesícula biliar, suele nacer de la:",o:["Arteria hepática derecha","Arteria esplénica","Arteria gástrica izquierda","Aorta directamente"],c:0,e:"La cística nace de la hepática derecha y se localiza en el triángulo de Calot."},
+ {id:8,cat:"arterias",q:"El triángulo de Calot está delimitado por el conducto cístico, el conducto hepático común y:",o:["El borde inferior del hígado","El páncreas","El duodeno","El bazo"],c:0,e:"Sus límites son el conducto cístico, el conducto hepático común y el borde inferior del hígado; contiene la arteria cística."},
+ {id:9,cat:"arterias",q:"La arteria de trayecto tortuoso que se dirige al bazo es la:",o:["Hepática propia","Esplénica","Gastroduodenal","Mesentérica inferior"],c:1,e:"La esplénica es característicamente tortuosa; irriga el bazo y da ramas al páncreas y a la curvatura mayor."},
+ {id:10,cat:"arterias",q:"La arteria mesentérica superior emerge a nivel de:",o:["T12","L1","L3","L4"],c:1,e:"La mesentérica superior nace en L1; irriga páncreas, intestino delgado, ciego, apéndice y parte del colon."},
+ {id:11,cat:"arterias",q:"La aorta abdominal se bifurca en las arterias ilíacas comunes a nivel de:",o:["L2","L4","T12","S1"],c:1,e:"A nivel de L4 la aorta se divide en las ilíacas comunes, que se bifurcan en interna y externa."},
+ {id:12,cat:"arterias",q:"Las primeras ramas de la aorta abdominal, que irrigan la parte inferior del diafragma, son:",o:["Las renales","Las frénicas inferiores","Las lumbares","Las gonadales"],c:1,e:"Las frénicas inferiores son las primeras ramas; irrigan el diafragma y dan la suprarrenal superior."},
+ {id:13,cat:"arterias",q:"La arteria gastroduodenal da origen a:",o:["La gastroepiploica derecha y la pancreatoduodenal superior","La gástrica izquierda","La esplénica","La cística"],c:0,e:"La gastroduodenal se divide en pancreatoduodenal superior anterior y gastroepiploica derecha."},
+ {id:14,cat:"venas",q:"La vena cava inferior se sitúa respecto a la aorta abdominal:",o:["A la izquierda","A la derecha","Por delante","Por detrás"],c:1,e:"La VCI está a la derecha de la aorta abdominal; referencia clave en cortes anatómicos."},
+ {id:15,cat:"venas",q:"La vena porta hepática se forma por la unión de:",o:["Vena mesentérica superior + vena esplénica","Vena renal + vena gonadal","Venas hepáticas","Vena cava + vena ácigos"],c:0,e:"La porta resulta de la unión de la mesentérica superior y la esplénica (la mesentérica inferior suele unirse a la esplénica antes)."},
+ {id:16,cat:"venas",q:"La vena gonadal (testicular u ovárica) IZQUIERDA drena en:",o:["La vena cava inferior directamente","La vena renal izquierda","La vena porta","La vena ácigos"],c:1,e:"La gonadal izquierda drena en la vena renal izquierda; la derecha drena directamente en la VCI."},
+ {id:17,cat:"venas",q:"¿Cuál de estas drena DIRECTAMENTE en la vena cava inferior?",o:["Vena gonadal izquierda","Vena suprarrenal izquierda","Venas hepáticas","Vena gástrica izquierda"],c:2,e:"Las venas hepáticas, renales, suprarrenal/gonadal derechas y frénicas drenan directo en la VCI."},
+ {id:18,cat:"venas",q:"La sangre del sistema digestivo, antes de llegar a la circulación general, pasa por:",o:["El bazo","El hígado (sistema porta)","El riñón","El páncreas"],c:1,e:"El sistema porta lleva la sangre del tubo digestivo al hígado para su metabolización antes de la VCI."},
+ {id:19,cat:"venas",q:"Las venas lumbares contribuyen, mediante la vena lumbar ascendente, al sistema:",o:["Porta","Ácigos/hemiácigos","Renal","Esplénico"],c:1,e:"Las lumbares no drenan directo en la VCI; forman la lumbar ascendente que aporta al sistema ácigos."},
+ {id:20,cat:"venas",q:"El plexo celíaco (plexo solar) distribuye inervación autónoma y contiene los ganglios:",o:["Celíacos, mesentéricos superiores y aórtico-renales","Estrellados","Cervicales","Sacros"],c:0,e:"El plexo celíaco lo forman los ganglios celíacos, mesentéricos superiores y aórtico-renales."},
+ {id:21,cat:"peritoneo",q:"El peritoneo que recubre directamente los órganos se llama:",o:["Parietal","Visceral","Fibroso","Seroso parietal"],c:1,e:"El peritoneo visceral cubre los órganos; el parietal reviste la pared abdominopélvica."},
+ {id:22,cat:"peritoneo",q:"Un órgano RETROPERITONEAL típico es:",o:["El estómago","El bazo","El riñón","El colon transverso"],c:2,e:"Los riñones y el páncreas son retroperitoneales (entre la pared y el peritoneo parietal); el estómago y el bazo son intraperitoneales."},
+ {id:23,cat:"peritoneo",q:"La doble capa de peritoneo que suspende el intestino delgado y lleva sus vasos y nervios es:",o:["El epiplón menor","El mesenterio","El ligamento falciforme","El mesocolon transverso"],c:1,e:"El mesenterio conecta el intestino delgado con la pared posterior y da paso a vasos, nervios y linfáticos."},
+ {id:24,cat:"peritoneo",q:"El epiplón menor conecta:",o:["La curvatura mayor con el colon","El hígado con la curvatura menor del estómago","El estómago con el bazo","El diafragma con el hígado"],c:1,e:"El epiplón (omento) menor va del hígado a la curvatura menor del estómago y al duodeno."},
+ {id:25,cat:"peritoneo",q:"El epiplón mayor cuelga de:",o:["La curvatura menor","La curvatura mayor del estómago","El hígado","El páncreas"],c:1,e:"El epiplón mayor cuelga de la curvatura mayor como un 'delantal' sobre el intestino y se repliega al colon transverso."},
+ {id:26,cat:"peritoneo",q:"El saco menor (bolsa omental) se comunica con el saco mayor a través del:",o:["Hiato esofágico","Foramen epiploico (de Winslow)","Foramen oval","Hiato aórtico"],c:1,e:"El foramen epiploico u omental (de Winslow) comunica la transcavidad de los epiplones (saco menor) con el saco mayor."},
+ {id:27,cat:"peritoneo",q:"El ligamento peritoneal que une el hígado con la pared abdominal anterior es el:",o:["Ligamento gastroesplénico","Ligamento falciforme","Ligamento coronario","Ligamento redondo del útero"],c:1,e:"El ligamento falciforme fija el hígado a la pared abdominal anterior; en su borde libre lleva el ligamento redondo."},
+ {id:28,cat:"peritoneo",q:"El colon ascendente y descendente son secundariamente retroperitoneales porque:",o:["Nunca tuvieron mesenterio","Su mesenterio se fusionó con el peritoneo parietal","Están dentro del saco menor","Los cubre el epiplón menor"],c:1,e:"Inicialmente tenían mesenterio, pero se fusionó con el peritoneo parietal posterior durante el desarrollo."},
+ {id:29,cat:"peritoneo",q:"El compartimento supracólico (sobre el mesocolon transverso) contiene:",o:["Intestino delgado y colon","Estómago, hígado y bazo","Recto y vejiga","Riñones"],c:1,e:"Por encima del mesocolon transverso están el estómago, el hígado y el bazo; por debajo, el intestino delgado y el colon."},
+ {id:30,cat:"peritoneo",q:"Los órganos intraperitoneales (como el estómago) se caracterizan por:",o:["Estar fijos a la pared posterior","Estar rodeados de peritoneo y tener mesenterio/movilidad","No tener irrigación","Ser retroperitoneales"],c:1,e:"Están casi rodeados por peritoneo y suspendidos por un meso, lo que les da movilidad."},
+ {id:31,cat:"estomago",q:"La región del estómago que se proyecta por encima de la entrada del esófago y suele contener aire es:",o:["El antro pilórico","El fondo","El cardias","El cuerpo"],c:1,e:"El fondo gástrico se proyecta por encima del cardias y suele estar lleno de aire (cámara de gases)."},
+ {id:32,cat:"estomago",q:"La entrada del esófago al estómago corresponde a la región:",o:["Del cardias","Del píloro","Del fondo","Del antro"],c:0,e:"El cardias es la región de la unión esofagogástrica, donde entra el esófago."},
+ {id:33,cat:"estomago",q:"La incisura angular se encuentra en la:",o:["Curvatura mayor","Curvatura menor","Cara anterior","Región del fondo"],c:1,e:"La incisura (muesca) angular está en la curvatura menor y marca el límite entre el cuerpo y el antro pilórico."},
+ {id:34,cat:"estomago",q:"El esfínter que regula el paso del estómago al duodeno es el:",o:["Esfínter esofágico inferior","Esfínter pilórico","Esfínter de Oddi","Esfínter ileocecal"],c:1,e:"El esfínter pilórico (músculo circular) controla el vaciamiento gástrico hacia el duodeno."},
+ {id:34.5,cat:"estomago",q:"Los pliegues de la mucosa gástrica que aumentan la superficie y permiten la expansión son:",o:["Las vellosidades","Los pliegues gástricos (rugosidades)","Las tenias","Las haustras"],c:1,e:"Las rugosidades o pliegues gástricos aumentan la superficie y desaparecen con la distensión del estómago."},
+ {id:35,cat:"estomago",q:"La 'línea Z' del estómago marca:",o:["El límite con el bazo","El cambio histológico entre esófago y estómago","La curvatura mayor","El esfínter pilórico"],c:1,e:"La línea Z es la transición abrupta del epitelio esofágico al gástrico (unión escamocolumnar)."},
+ {id:36,cat:"estomago",q:"La cara POSTERIOR del estómago se relaciona con el páncreas, el bazo y:",o:["El lóbulo izquierdo del hígado","El colon transverso y los riñones","La pared abdominal anterior","El diafragma únicamente"],c:1,e:"Por detrás (lecho gástrico) se relaciona con páncreas, bazo, arteria esplénica, colon transverso, riñón y suprarrenal."},
+ {id:37,cat:"estomago",q:"La parte del estómago que se estrecha hacia el canal pilórico es:",o:["El fondo","El antro pilórico","El cardias","El cuerpo"],c:1,e:"El antro pilórico se estrecha hacia el canal pilórico que conecta con el duodeno."},
+ {id:38,cat:"caso",q:"En el paciente con gastritis, el dolor visceral del estómago se percibe típicamente en:",o:["La fosa ilíaca derecha","El epigastrio","El hipocondrio izquierdo","La región suprapúbica"],c:1,e:"El dolor visceral gástrico se refiere al epigastrio, por la inervación a través del plexo celíaco."},
+ {id:39,cat:"caso",q:"Una úlcera en la curvatura menor podría comprometer la arteria:",o:["Gástrica izquierda","Mesentérica inferior","Renal","Cística"],c:0,e:"La curvatura menor la irriga la gástrica izquierda; una úlcera profunda puede erosionarla y sangrar."},
+ {id:40,cat:"caso",q:"Una úlcera de la pared POSTERIOR del estómago/duodeno puede erosionar y provocar hemorragia de la arteria:",o:["Gastroduodenal","Frénica inferior","Gonadal","Ilíaca externa"],c:0,e:"La arteria gastroduodenal, por detrás del bulbo duodenal, es causa clásica de hemorragia digestiva alta por úlcera posterior."},
+ {id:41,cat:"caso",q:"El dolor referido del estómago viaja por fibras autónomas del:",o:["Plexo braquial","Plexo celíaco","Nervio frénico","Plexo sacro"],c:1,e:"El plexo celíaco conduce la inervación simpática/aferente visceral del estómago; explica el dolor epigástrico referido."}
+];
+
+/* Navegación */
+document.querySelectorAll('nav.fases .tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav.fases .tab').forEach(x=>x.classList.remove('activa'));
+    document.querySelectorAll('.fase').forEach(x=>x.classList.remove('activa'));
+    b.classList.add('activa'); document.getElementById(b.dataset.f).classList.add('activa');
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+
+/* Checklists */
+document.querySelectorAll('.check').forEach(box=>{
+  const barra=box.nextElementSibling.querySelector('i');
+  const txt=box.nextElementSibling.nextElementSibling;
+  const inputs=box.querySelectorAll('input');
+  function upd(){let n=0;inputs.forEach(i=>{const l=i.parentElement;i.checked?l.classList.add('done'):l.classList.remove('done');if(i.checked)n++;});
+    barra.style.width=Math.round(n/inputs.length*100)+'%';txt.textContent=`${n} de ${inputs.length} estructuras identificadas`;}
+  inputs.forEach(i=>i.onchange=()=>{upd();actualizarChecklist();if(ESTUDIANTE)guardarAvance();});upd();
+});
+actualizarChecklist();
+
+/* Utilidades */
+function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sanea(c){return c.trim().toLowerCase();}
+let ESTUDIANTE=null, RONDA=[], respondidas={}, aciertos=0, acumRespondidas=0, acumAciertos=0;
+let temaStats={};
+const TEMAS_LABEL={arterias:'Aorta y arterias',venas:'Vena cava y porta',peritoneo:'Peritoneo',estomago:'Estómago',caso:'Caso clínico'};
+function renderTemas(){
+  const box=document.getElementById('temasBox'); if(!box) return;
+  const keys=Object.keys(TEMAS_LABEL);
+  const conDatos=keys.filter(k=>temaStats[k]&&temaStats[k].total);
+  const card=document.getElementById('temasCard'); if(card) card.style.display=conDatos.length?'block':'none';
+  box.innerHTML=keys.map(k=>{
+    const s=temaStats[k]||{ok:0,total:0};
+    const pct=s.total?Math.round(s.ok/s.total*100):0;
+    const col=s.total?(pct>=80?'var(--verde)':pct>=60?'var(--ambar)':'var(--rojo)'):'#ccc';
+    return `<div style="margin:9px 0">
+      <div style="display:flex;justify-content:space-between;font-size:.87rem"><span>${TEMAS_LABEL[k]}</span><span style="font-weight:700">${s.total?pct+'% ('+s.ok+'/'+s.total+')':'—'}</span></div>
+      <div style="height:9px;background:#eee;border-radius:5px;overflow:hidden;margin-top:3px"><i style="display:block;height:100%;width:${pct}%;background:${col};transition:.3s"></i></div>
+    </div>`;
+  }).join('');
+}
+
+/* Login */
+const login=document.getElementById('login');
+const zonaQuiz=document.getElementById('zonaQuiz');
+async function entrar(){
+  const nombre=document.getElementById('inNombre').value.trim();
+  const correo=document.getElementById('inCorreo').value.trim();
+  const err=document.getElementById('loginErr');
+  if(nombre.length<3){err.textContent='Escribe tu nombre completo.';return;}
+  const reMail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!reMail.test(correo)){err.textContent='Escribe un correo válido.';return;}
+  if(DOMINIO_INSTITUCIONAL && !correo.toLowerCase().endsWith(DOMINIO_INSTITUCIONAL.toLowerCase())){
+    err.textContent='Usa tu correo institucional ('+DOMINIO_INSTITUCIONAL+').';return;}
+  err.textContent='';
+  if(FB_OK){
+    const btn=document.getElementById('btnEntrar');btn.disabled=true;err.style.color='var(--gris)';err.textContent='Verificando acceso…';
+    try{
+      const {data:doc}=await sb.from('docentes').select('correo').eq('correo',correo.toLowerCase()).maybeSingle();
+      ES_DOCENTE=!!doc;
+    }catch(e){console.warn('docente',e);}
+    if(!ES_DOCENTE){
+      try{
+        const {data:aut}=await sb.from('autorizados').select('correo').eq('correo',correo.toLowerCase()).maybeSingle();
+        if(!aut){err.style.color='';err.textContent='Este correo no está autorizado para esta actividad. Contacta a tu docente.';btn.disabled=false;return;}
+      }catch(e){console.warn('autoriz',e);}
+    }
+    btn.disabled=false;err.style.color='';err.textContent='';
+  }
+  ESTUDIANTE={nombre,correo,id:sanea(correo)};
+  try{localStorage.setItem('soi2_estudiante',JSON.stringify({nombre,correo}));}catch(e){}
+  login.style.display='none'; zonaQuiz.style.display='block';
+  const rol=ES_DOCENTE?' · <b>docente</b>':'';
+  const avisoCierre=moduloCerrado()?'<div class="aviso" style="margin-top:10px">🔒 Este módulo está cerrado. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>':'';
+  document.getElementById('saludo').innerHTML=`<span>👋 Hola, <b>${nombre}</b>${rol}</span><button id="salir">No soy yo / Salir</button>`;
+  document.getElementById('saludo').insertAdjacentHTML('afterend',avisoCierre);
+  document.getElementById('salir').onclick=()=>{try{localStorage.removeItem('soi2_estudiante');}catch(e){}location.reload();};
+  if(ES_DOCENTE){ activarControlDocente(); } else { registrarInicio(); }
+  nuevaRonda();
+  if(FB_OK) cargarDibujos();
+}
+async function estadoCaso(){ try{const {data}=await sb.from('app_estado').select('abierta').eq('clave','paciente_digestivo').maybeSingle(); return !!(data&&data.abierta);}catch(e){return false;} }
+async function activarControlDocente(){
+  const panel=document.getElementById('docCasoPanel'); if(!panel||!sb) return;
+  panel.style.display='block';
+  chkCaso();
+  const btn=document.getElementById('btnCasoSesion'), est=document.getElementById('casoSesEstado');
+  function pinta(ab){ btn.textContent=ab?'⏸ Cerrar sesión del caso':'▶ Abrir sesión del caso'; est.textContent=ab?'🟢 Sesión ABIERTA · los estudiantes ya ven el caso':'🔒 Sesión cerrada · oculta para los estudiantes'; }
+  pinta(await estadoCaso());
+  btn.onclick=async()=>{ btn.disabled=true; const nueva=!(await estadoCaso()); await sb.from('app_estado').update({abierta:nueva,actualizado:new Date().toISOString()}).eq('clave','paciente_digestivo'); pinta(nueva); btn.disabled=false; };
+}
+document.getElementById('btnEntrar').onclick=entrar;
+document.getElementById('inCorreo').addEventListener('keydown',e=>{if(e.key==='Enter')entrar();});
+try{
+  const g=JSON.parse(localStorage.getItem('soi2_estudiante')||'null');
+  if(g&&g.nombre&&g.correo){ document.getElementById('inNombre').value=g.nombre; document.getElementById('inCorreo').value=g.correo; entrar(); }
+}catch(e){}
+
+/* Encuesta */
+const encuestaVal={satisfaccion:0,utilidad:0};
+document.querySelectorAll('.stars').forEach(cont=>{
+  const name=cont.dataset.name;
+  for(let n=1;n<=5;n++){
+    const b=document.createElement('button');b.type='button';b.textContent=n;
+    b.onclick=()=>{encuestaVal[name]=n;cont.querySelectorAll('button').forEach((x,k)=>x.classList.toggle('sel',k<n));};
+    cont.appendChild(b);
+  }
+});
+document.getElementById('btnEncuesta').onclick=async()=>{
+  const err=document.getElementById('encErr');
+  if(!ESTUDIANTE){err.textContent='Primero identifícate.';return;}
+  if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se puede enviar la encuesta.';return;}
+  if(!encuestaVal.satisfaccion){err.textContent='Marca al menos tu nivel de satisfacción.';return;}
+  err.textContent='';
+  const dudas=document.getElementById('inDudas').value.trim();
+  const comentario=document.getElementById('inComentario').value.trim();
+  if(FB_OK){ try{ await sb.from(TABLA).upsert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,satisfaccion:encuestaVal.satisfaccion,utilidad:encuestaVal.utilidad||null,dudas:dudas||null,comentario:comentario||null,encuesta_fecha:new Date().toISOString(),ultima_actividad:new Date().toISOString()},{onConflict:'correo'}); }catch(e){console.warn('encuesta',e);} }
+  document.getElementById('encuestaMsg').style.display='block';
+  document.getElementById('btnEncuesta').disabled=true;
+};
+
+/* Quiz */
+const quizCont=document.getElementById('quiz');
+const marcador=document.getElementById('marcador');
+function nuevaRonda(){
+  if(moduloCerrado()){
+    quizCont.innerHTML='<div class="aviso">🔒 <b>Este módulo está cerrado.</b> Ya no se pueden responder más preguntas ni completar esta actividad. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>';
+    marcador.textContent='Módulo cerrado';
+    document.getElementById('nuevaRonda').disabled=true; document.getElementById('numP').disabled=true;
+    document.getElementById('verResultado').style.display='none';
+    return;
+  }
+  const n=parseInt(document.getElementById('numP').value,10);
+  let sel=barajar(POOL);
+  if(n>0) sel=sel.slice(0,n);
+  RONDA=sel.map(p=>{const orden=barajar(p.o.map((_,i)=>i));return {...p,o:orden.map(i=>p.o[i]),c:orden.indexOf(p.c)};});
+  respondidas={};aciertos=0;
+  document.getElementById('resultado').style.display='none';
+  renderQuiz();actualizarMarcador();
+  quizCont.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderQuiz(){
+  quizCont.innerHTML='';
+  RONDA.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='pregunta';
+    const catLbl={arterias:'🩸 Aorta y arterias',venas:'🔵 Cava y porta',peritoneo:'🫙 Peritoneo',estomago:'🍽️ Estómago',caso:'🩺 Caso clínico'}[p.cat];
+    card.innerHTML=`<div class="qh"><span>Pregunta ${i+1} de ${RONDA.length}</span><span>${catLbl}</span></div><div class="q">${p.q}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts=card.querySelector('.opts'), fb=card.querySelector('.fb');
+    p.o.forEach((op,j)=>{
+      const b=document.createElement('button');b.textContent=op;
+      b.onclick=()=>{
+        if(respondidas[i]!==undefined) return;
+        respondidas[i]=j;
+        opts.querySelectorAll('button').forEach((bb,k)=>{bb.disabled=true;if(k===p.c)bb.classList.add('bien');if(k===j&&j!==p.c)bb.classList.add('mal');});
+        const ok=j===p.c;if(ok){aciertos++;acumAciertos++;}
+        acumRespondidas++;
+        const tm=p.tema||p.cat; if(!temaStats[tm])temaStats[tm]={ok:0,total:0}; temaStats[tm].total++; if(ok)temaStats[tm].ok++; renderTemas();
+        fb.style.display='block';fb.className='fb '+(ok?'ok':'no');
+        fb.innerHTML=`<b>${ok?'✅ Correcto':'❌ Incorrecto'}</b>${p.e}`;
+        actualizarMarcador();guardarAvance();
+      };
+      opts.appendChild(b);
+    });
+    quizCont.appendChild(card);
+  });
+}
+function actualizarMarcador(){const n=Object.keys(respondidas).length;marcador.textContent=`${n} / ${RONDA.length} · ${aciertos} aciertos`;}
+document.getElementById('nuevaRonda').onclick=nuevaRonda;
+document.getElementById('numP').onchange=()=>{ if(ESTUDIANTE) nuevaRonda(); };
+
+/* ===== Galería de dibujos · tronco celíaco (subir · ver · votar) ===== */
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function resizeImage(file,max=900,q=0.62){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>{ let w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;} else {w=Math.round(w*max/h);h=max;} } const c=document.createElement('canvas');c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); c.toBlob(b=>b?res(b):rej(new Error('No se pudo procesar la imagen')),'image/jpeg',q); }; img.onerror=()=>rej(new Error('Archivo de imagen no válido')); img.src=URL.createObjectURL(file); }); }
+let DIBUJOS=[], VOTOS=[];
+async function cargarDibujos(){ if(!FB_OK) return; try{ const [d,v]=await Promise.all([ sb.from('dibujos_digestivo').select('*'), sb.from('dibujo_votos_dig').select('*') ]); DIBUJOS=d.data||[]; VOTOS=v.data||[]; renderDibujos(); }catch(e){console.warn('cargarDibujos',e);} }
+function renderDibujos(){ const cont=document.getElementById('galDibujos'); if(!cont) return; const lista=DIBUJOS.slice(); const cnt={}; VOTOS.forEach(v=>cnt[v.dibujo_id]=(cnt[v.dibujo_id]||0)+1); lista.sort((a,b)=>(cnt[b.id]||0)-(cnt[a.id]||0)); const yo=ESTUDIANTE?ESTUDIANTE.correo:null; const mis=new Set(VOTOS.filter(v=>v.correo===yo).map(v=>v.dibujo_id)); const gi=document.getElementById('galInfo'); if(gi) gi.textContent=lista.length+' dibujo(s)'; cont.innerHTML=lista.map((x,i)=>{ const n=cnt[x.id]||0, propio=x.correo===yo, vote=mis.has(x.id); const corona=(i===0&&n>0)?'<div class="corona">🏆 Más votado</div>':''; const dis=(!ESTUDIANTE||propio||vote)?'disabled':''; const lbl=vote?'✓ Votado':(propio?'Tu dibujo':'👍 Votar'); return `<div class="dib">${corona}<img loading="lazy" src="${x.url}" data-full="${x.url}" alt="dibujo de ${escHtml(x.nombre)}"><div class="meta"><div class="n">${escHtml(x.nombre)}</div><div class="t">Tronco celíaco</div><div class="votar"><button data-id="${x.id}" ${dis} class="${vote?'voted':''}">${lbl}</button><span class="votos">${n} voto${n===1?'':'s'}</span></div></div></div>`; }).join('')||'<p class="mini">Aún no hay dibujos. ¡Sé el primero en subir el tuyo!</p>'; cont.querySelectorAll('.dib img').forEach(im=>im.onclick=()=>window.open(im.dataset.full,'_blank','noopener')); cont.querySelectorAll('.votar button[data-id]').forEach(b=>b.onclick=()=>votar(b.dataset.id)); }
+async function votar(id){ if(!ESTUDIANTE||!FB_OK) return; try{ const r=await sb.from('dibujo_votos_dig').insert({dibujo_id:id,correo:ESTUDIANTE.correo}); if(r.error && !(''+r.error.message).toLowerCase().includes('duplicate')) throw r.error; cargarDibujos(); }catch(e){console.warn('votar',e);} }
+document.getElementById('btnSubir').onclick=async()=>{ const err=document.getElementById('dibErr'); if(!FB_OK){err.textContent='Sin conexión a la base de datos.';return;} if(!ESTUDIANTE){err.textContent='Primero identifícate para subir.';return;} if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se pueden subir dibujos.';return;} const f=document.getElementById('fileDibujo').files[0]; if(!f){err.textContent='Selecciona la foto de tu dibujo.';return;} if(!f.type.startsWith('image/')){err.textContent='El archivo debe ser una imagen.';return;} err.style.color='var(--rojo)';err.textContent=''; const spin=document.getElementById('subiendo'), btn=document.getElementById('btnSubir'); spin.style.display='inline'; btn.disabled=true; try{ const blob=await resizeImage(f); const path=`tronco_celiaco/${ESTUDIANTE.id.replace(/[^a-z0-9]/g,'_')}_${Date.now()}.jpg`; const up=await sb.storage.from('dibujos').upload(path,blob,{contentType:'image/jpeg', cacheControl:'2592000'}); if(up.error) throw up.error; const pub=sb.storage.from('dibujos').getPublicUrl(path); const url=pub.data.publicUrl; const ins=await sb.from('dibujos_digestivo').insert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,tema:'tronco_celiaco',path,url}); if(ins.error) throw ins.error; document.getElementById('fileDibujo').value=''; err.style.color='var(--verde)';err.textContent='¡Subido! Ya aparece en la galería. 🎉'; setTimeout(()=>{err.textContent='';err.style.color='var(--rojo)';},3000); cargarDibujos(); }catch(e){console.warn('subir',e);err.textContent='No se pudo subir: '+(e.message||e);} finally{spin.style.display='none';btn.disabled=false;} };
+if(FB_OK){ cargarDibujos(); sb.channel('galeria-dig').on('postgres_changes',{event:'*',schema:'public',table:'dibujos_digestivo'},()=>cargarDibujos()).on('postgres_changes',{event:'*',schema:'public',table:'dibujo_votos_dig'},()=>cargarDibujos()).subscribe(); }
+document.getElementById('verResultado').onclick=()=>{
+  const n=Object.keys(respondidas).length, res=document.getElementById('resultado');
+  const pct=n?Math.round(aciertos/n*100):0;
+  document.getElementById('scoreTxt').textContent=pct+'%';
+  let msg;
+  if(n<RONDA.length) msg=`Llevas ${n} de ${RONDA.length} en esta ronda (${aciertos} correctas). ¡Termínala!`;
+  else if(pct>=85) msg=`¡Excelente! ${aciertos}/${RONDA.length}. Lanza una nueva ronda para repasar otras.`;
+  else if(pct>=60) msg=`Bien: ${aciertos}/${RONDA.length}. Repite con Nueva ronda para afianzar.`;
+  else msg=`${aciertos}/${RONDA.length}. Repasa la guía y reintenta.`;
+  document.getElementById('scoreMsg').textContent=msg;
+  res.style.display='block';res.scrollIntoView({behavior:'smooth'});
+  guardarAvance(true);
+};
+
+/* Supabase */
+let rondasCompletadas=0; let avanceCargado=false; // no guardar hasta cargar el avance previo (evita sobrescribir con ceros)
+async function registrarInicio(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const {data}=await sb.from(TABLA).select('*').eq('correo',ESTUDIANTE.correo).maybeSingle();
+    if(data){
+      acumRespondidas=data.respondidas_total||0; acumAciertos=data.aciertos_total||0;
+      rondasCompletadas=data.rondas_completadas||0; baseSegundos=data.segundos_activos||0;
+      (data.videos_lista||[]).forEach(id=>videosVistos.add(id)); temaStats=data.temas||{}; renderTemas(); actualizarMarcador();
+    }
+    const payload={correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre, ultima_actividad:new Date().toISOString()};
+    if(!data||!data.primera_actividad) payload.primera_actividad=new Date().toISOString();
+    await sb.from(TABLA).upsert(payload,{onConflict:'correo'}); avanceCargado=true;
+    guardarAvance();
+  }catch(e){console.warn('registrarInicio',e); avanceCargado=true;}
+}
+async function guardarAvance(finRonda=false){ if(!avanceCargado) return;
+  if(!FB_OK||!ESTUDIANTE) return;
+  if(moduloCerrado()) return;
+  if(finRonda) rondasCompletadas++;
+  actualizarChecklist();
+  const pct=acumRespondidas?Math.round(acumAciertos/acumRespondidas*100):0;
+  try{
+    await sb.from(TABLA).upsert({
+      correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre,
+      respondidas_total:acumRespondidas, aciertos_total:acumAciertos, porcentaje:pct,
+      ronda_respondidas:Object.keys(respondidas).length, ronda_total:RONDA.length, ronda_aciertos:aciertos,
+      rondas_completadas:rondasCompletadas,
+      segundos_activos:baseSegundos+segundosSesion,
+      videos_vistos:videosVistos.size, videos_lista:[...videosVistos],
+      checklist_marcados:checklistMarcados, checklist_total:checklistTotal,
+      temas:temaStats,
+      ultima_actividad:new Date().toISOString()
+    },{onConflict:'correo'});
+  }catch(e){console.warn('guardarAvance',e);}
+}
+</script>
+<a href="recursos.html" style="position:fixed;right:16px;bottom:16px;z-index:500;background:#0f7391;color:#fff;text-decoration:none;padding:11px 16px;border-radius:999px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.28);font-family:system-ui,sans-serif;font-size:.9rem">📚 Recursos</a>
+</body>
+</html>

@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+import re
+P="/sessions/jolly-practical-gauss/mnt/corazon/SOI III/public/sentidos.html"
+h=open(P,encoding="utf-8").read()
+POOL='''const POOL=[
+ {id:1,cat:"orbita",q:"La órbita tiene forma de:",o:["Cubo","Pirámide cuadrangular","Esfera","Cono"],c:1,e:"La órbita es una pirámide cuadrangular con base anterior y vértice posterior."},
+ {id:2,cat:"orbita",q:"El TECHO de la órbita lo forma principalmente el hueso:",o:["Maxilar","Frontal","Cigomático","Etmoides"],c:1,e:"El hueso frontal forma el techo; el maxilar, gran parte del piso."},
+ {id:3,cat:"orbita",q:"La pared MEDIAL de la órbita está formada por:",o:["Cigomático y palatino","Etmoides y lacrimal","Maxilar y frontal","Esfenoides y temporal"],c:1,e:"La pared medial la forman el etmoides y el lacrimal (muy delgada)."},
+ {id:4,cat:"orbita",q:"Por el canal óptico pasan:",o:["Nervio maxilar y vena facial","Nervio óptico y arteria oftálmica","Nervios oculomotor y troclear","Nervio abducens y vena oftálmica"],c:1,e:"El canal óptico da paso al nervio óptico (II) y a la arteria oftálmica."},
+ {id:5,cat:"orbita",q:"Por la fisura orbitaria SUPERIOR pasan los nervios:",o:["Óptico, maxilar e infraorbitario","Oculomotor, troclear, oftálmico y abducens","Facial, vestibulococlear y glosofaríngeo","Maxilar, mandibular y lingual"],c:1,e:"La fisura orbitaria superior transmite el III, IV, V1 y VI."},
+ {id:6,cat:"orbita",q:"El nervio maxilar (V2) pasa por la fisura orbitaria:",o:["Superior","Inferior","Media","Óptica"],c:1,e:"La fisura orbitaria inferior da paso al nervio maxilar (V2) y vasos infraorbitarios."},
+ {id:7,cat:"orbita",q:"Cuántos huesos forman la órbita:",o:["Cuatro","Cinco","Siete","Nueve"],c:2,e:"Siete huesos: frontal, esfenoides, cigomático, maxilar, palatino, etmoides y lacrimal."},
+ {id:8,cat:"globo",q:"La túnica FIBROSA del globo ocular está formada por:",o:["Coroides e iris","Córnea y esclerótica","Retina y coroides","Cuerpo ciliar e iris"],c:1,e:"La túnica fibrosa externa está formada por la córnea (anterior) y la esclerótica (posterior)."},
+ {id:9,cat:"globo",q:"El principal medio de refracción del ojo es la:",o:["Cristalino","Córnea","Esclerótica","Retina"],c:1,e:"La córnea, transparente y avascular, ocupa el sexto anterior y es el principal medio de refracción."},
+ {id:10,cat:"globo",q:"La túnica vascular (úvea) está compuesta por:",o:["Córnea, esclerótica y limbo","Coroides, cuerpo ciliar e iris","Retina, mácula y fóvea","Cristalino, vítreo y acuoso"],c:1,e:"La úvea = coroides + cuerpo ciliar + iris."},
+ {id:11,cat:"globo",q:"El humor acuoso y la acomodación dependen del:",o:["Iris","Cuerpo ciliar","Disco óptico","Limbo"],c:1,e:"El cuerpo ciliar produce el humor acuoso y su músculo ciliar controla la acomodación."},
+ {id:12,cat:"globo",q:"Los fotorreceptores (conos y bastones) están en la:",o:["Coroides","Retina","Esclerótica","Iris"],c:1,e:"La retina (túnica nerviosa) contiene los conos y bastones."},
+ {id:13,cat:"globo",q:"El área de MAYOR agudeza visual es la:",o:["Disco óptico","Fóvea","Ora serrata","Pupila"],c:1,e:"La fóvea, en la mácula, tiene la mayor concentración de conos y la máxima agudeza."},
+ {id:14,cat:"globo",q:"El punto sin fotorreceptores (punto ciego) es el:",o:["Mácula","Disco óptico","Ora serrata","Limbo"],c:1,e:"El disco óptico es donde convergen las fibras para formar el nervio óptico; no tiene fotorreceptores."},
+ {id:15,cat:"globo",q:"El iris regula:",o:["La curvatura de la córnea","El diámetro de la pupila","La secreción de lágrima","La presión venosa ocular"],c:1,e:"El iris, con sus músculos, regula el diámetro pupilar y la entrada de luz."},
+ {id:16,cat:"anexos",q:"Los músculos rectos del ojo se originan en:",o:["La tróclea","El anillo de Zinn","El tarso superior","El limbo corneal"],c:1,e:"Los cuatro rectos nacen del anillo tendinoso común (de Zinn) en el vértice de la órbita."},
+ {id:17,cat:"anexos",q:"El músculo que ABDUCE el ojo es el:",o:["Recto medial","Recto lateral","Oblicuo inferior","Recto superior"],c:1,e:"El recto lateral abduce (inervado por el VI); el recto medial aduce."},
+ {id:18,cat:"anexos",q:"El músculo que pasa por una tróclea es el:",o:["Oblicuo inferior","Oblicuo superior","Recto superior","Elevador del párpado"],c:1,e:"El oblicuo superior pasa por la tróclea; lo inerva el nervio troclear (IV)."},
+ {id:19,cat:"anexos",q:"La secuencia de drenaje de la lágrima es:",o:["Glándula, conducto nasolacrimal y puntos","Puntos, canalículos, saco y conducto nasolacrimal","Saco, puntos, glándula y nariz","Glándula, tróclea y cavidad nasal"],c:1,e:"La lágrima drena por los puntos, canalículos, saco lacrimal y conducto nasolacrimal hacia la cavidad nasal."},
+ {id:20,cat:"anexos",q:"Las glándulas de Meibomio producen:",o:["La capa acuosa","La capa lipídica","La capa mucosa","El humor acuoso"],c:1,e:"Las glándulas de Meibomio aportan la capa lipídica; la glándula lacrimal, la acuosa."},
+ {id:21,cat:"anexos",q:"La irrigación del ojo depende sobre todo de la arteria:",o:["Facial","Oftálmica","Maxilar","Temporal superficial"],c:1,e:"La arteria oftálmica, rama de la carótida interna, entra por el canal óptico e irriga el ojo."},
+ {id:22,cat:"anexos",q:"La arteria que irriga específicamente la retina es la:",o:["Central de la retina","Facial","Lagrimal","Ciliar posterior corta"],c:0,e:"La arteria central de la retina, rama de la oftálmica, irriga la retina."},
+ {id:23,cat:"oidoext",q:"El borde más externo del pabellón auricular es el:",o:["Trago","Hélix","Concha","Lóbulo"],c:1,e:"El hélix es el borde externo; el trago es la proyección frente al conducto."},
+ {id:24,cat:"oidoext",q:"El conducto auditivo externo, hacia dentro, es:",o:["Totalmente cartilaginoso","Cartilaginoso externo y óseo interno","Totalmente óseo","Totalmente membranoso"],c:1,e:"El tercio externo es cartilaginoso y los dos tercios internos, óseos."},
+ {id:25,cat:"oidoext",q:"El umbo de la membrana timpánica corresponde a la inserción del:",o:["Estribo","Mango del martillo","Proceso del yunque","Tensor del tímpano"],c:1,e:"El mango del martillo se adhiere a la membrana timpánica; su punto más deprimido es el umbo."},
+ {id:26,cat:"oidoext",q:"Los tres osículos, desde la membrana timpánica, son:",o:["Estribo, yunque y martillo","Martillo, yunque y estribo","Yunque, martillo y estribo","Martillo, estribo y yunque"],c:1,e:"Martillo, yunque y estribo; la base del estribo se articula con la ventana oval."},
+ {id:27,cat:"oidoext",q:"La base del estribo se articula con la:",o:["Ventana redonda","Ventana oval","Trompa de Eustaquio","Rampa timpánica"],c:1,e:"La base (platina) del estribo ocupa la ventana oval, transmitiendo la vibración al oído interno."},
+ {id:28,cat:"oidoext",q:"La trompa de Eustaquio conecta el oído medio con la:",o:["Órbita","Nasofaringe","Celda mastoidea","Fosa craneal media"],c:1,e:"La tuba auditiva (Eustaquio) comunica el oído medio con la nasofaringe e iguala la presión."},
+ {id:29,cat:"oidoext",q:"El reflejo estapedial ante sonidos intensos lo producen:",o:["Los canales semicirculares","El tensor del tímpano y el estapedio","El músculo ciliar y el iris","El recto lateral y el medial"],c:1,e:"El tensor del tímpano y el estapedio se contraen ante sonidos fuertes, reduciendo la transmisión."},
+ {id:30,cat:"oidoint",q:"El oído interno (laberinto) se aloja en el hueso:",o:["Frontal","Temporal","Occipital","Esfenoides"],c:1,e:"El laberinto está en la porción petrosa (peñasco) del hueso temporal."},
+ {id:31,cat:"oidoint",q:"La estructura responsable de la AUDICIÓN es la:",o:["Canales semicirculares","Cóclea","Utrículo","Sáculo"],c:1,e:"La cóclea, con el órgano de Corti, transforma la vibración en impulsos: es la audición."},
+ {id:32,cat:"oidoint",q:"El líquido de la rampa media (conducto coclear) es:",o:["Perilinfa","Endolinfa","Humor acuoso","Líquido cefalorraquídeo"],c:1,e:"La rampa media contiene endolinfa; las rampas vestibular y timpánica, perilinfa."},
+ {id:33,cat:"oidoint",q:"Las células ciliadas de la audición están en el:",o:["Mácula del utrículo","Órgano de Corti","Cresta ampular","Sáculo"],c:1,e:"El órgano de Corti, sobre la membrana basilar, aloja las células ciliadas auditivas."},
+ {id:34,cat:"oidoint",q:"Los canales semicirculares detectan:",o:["La aceleración lineal","La aceleración angular","La intensidad del sonido","La presión del oído medio"],c:1,e:"Los tres canales semicirculares detectan la aceleración angular en los tres planos."},
+ {id:35,cat:"oidoint",q:"El utrículo y el sáculo detectan:",o:["El sonido","La aceleración lineal y la gravedad","La aceleración angular","La temperatura"],c:1,e:"El utrículo y el sáculo (órganos otolíticos) detectan aceleración lineal y la gravedad."},
+ {id:36,cat:"oidoint",q:"El nervio que lleva la audición y el equilibrio es el:",o:["Facial (VII)","Vestibulococlear (VIII)","Trigémino (V)","Glosofaríngeo (IX)"],c:1,e:"El VIII par (vestibulococlear) transmite la información auditiva y vestibular."}
+];'''
+h=re.sub(r"const POOL=\[.*?\n\];", POOL, h, count=1, flags=re.S)
+open(P,"w",encoding="utf-8").write(h)
+print("sentidos POOL NBME · preguntas:", h.count('cat:"'))

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerebro Interno · SOI II · Semana 6</title>
+<style>
+:root{
+  --rojo:#3949ab; --rojo-osc:#1a237e; --rojo-cl:#7986cb;
+  --azul:#00897b; --crema:#f4f6fc; --tinta:#20283a; --gris:#5c6472;
+  --verde:#2e7d5b; --ambar:#c77d0a; --linea:#dfe3f0;
+  --sombra:0 4px 18px rgba(26,35,126,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--crema);color:var(--tinta);line-height:1.6;font-size:16.5px}
+header.top{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));
+  color:#fff;padding:34px 20px 26px;text-align:center;position:relative}
+header.top h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:.3px}
+header.top p{margin:2px 0;opacity:.92;font-size:.95rem}
+.pill{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+  padding:3px 12px;border-radius:999px;font-size:.8rem;margin-top:10px}
+.volver{position:absolute;left:14px;top:14px;color:#fff;font-size:.82rem;text-decoration:none;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+#estado{display:none}
+nav.fases{position:sticky;top:0;z-index:50;background:#fff;display:flex;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);flex-wrap:wrap}
+nav.fases button{flex:1 1 33%;min-width:120px;border:0;background:#fff;cursor:pointer;
+  padding:14px 8px;font-size:.98rem;font-weight:600;color:var(--gris);
+  border-bottom:3px solid transparent;transition:.15s}
+nav.fases button .n{display:block;font-size:.72rem;font-weight:700;opacity:.6}
+nav.fases button:hover{background:var(--crema)}
+nav.fases button.activa{color:var(--rojo);border-bottom-color:var(--rojo)}
+main{max-width:920px;margin:0 auto;padding:26px 18px 70px}
+.fase{display:none;animation:fade .35s}
+.fase.activa{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2.sec{font-size:1.35rem;color:var(--rojo-osc);border-left:5px solid var(--rojo);padding-left:12px;margin:34px 0 14px}
+h3{color:var(--azul);margin:22px 0 8px;font-size:1.1rem}
+.intro{color:var(--gris);margin-top:-6px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:var(--sombra)}
+.card.plano{box-shadow:none}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:6px;margin-bottom:8px}
+.tag.a{background:#e7eaf6;color:var(--rojo)}
+.tag.tiempo{background:#e9f4ee;color:var(--verde)}
+ul.limpia{list-style:none;padding-left:0;margin:8px 0}
+ul.limpia li{padding:5px 0 5px 26px;position:relative}
+ul.limpia li::before{content:"›";position:absolute;left:6px;color:var(--rojo);font-weight:700}
+.recursos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.recursos a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--rojo);color:var(--rojo);
+  border-radius:10px;padding:11px 16px;text-decoration:none;font-weight:600;font-size:.92rem;cursor:pointer}
+.recursos a:hover{background:var(--rojo);color:#fff}
+.videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:12px 0}
+.vid{border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;position:relative;aspect-ratio:16/9}
+.vid img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:.2s}
+.vid:hover img{opacity:1}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid .play::after{content:"";width:0;height:0;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent;filter:drop-shadow(0 0 6px rgba(0,0,0,.5));margin-left:5px}
+.vid .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.82rem;padding:16px 10px 8px;font-weight:600}
+.vid iframe{width:100%;height:100%;border:0}
+.check label{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--rojo);flex:0 0 auto}
+.check .done{text-decoration:line-through;color:var(--gris)}
+.progreso{height:9px;background:#eaeef0;border-radius:6px;overflow:hidden;margin:10px 0}
+.progreso i{display:block;height:100%;width:0;background:var(--verde);transition:.3s}
+.progtxt{font-size:.82rem;color:var(--gris)}
+.flujo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.9rem;margin:10px 0}
+.flujo span{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:6px 11px;font-weight:600}
+.flujo .fl{color:var(--rojo);font-weight:700}
+.saludo{background:#e9f4ee;border:1px solid var(--verde);color:#1c5c40;padding:8px 14px;border-radius:10px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.saludo button{background:none;border:0;color:var(--rojo);cursor:pointer;font-size:.82rem;text-decoration:underline}
+#login{position:fixed;inset:0;z-index:300;background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));display:flex;align-items:center;justify-content:center;padding:20px}
+#login .box{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#login h2{margin:0 0 4px;color:var(--rojo-osc);font-size:1.3rem}
+#login label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+#login input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+#login input:focus{outline:none;border-color:var(--rojo)}
+#login .err{color:#b3202c;font-size:.83rem;min-height:18px;margin-top:6px}
+.quiz-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px 0}
+.controles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controles label{font-size:.85rem;color:var(--gris)}
+.controles select{padding:6px 10px;border:1px solid var(--linea);border-radius:8px;font-size:.9rem}
+.marcador{font-weight:700;color:var(--rojo-osc);font-size:.92rem}
+.pregunta{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px;margin:14px 0;box-shadow:var(--sombra)}
+.pregunta .qh{display:flex;justify-content:space-between;gap:10px;font-size:.75rem;color:var(--gris);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.pregunta .q{font-weight:600;margin-bottom:12px;font-size:1.02rem}
+.opts button{display:block;width:100%;text-align:left;border:1px solid var(--linea);background:#fff;border-radius:10px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:.96rem;transition:.12s;color:var(--tinta)}
+.opts button:hover:not(:disabled){border-color:var(--rojo);background:#eef1fb}
+.opts button:disabled{cursor:default}
+.opts button.bien{background:#e7f6ee;border-color:var(--verde);color:#1c5c40;font-weight:600}
+.opts button.mal{background:#fdeceb;border-color:#b3202c;color:#7d1620}
+.fb{margin-top:10px;padding:11px 14px;border-radius:10px;font-size:.9rem;display:none}
+.fb.ok{background:#e7f6ee;color:#1c5c40;border:1px solid var(--verde)}
+.fb.no{background:#fdeceb;color:#7d1620;border:1px solid #e14b57}
+.fb b{display:block;margin-bottom:2px}
+.qacts{text-align:center;margin:22px 0}
+.btn{background:var(--rojo);color:#fff;border:0;border-radius:10px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;margin:4px}
+.btn.sec{background:#fff;color:var(--rojo);border:1px solid var(--rojo)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.resultado{display:none;text-align:center;background:#fff;border:2px solid var(--rojo);border-radius:14px;padding:24px;margin:16px 0;box-shadow:var(--sombra)}
+.resultado .score{font-size:2.4rem;font-weight:800;color:var(--rojo)}
+.nota{background:#fff7e8;border-left:4px solid var(--ambar);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0}
+.aviso{background:#e7f2f1;border-left:4px solid var(--azul);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.86rem;margin:12px 0;color:#0a5f57}
+.stars{display:flex;gap:6px;margin:2px 0 4px}
+.stars button{border:1px solid var(--linea);background:#fff;border-radius:8px;width:44px;height:40px;font-size:1.05rem;cursor:pointer;color:var(--gris);font-weight:700}
+.stars button.sel{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.enc label{display:block;font-weight:600;margin:14px 0 4px;font-size:.9rem}
+.enc textarea{width:100%;min-height:70px;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;font-size:.95rem;font-family:inherit;resize:vertical}
+.enc .ok{background:#e7f6ee;border:1px solid var(--verde);color:#1c5c40;padding:10px 14px;border-radius:10px;margin-top:12px;display:none}
+.mnota{display:grid;grid-template-columns:1fr auto;gap:6px 14px;font-size:.95rem;margin:8px 0}
+.mnota .k{color:var(--gris)}
+.mnota .v{font-weight:700;color:var(--rojo-osc);text-align:right}
+footer{text-align:center;color:var(--gris);font-size:.82rem;padding:26px 20px}
+.mini{font-size:.8rem;color:var(--gris)}
+.mn{background:#fff;border:1px solid var(--linea);border-radius:10px;padding:10px 12px;text-align:center}
+.mn .l{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.mn .v{font-size:1.2rem;font-weight:800;color:var(--rojo-osc);margin-top:2px}
+.galFotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:12px}
+.ftar{background:#fff;border:1px solid var(--linea);border-radius:12px;overflow:hidden;box-shadow:var(--sombra)}
+.ftar img{width:100%;height:180px;object-fit:cover;cursor:zoom-in;display:block;background:#eef0f7}
+.ftar .meta{padding:10px 12px}
+.ftar .meta .n{font-weight:600;font-size:.86rem;color:var(--rojo-osc)}
+.ftar .meta .g{font-size:.82rem;color:var(--gris);margin-top:3px}
+#fileFoto{display:block;margin:10px 0}
+.enc2 textarea{width:100%;min-height:56px;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;font-size:.95rem;font-family:inherit;resize:vertical}
+</style>
+</head>
+<body>
+
+<div id="login"><div class="box">
+  <h2>🧠 Cerebro Interno · Sistema Nervioso II</h2>
+  <p class="mini" style="margin:0 0 6px">SOI II · Semana 6 — Identifícate para comenzar.</p>
+  <label>Nombre completo</label>
+  <input id="inNombre" type="text" placeholder="Ej: María Fernanda Gómez" autocomplete="name">
+  <label>Correo institucional</label>
+  <input id="inCorreo" type="email" placeholder="tu.correo@universidad.edu" autocomplete="email">
+  <div class="err" id="loginErr"></div>
+  <button class="btn" id="btnEntrar" style="width:100%">Entrar y comenzar</button>
+</div></div>
+
+<header class="top">
+  <a class="volver" href="index.html">← Portafolio</a>
+  <span id="estado">Modo local</span>
+  <h1>Cerebro Interno — Núcleos, sustancia blanca y ventrículos</h1>
+  <p>Laboratorio de Anatomía · SOI II · Semana 6 · Integración con el caso de Fotoprotección</p>
+  <p class="mini">Núcleos basales · tálamo · cápsulas y comisuras · sistema ventricular y cisternas</p>
+  <span class="pill">Prepárate → practica → repasa · preguntas nuevas cada vez</span>
+</header>
+
+<nav class="fases">
+  <button class="tab activa" data-f="prep"><span class="n">Fase 1 · Antes</span>🧠 Preparación</button>
+  <button class="tab" data-f="dur"><span class="n">Fase 2 · Laboratorio</span>🔬 Durante la práctica</button>
+  <button class="tab" data-f="rep"><span class="n">Fase 3 · Después</span>✅ Repaso y evaluación</button>
+  <button class="tab" data-f="notas"><span class="n">Tus resultados</span>🎓 Notas del módulo</button>
+</nav>
+
+<main>
+
+<!-- NOTAS DEL MÓDULO -->
+<section class="fase notas" id="notas">
+  <div class="card" style="border:2px solid var(--rojo);background:#fff7fb">
+    <h3 style="margin-top:0">📋 Notas del módulo actual · Cerebro interno (Semana 6)</h3>
+    <p class="mini" style="margin-top:0">Estos son tus componentes de este módulo.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+      <div class="mn"><div class="l">🧠 Quiz Cerebro interno</div><div class="v" id="mnQuiz">—</div></div>
+      <div class="mn"><div class="l">📸 Foto del laboratorio</div><div class="v" id="mnFoto">—</div></div>
+    </div>
+    <p class="mini" id="mnAviso" style="margin:8px 0 0">Identifícate para ver tus notas.</p>
+  </div>
+</section>
+
+<!-- FASE 1 -->
+<section class="fase prep activa" id="prep">
+  <h2 class="sec">🧠 Antes de entrar a la práctica</h2>
+  <p class="intro">Llega dominando la organización interna del cerebro: los núcleos basales, el tálamo, la sustancia blanca (cápsulas y comisuras) y el sistema ventricular. Reconocerlos en los cortes coronales y axiales hará que la práctica te rinda el doble.</p>
+
+  <div class="card">
+    <h3>Resultados de aprendizaje</h3>
+    <ul class="limpia">
+      <li>Identificar los núcleos basales (caudado, putamen, globo pálido, accumbens, claustro) y sus agrupaciones (cuerpo estriado y núcleo lentiforme).</li>
+      <li>Ubicar el tálamo y sus núcleos de relevo (VPL, VPM, geniculado lateral y medial) y el resto del diencéfalo.</li>
+      <li>Reconocer la sustancia blanca de proyección: corona radiada y cápsula interna (brazo anterior, rodilla, brazo posterior), externa y extrema.</li>
+      <li>Describir las comisuras (cuerpo calloso, fórnix, comisuras anterior y posterior) y los fascículos de asociación (arcuato, uncinado).</li>
+      <li>Trazar el sistema ventricular, la circulación del LCR y las principales cisternas subaracnoideas.</li>
+      <li>Integrar la anatomía del encéfalo, los neurotransmisores y las funciones de la piel con el caso de fotoprotección.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Materiales para la práctica</h3>
+    <ul class="limpia">
+      <li>Encéfalos y cortes (coronal, axial y sagital); mesa de disección virtual (Anatomage) según disponibilidad.</li>
+      <li>Atlas físico impreso y cuaderno para dibujar/rotular los cortes.</li>
+      <li>Guantes, bata y EPP según norma del laboratorio.</li>
+    </ul>
+    <div class="nota"><b>Pre-lab:</b> ven capaz de señalar, en un corte transversal y en uno coronal, al menos: caudado, putamen, globo pálido, tálamo, cápsula interna (sus tres partes), cuerpo calloso, fórnix, cápsulas externa y extrema, claustro, ventrículos laterales, III y IV ventrículo.</div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos recomendados (cerebro interno y cortes)</h3>
+    <p class="mini">Toca cada tarjeta para reproducir. Cerebro interno, sistema ventricular y cortes coronales/axiales.</p>
+    <div class="videos" id="vids-yt"></div>
+  </div>
+
+  <div class="card">
+    <h3>📚 Recursos complementarios</h3>
+    <p class="mini">Ábrelos antes de venir. Se abren en una pestaña nueva.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+
+  <div class="card">
+    <h3>Roles del equipo</h3>
+    <ul class="limpia">
+      <li><b>Líder:</b> administra el tiempo y el orden de las estaciones.</li>
+      <li><b>Operador:</b> manipula cortes/modelos con cuidado.</li>
+      <li><b>Relator clínico:</b> conecta hallazgos con el caso de fotoprotección.</li>
+      <li><b>Auditor:</b> diligencia los checklists y controla la calidad.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section class="fase dur" id="dur">
+  <h2 class="sec">🔬 Durante la práctica</h2>
+  <p class="intro">Trabaja estación por estación sobre los cortes. Marca cada estructura al identificarla con seguridad.</p>
+
+  <div class="card">
+    <span class="tag a">Estación A</span><span class="tag tiempo">Núcleos basales</span>
+    <h3>Cuerpo estriado, lentiforme, accumbens y claustro</h3>
+    <div class="check" data-chk="A">
+      <label><input type="checkbox"> Núcleo caudado — cabeza, cuerpo y cola (sigue la curva del ventrículo lateral)</label>
+      <label><input type="checkbox"> Putamen (porción lateral del núcleo lentiforme)</label>
+      <label><input type="checkbox"> Globo pálido — segmentos externo e interno</label>
+      <label><input type="checkbox"> Núcleo lentiforme = putamen + globo pálido</label>
+      <label><input type="checkbox"> Cuerpo estriado (neoestriado) = núcleo caudado + putamen</label>
+      <label><input type="checkbox"> Núcleo accumbens (estriado ventral: unión caudado–putamen)</label>
+      <label><input type="checkbox"> Claustro (entre cápsula externa y cápsula extrema)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">Regla: <b>lentiforme</b> = putamen + globo pálido; <b>estriado</b> = caudado + putamen. La dopamina de la vía nigroestriada modula el circuito motor de estos núcleos.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación B</span><span class="tag tiempo">Tálamo y diencéfalo</span>
+    <h3>Núcleos de relevo y componentes del diencéfalo</h3>
+    <div class="check" data-chk="B">
+      <label><input type="checkbox"> Tálamo (mayor porción del diencéfalo) y adhesión intertalámica (masa intermedia)</label>
+      <label><input type="checkbox"> Núcleo ventral posterolateral (VPL) — relevo somatosensitivo del cuerpo</label>
+      <label><input type="checkbox"> Núcleo ventral posteromedial (VPM) — relevo somatosensitivo de la cara</label>
+      <label><input type="checkbox"> Cuerpo geniculado lateral — relevo visual</label>
+      <label><input type="checkbox"> Cuerpo geniculado medial — relevo auditivo</label>
+      <label><input type="checkbox"> Hipotálamo, epitálamo (glándula pineal) y subtálamo</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">Geniculado <b>L</b>ateral = <b>L</b>uz (visión); geniculado <b>M</b>edial = <b>M</b>úsica (audición). La glándula pineal (epitálamo) produce melatonina, regulada por la luz.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación C</span><span class="tag tiempo">Sustancia blanca</span>
+    <h3>Corona radiada y cápsulas</h3>
+    <div class="check" data-chk="C">
+      <label><input type="checkbox"> Corona radiada (fibras de proyección que se abren hacia la corteza)</label>
+      <label><input type="checkbox"> Cápsula interna — brazo anterior (entre caudado y lentiforme)</label>
+      <label><input type="checkbox"> Cápsula interna — rodilla (fibras corticobulbares)</label>
+      <label><input type="checkbox"> Cápsula interna — brazo posterior (fibras corticoespinales; entre tálamo y lentiforme)</label>
+      <label><input type="checkbox"> Cápsula externa (entre putamen y claustro)</label>
+      <label><input type="checkbox"> Cápsula extrema (entre claustro y corteza de la ínsula)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">Por la <b>rodilla y el brazo posterior</b> de la cápsula interna baja el haz piramidal (corticobulbar y corticoespinal): un infarto aquí produce hemiparesia contralateral.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación D</span><span class="tag tiempo">Comisuras y fascículos</span>
+    <h3>Cuerpo calloso, fórnix y fibras de asociación</h3>
+    <div class="check" data-chk="D">
+      <label><input type="checkbox"> Cuerpo calloso — rostrum (pico), rodilla (genu), cuerpo (tronco) y esplenio (rodete)</label>
+      <label><input type="checkbox"> Fórceps menor (rodilla) y fórceps mayor (esplenio)</label>
+      <label><input type="checkbox"> Fórnix — fimbria, pilares/crura, cuerpo y columnas (conecta hipocampo con cuerpos mamilares)</label>
+      <label><input type="checkbox"> Comisura anterior (conecta ambos lóbulos temporales)</label>
+      <label><input type="checkbox"> Comisura posterior</label>
+      <label><input type="checkbox"> Fascículo arcuato (Broca–Wernicke) y fascículo uncinado (frontal–temporal)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">El <b>cuerpo calloso</b> es la comisura más grande (fibras comisurales); el <b>fórnix</b> es la principal vía eferente del hipocampo (sistema límbico).</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación E</span><span class="tag tiempo">Ventrículos y cisternas</span>
+    <h3>Sistema ventricular, LCR y cisternas</h3>
+    <div class="check" data-chk="E">
+      <label><input type="checkbox"> Ventrículos laterales — astas frontal, occipital y temporal + atrio</label>
+      <label><input type="checkbox"> Foramen interventricular de Monro (comunica con el III ventrículo)</label>
+      <label><input type="checkbox"> III ventrículo → acueducto de Silvio (mesencéfalo)</label>
+      <label><input type="checkbox"> IV ventrículo — agujeros laterales de Luschka y medial de Magendie</label>
+      <label><input type="checkbox"> Plexos coroideos (producen el LCR)</label>
+      <label><input type="checkbox"> Cisternas: magna (cerebelomedular), pontina, interpeduncular, quiasmática, cuadrigémina y ambiens</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">Flujo del LCR: laterales → <b>Monro</b> → III → <b>acueducto de Silvio</b> → IV → <b>Luschka/Magendie</b> → espacio subaracnoideo → granulaciones aracnoideas.</div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section class="fase rep" id="rep">
+  <h2 class="sec">✅ Repaso y evaluación</h2>
+  <p class="intro">Pon a prueba lo aprendido. <b>Cada ronda muestra preguntas distintas.</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">🔗 Integración con el caso (Fotoprotección)</h3>
+    <p><b>Caso:</b> Sofía, 25 años, consulta por un fotoprotector para jugar tenis al aire libre. Refiere piel sensible, quemaduras con ampollas hace 3 meses, que se quema con facilidad y <b>nunca se broncea</b>. Al examen: pelirroja, ojos azules, piel blanca con <b>efélides</b> (fototipo I de Fitzpatrick). Antecedente: abuela materna fallecida por <b>melanoma</b>.</p>
+    <div class="flujo"><span>Fototipo I + antecedente de melanoma</span><span class="fl">→</span><span>Alto riesgo UV</span><span class="fl">→</span><span>Fotoprotección estricta (SPF 50+, amplio espectro)</span><span class="fl">→</span><span>Reaplicar cada 2–4 h + medidas físicas</span></div>
+    <div class="nota"><b>Correlación:</b> la piel es barrera física, inmunológica (células de Langerhans) y órgano sensorial; los melanocitos del estrato basal dan la fotoprotección natural. La UVB sintetiza vitamina D pero también daña el ADN → riesgo de melanoma. El SPF mide protección UVB; la UVA (amplio espectro) causa fotoenvejecimiento.</div>
+  </div>
+
+  <div class="card enc2" style="border:2px solid var(--rojo)">
+    <h3 style="margin-top:0">📸 Foto del laboratorio · por grupo</h3>
+    <p style="margin-top:0"><b>Una sola persona por grupo</b> sube la foto del corte/estructura que les correspondió en el laboratorio y escribe los nombres de los integrantes del grupo.</p>
+    <label style="display:block;font-weight:600;margin:6px 0 4px;font-size:.9rem">Nombres de los integrantes del grupo</label>
+    <textarea id="inIntegrantes" placeholder="Ej: Ana Martínez, Juan Gómez, Laura Ríos…"></textarea>
+    <label style="display:block;font-weight:600;margin:10px 0 4px;font-size:.9rem">Foto del laboratorio</label>
+    <input type="file" id="fileFoto" accept="image/*">
+    <div class="err" id="fotoErr" style="color:var(--rojo);font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnFoto">📤 Subir foto del grupo</button>
+    <span id="subiendoF" class="mini" style="display:none">Subiendo…</span>
+    <div style="margin:12px 0 0"><span class="mini" id="fotoInfo"></span></div>
+    <div class="galFotos" id="galFotos"></div>
+  </div>
+
+  <h3>📝 Banco de preguntas</h3>
+  <div id="zonaQuiz" style="display:none">
+    <div class="saludo" id="saludo"></div>
+    <div class="quiz-top">
+      <div class="controles">
+        <label for="numP">Preguntas por ronda:</label>
+        <select id="numP">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+          <option value="0">Todas</option>
+        </select>
+        <button class="btn sec" id="nuevaRonda">🔀 Nueva ronda</button>
+      </div>
+      <div class="marcador" id="marcador">0 / 0 · 0 aciertos</div>
+    </div>
+    <div id="quiz"></div>
+    <div class="qacts"><button class="btn" id="verResultado">Ver resultado de la ronda</button></div>
+    <div class="resultado" id="resultado"><div class="score" id="scoreTxt">0%</div><p id="scoreMsg"></p></div>
+    <div class="card" id="temasCard" style="display:none">
+      <h3 style="margin-top:0">📊 Tu apropiación por tema</h3>
+      <p class="mini">Se actualiza con cada pregunta; acumula todas tus rondas. Verde ≥80%, ámbar ≥60%, rojo &lt;60%.</p>
+      <div id="temasBox"></div>
+    </div>
+  </div>
+
+  <div class="card enc" id="encuesta">
+    <h3>🗳️ Encuesta de satisfacción y dudas</h3>
+    <p style="margin-top:0">Al terminar, cuéntanos cómo te fue. Solo lo ve tu docente.</p>
+    <label>¿Qué tan satisfecho/a quedaste con la práctica? <span class="mini">(1 = poco · 5 = mucho)</span></label>
+    <div class="stars" data-name="satisfaccion"></div>
+    <label>¿Qué tan útil te resultó para prepararte? <span class="mini">(1–5)</span></label>
+    <div class="stars" data-name="utilidad"></div>
+    <label>¿Qué dudas te quedaron?</label>
+    <textarea id="inDudas" placeholder="Escribe aquí tus dudas sobre la anatomía o la práctica…"></textarea>
+    <label>Comentarios o sugerencias</label>
+    <textarea id="inComentario" placeholder="¿Qué mejorarías?"></textarea>
+    <div class="err" id="encErr" style="color:#b3202c;font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnEncuesta">Enviar encuesta</button>
+    <div class="ok" id="encuestaMsg">¡Gracias! Tu respuesta quedó registrada. 💙</div>
+  </div>
+
+  <div class="card">
+    <h3>🎫 Exit ticket</h3>
+    <ul class="limpia">
+      <li>Una estructura que hoy dejé de confundir: __________</li>
+      <li>Las tres partes de la cápsula interna: __________</li>
+      <li>El flujo del LCR desde los ventrículos laterales: __________</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>Recurso de estudio · Cerebro interno (Sistema Nervioso II) + caso de fotoprotección · SOI II Semana 6 · Uso educativo.</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA_S6, DOMINIO_INSTITUCIONAL } from './supabase-config.js';
+const TABLA=TABLA_S6;
+let sb=null, FB_OK=false;
+const badge=document.getElementById('estado');
+if(SUPABASE_URL && !SUPABASE_URL.includes('PEGA_AQUI')){
+  try{ sb=createClient(SUPABASE_URL, SUPABASE_KEY); FB_OK=true; badge.textContent='🟢 Conectado'; }
+  catch(e){ badge.textContent='Modo local'; console.warn('Supabase no inició:',e); }
+}
+
+/* Cierre de módulo (calendario académico) */
+const CIERRE_MODULO = new Date('2026-08-21T09:00:00-05:00');
+function moduloCerrado(){ return Date.now() >= CIERRE_MODULO.getTime();
+}
+
+/* Rastreador de uso */
+const videosVistos=new Set();
+let baseSegundos=0, segundosSesion=0, checklistMarcados=0, checklistTotal=0;
+let visible=true;
+document.addEventListener('visibilitychange',()=>{visible=document.visibilityState==='visible';});
+setInterval(()=>{ if(visible) segundosSesion++; },1000);
+setInterval(()=>{ if(FB_OK && ESTUDIANTE) guardarAvance(); },30000);
+function registrarRecurso(id){ if(!videosVistos.has(id)){ videosVistos.add(id); if(ESTUDIANTE) guardarAvance(); } }
+function actualizarChecklist(){ const ins=document.querySelectorAll('.check input'); checklistTotal=ins.length; checklistMarcados=[...ins].filter(i=>i.checked).length; }
+
+/* Recursos complementarios */
+const RECURSOS=[
+  {id:"lecturio_neuro",t:"Neuroanatomía (Lecturio)",url:"https://unisabana.lecturio.com/#/search?q=neuroanatom%C3%ADa"},
+  {id:"recursos_atlas",t:"📚 Atlas y recursos",url:"recursos.html"}
+];
+const contRec=document.getElementById('recursos');
+RECURSOS.forEach(r=>{
+  const a=document.createElement('a');a.href=r.url;if(r.url.startsWith('http')){a.target='_blank';a.rel='noopener';}
+  a.innerHTML='▶ '+r.t;
+  a.addEventListener('click',()=>registrarRecurso(r.id));
+  contRec.appendChild(a);
+});
+
+/* Videos complementarios (YouTube incrustado) */
+const YT=[
+  {id:"QAV7yB2Hfb8",t:"Cerebro interno y sistema ventricular (Dr. Diego Aldana)"},
+  {id:"_sw6bMvkCMA",t:"Cerebro interno (Dr. Ricardo Aldana)"},
+  {id:"ShHFhE22bcM",t:"Cortes coronales del encéfalo"},
+  {id:"Xx1wgQndT-E",t:"Cortes axiales del encéfalo"},
+  {id:"x70rro4XT-g",t:"Cerebro interno — complemento"}
+];
+function tarjetaVideo(v){
+  const d=document.createElement('div');d.className='vid';
+  d.innerHTML=`<img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${v.t}"><div class="play"></div><div class="lbl">${v.t}</div>`;
+  d.onclick=()=>{d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;d.style.cursor='default';registrarRecurso('yt_'+v.id);};
+  return d;
+}
+YT.forEach(v=>document.getElementById('vids-yt').appendChild(tarjetaVideo(v)));
+
+/* Banco de preguntas */
+const POOL=[
+ {id:1,cat:"nucleos",q:"El cuerpo estriado (neoestriado) está formado por:",o:["Putamen y globo pálido","Núcleo caudado y putamen","Caudado y tálamo","Globo pálido y claustro"],c:1,e:"El cuerpo estriado = núcleo caudado + putamen."},
+ {id:2,cat:"nucleos",q:"El núcleo lentiforme está compuesto por:",o:["Caudado y putamen","Putamen y globo pálido","Claustro y putamen","Caudado y globo pálido"],c:1,e:"El núcleo lentiforme = putamen + globo pálido (externo e interno)."},
+ {id:3,cat:"nucleos",q:"El núcleo caudado tiene forma de C y acompaña en todo su trayecto a:",o:["El III ventrículo","El ventrículo lateral","El acueducto de Silvio","La cisterna magna"],c:1,e:"La cabeza, cuerpo y cola del caudado siguen la curvatura del ventrículo lateral."},
+ {id:4,cat:"nucleos",q:"El globo pálido se divide en:",o:["Segmento anterior y posterior","Segmentos externo e interno","Porción dorsal y ventral","Cabeza y cola"],c:1,e:"El globo pálido tiene un segmento externo (lateral) y uno interno (medial), separados por la lámina medular medial."},
+ {id:5,cat:"nucleos",q:"El claustro es una lámina de sustancia gris situada entre:",o:["El tálamo y el caudado","La cápsula externa y la cápsula extrema","El putamen y el globo pálido","El cuerpo calloso y el fórnix"],c:1,e:"El claustro se ubica entre la cápsula externa (medial) y la cápsula extrema (lateral)."},
+ {id:6,cat:"nucleos",q:"El estriado ventral, relacionado con el circuito de recompensa, corresponde al:",o:["Núcleo subtalámico","Núcleo accumbens","Globo pálido interno","Núcleo rojo"],c:1,e:"El núcleo accumbens (unión ventral caudado–putamen) forma parte del estriado ventral."},
+ {id:7,cat:"nucleos",q:"La función principal de los núcleos basales es:",o:["Producir el LCR","Modular e iniciar el movimiento","Relevo de la sensibilidad","Regular la temperatura"],c:1,e:"Los núcleos basales participan en el control, inicio y modulación del movimiento."},
+ {id:8,cat:"nucleos",q:"El neurotransmisor de la vía nigroestriada que modula los núcleos basales es:",o:["Acetilcolina","Dopamina","Serotonina","Glutamato"],c:1,e:"La dopamina de la sustancia negra (vía nigroestriada) modula el estriado; su déficit causa parkinsonismo."},
+ {id:9,cat:"talamo",q:"La mayor porción del diencéfalo es:",o:["El hipotálamo","El tálamo","El epitálamo","El subtálamo"],c:1,e:"El tálamo es la porción más voluminosa del diencéfalo; es la gran estación de relevo sensitivo."},
+ {id:10,cat:"talamo",q:"El núcleo ventral posterolateral (VPL) del tálamo releva la sensibilidad de:",o:["La cara","El cuerpo (tronco y extremidades)","La retina","La cóclea"],c:1,e:"El VPL recibe el lemnisco medial y el espinotalámico del cuerpo; el VPM, la de la cara."},
+ {id:11,cat:"talamo",q:"El núcleo ventral posteromedial (VPM) releva la sensibilidad de:",o:["El cuerpo","La cara (vía trigeminal)","El oído","La visión"],c:1,e:"El VPM releva la sensibilidad de la cara procedente del nervio trigémino."},
+ {id:12,cat:"talamo",q:"El cuerpo geniculado lateral es la estación de relevo de la vía:",o:["Auditiva","Visual","Gustativa","Olfatoria"],c:1,e:"El geniculado lateral releva la vía visual hacia la corteza occipital (recuerda: Lateral = Luz)."},
+ {id:13,cat:"talamo",q:"El cuerpo geniculado medial es la estación de relevo de la vía:",o:["Visual","Auditiva","Somatosensitiva","Motora"],c:1,e:"El geniculado medial releva la vía auditiva hacia la corteza temporal (Medial = Música)."},
+ {id:14,cat:"talamo",q:"La glándula pineal, que produce melatonina en respuesta a la luz, pertenece al:",o:["Hipotálamo","Epitálamo","Subtálamo","Metatálamo"],c:1,e:"La glándula pineal forma parte del epitálamo; secreta melatonina regulando los ritmos circadianos."},
+ {id:15,cat:"blanca",q:"Las fibras de proyección que se abren en abanico desde la cápsula interna hacia la corteza forman:",o:["El cuerpo calloso","La corona radiada","El fórnix","La comisura anterior"],c:1,e:"La corona radiada continúa hacia arriba con la cápsula interna y lleva fibras de proyección a/desde la corteza."},
+ {id:16,cat:"blanca",q:"El brazo anterior de la cápsula interna se sitúa entre:",o:["El tálamo y el núcleo lentiforme","La cabeza del caudado y el núcleo lentiforme","El putamen y el claustro","El globo pálido y el tálamo"],c:1,e:"El brazo anterior queda entre la cabeza del caudado (medial) y el núcleo lentiforme (lateral)."},
+ {id:17,cat:"blanca",q:"El brazo posterior de la cápsula interna se ubica entre:",o:["El tálamo y el núcleo lentiforme","El caudado y el putamen","El claustro y la ínsula","El putamen y el globo pálido"],c:1,e:"El brazo posterior queda entre el tálamo (medial) y el núcleo lentiforme (lateral); por él baja el haz corticoespinal."},
+ {id:18,cat:"blanca",q:"Las fibras corticoespinales (haz piramidal) descienden principalmente por:",o:["El brazo anterior de la cápsula interna","La rodilla y el brazo posterior de la cápsula interna","La cápsula extrema","El fórnix"],c:1,e:"El haz corticobulbar pasa por la rodilla y el corticoespinal por el brazo posterior; un infarto aquí da hemiparesia contralateral."},
+ {id:19,cat:"blanca",q:"La cápsula externa se localiza entre:",o:["El putamen y el claustro","El claustro y la ínsula","El caudado y el tálamo","El globo pálido y el putamen"],c:0,e:"La cápsula externa está entre el putamen (medial) y el claustro (lateral)."},
+ {id:20,cat:"blanca",q:"La cápsula extrema se localiza entre:",o:["El putamen y el globo pálido","El claustro y la corteza de la ínsula","El tálamo y el caudado","El fórnix y el cuerpo calloso"],c:1,e:"La cápsula extrema está entre el claustro (medial) y la corteza insular (lateral)."},
+ {id:21,cat:"comisuras",q:"La comisura más grande del encéfalo es:",o:["La comisura anterior","El cuerpo calloso","El fórnix","La comisura posterior"],c:1,e:"El cuerpo calloso es la mayor comisura interhemisférica (fibras comisurales)."},
+ {id:22,cat:"comisuras",q:"El orden anteroposterior de las partes del cuerpo calloso es:",o:["Esplenio, cuerpo, rodilla, rostrum","Rostrum, rodilla, cuerpo, esplenio","Rodilla, rostrum, esplenio, cuerpo","Cuerpo, rodilla, esplenio, rostrum"],c:1,e:"De adelante hacia atrás: rostrum (pico), rodilla (genu), cuerpo (tronco) y esplenio (rodete)."},
+ {id:23,cat:"comisuras",q:"El fórnix conecta el hipocampo con:",o:["La corteza visual","Los cuerpos mamilares","El cerebelo","La médula espinal"],c:1,e:"El fórnix es la principal vía eferente del hipocampo y termina en los cuerpos mamilares (circuito de Papez)."},
+ {id:24,cat:"comisuras",q:"La porción del fórnix que se adhiere al hipocampo se denomina:",o:["Columna","Fimbria","Rostrum","Esplenio"],c:1,e:"La fimbria es la banda de fibras adosada al hipocampo; se continúa con las crura (pilares) y el cuerpo del fórnix."},
+ {id:25,cat:"comisuras",q:"El fascículo de asociación que conecta el área de Broca con la de Wernicke es el:",o:["Fascículo uncinado","Fascículo arcuato","Cíngulo","Fórnix"],c:1,e:"El fascículo arcuato conecta las áreas del lenguaje; su lesión produce afasia de conducción."},
+ {id:26,cat:"comisuras",q:"La comisura anterior conecta principalmente:",o:["Ambos lóbulos temporales","Los cuerpos mamilares","El tálamo con el hipotálamo","Las cortezas occipitales"],c:0,e:"La comisura anterior interconecta ambos lóbulos temporales (y estructuras olfatorias)."},
+ {id:27,cat:"ventriculos",q:"Los ventrículos laterales se comunican con el III ventrículo por:",o:["El acueducto de Silvio","El foramen interventricular de Monro","Los agujeros de Luschka","El agujero de Magendie"],c:1,e:"El foramen de Monro comunica cada ventrículo lateral con el III ventrículo."},
+ {id:28,cat:"ventriculos",q:"El III y el IV ventrículo se comunican a través del:",o:["Foramen de Monro","Acueducto de Silvio (cerebral)","Agujero de Magendie","Foramen de Luschka"],c:1,e:"El acueducto de Silvio (acueducto cerebral) atraviesa el mesencéfalo uniendo el III con el IV ventrículo."},
+ {id:29,cat:"ventriculos",q:"El IV ventrículo se comunica con el espacio subaracnoideo por:",o:["El foramen de Monro y el acueducto","Los agujeros laterales de Luschka y el medial de Magendie","La comisura posterior","La adhesión intertalámica"],c:1,e:"El LCR sale del IV ventrículo por los dos agujeros de Luschka (laterales) y el de Magendie (medial)."},
+ {id:30,cat:"ventriculos",q:"El líquido cefalorraquídeo (LCR) es producido por:",o:["Las granulaciones aracnoideas","Los plexos coroideos","La glándula pineal","La duramadre"],c:1,e:"Los plexos coroideos de los ventrículos producen el LCR; se reabsorbe en las granulaciones aracnoideas."},
+ {id:31,cat:"ventriculos",q:"La secuencia correcta del flujo del LCR es:",o:["IV → III → laterales → subaracnoideo","Laterales → Monro → III → acueducto de Silvio → IV → Luschka/Magendie → subaracnoideo","III → Monro → IV → laterales","Laterales → acueducto → III → Monro → IV"],c:1,e:"Laterales → foramen de Monro → III → acueducto de Silvio → IV → agujeros de Luschka/Magendie → espacio subaracnoideo."},
+ {id:32,cat:"ventriculos",q:"La cisterna magna (cerebelomedular) se localiza entre:",o:["Los pedúnculos cerebrales","El cerebelo y el bulbo raquídeo","El quiasma óptico y la hipófisis","Las láminas cuadrigéminas"],c:1,e:"La cisterna magna está entre la cara inferior del cerebelo y la cara posterior del bulbo raquídeo."},
+ {id:33,cat:"ventriculos",q:"La cisterna interpeduncular se ubica:",o:["Entre los pedúnculos cerebrales (fosa interpeduncular)","Detrás del esplenio","Debajo del cerebelo","Alrededor del quiasma óptico"],c:0,e:"La cisterna interpeduncular ocupa la fosa entre los pedúnculos cerebrales."},
+ {id:34,cat:"ventriculos",q:"La cisterna cuadrigémina, por donde discurre la vena de Galeno, se sitúa:",o:["Delante del quiasma","Posterior al mesencéfalo (láminas cuadrigéminas)","Bajo la hipófisis","En el ángulo pontocerebeloso"],c:1,e:"La cisterna cuadrigémina (de la vena magna) está por detrás del techo del mesencéfalo."},
+ {id:35,cat:"caso",q:"Sofía (pelirroja, ojos azules, se quema y nunca se broncea) corresponde al fototipo de Fitzpatrick:",o:["I","IV","V","VI"],c:0,e:"El fototipo I es de piel muy blanca que siempre se quema y nunca se broncea."},
+ {id:36,cat:"caso",q:"La escala de Fitzpatrick clasifica:",o:["El tamaño de las lesiones","La respuesta de la piel a la radiación ultravioleta","La profundidad de las quemaduras","El tipo de melanoma"],c:1,e:"La escala de Fitzpatrick (I–VI) clasifica la respuesta de los distintos tipos de piel a la luz UV."},
+ {id:37,cat:"caso",q:"El factor de protección solar (SPF/FPS) mide la protección frente a la radiación:",o:["UVA","UVB","Infrarroja","Luz visible"],c:1,e:"El SPF cuantifica la protección frente a la UVB (relacionada con el eritema y la DEM)."},
+ {id:38,cat:"caso",q:"Para deporte al aire libre se recomienda un bloqueador de amplio espectro con SPF:",o:["<15","≥30, ideal 50+","Exactamente 10","No se recomienda"],c:1,e:"Se recomienda SPF >30 (ideal 50+), amplio espectro, reaplicado cada 2–4 horas."},
+ {id:39,cat:"caso",q:"Las efélides (pecas) que presenta Sofía se deben a:",o:["Aumento del número de melanocitos","Acumulación localizada de melanina","Infección micótica","Depósito de colágeno"],c:1,e:"Las efélides son máculas por aumento de melanina (no del número de melanocitos), típicas de fototipos claros."},
+ {id:40,cat:"caso",q:"Las células presentadoras de antígeno propias de la epidermis son:",o:["Los melanocitos","Las células de Langerhans","Los queratinocitos basales","Las células de Merkel"],c:1,e:"Las células de Langerhans son las presentadoras de antígeno (dendríticas) de la epidermis; participan en la inmunidad cutánea."},
+ {id:41,cat:"caso",q:"La radiación UVB, además de causar eritema y daño del ADN, es necesaria en la piel para:",o:["Sintetizar vitamina D","Producir melatonina","Formar queratina","Regular la sudoración"],c:0,e:"La UVB inicia la síntesis cutánea de vitamina D, pero en exceso daña el ADN y aumenta el riesgo de cáncer de piel."},
+ {id:42,cat:"caso",q:"El antecedente de melanoma en la abuela sumado al fototipo I implica que Sofía debe:",o:["No usar bloqueador para broncearse","Extremar la fotoprotección y el autoexamen de la piel","Exponerse al sol de 10am a 4pm","Usar solo protección UVB"],c:1,e:"El fototipo I y el antecedente familiar de melanoma elevan el riesgo: fotoprotección estricta de amplio espectro, medidas físicas y vigilancia de lesiones."},
+ {id:43,cat:"caso",q:"Los melanocitos, responsables de la fotoprotección natural, se localizan en el estrato:",o:["Córneo","Basal de la epidermis","Papilar de la dermis","Reticular"],c:1,e:"Los melanocitos residen en el estrato basal de la epidermis y transfieren melanina a los queratinocitos."}
+];
+
+/* Navegación */
+document.querySelectorAll('nav.fases .tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav.fases .tab').forEach(x=>x.classList.remove('activa'));
+    document.querySelectorAll('.fase').forEach(x=>x.classList.remove('activa'));
+    b.classList.add('activa');
+    document.getElementById(b.dataset.f).classList.add('activa');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(b.dataset.f==='notas') cargarMisNotas();
+  };
+});
+async function cargarMisNotas(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const [a,f6]=await Promise.all([
+      sb.from(TABLA).select('respondidas_total,aciertos_total,porcentaje').eq('correo',ESTUDIANTE.correo).maybeSingle(),
+      sb.from('fotos_s6').select('nota').eq('correo',ESTUDIANTE.correo).order('creado',{ascending:false}).limit(1)
+    ]);
+    const d=a.data||{};
+    const q=document.getElementById('mnQuiz'); if(q) q.textContent=(d.respondidas_total>0)?`${d.aciertos_total||0}/${d.respondidas_total} (${d.porcentaje||0}%)`:'Sin hacer';
+    const foto=(f6.data&&f6.data[0])||null;
+    const fo=document.getElementById('mnFoto'); if(fo) fo.textContent= foto ? (foto.nota!=null?`${foto.nota}/5`:'Pendiente de calificar') : 'Sin subir';
+    const av=document.getElementById('mnAviso'); if(av) av.textContent='Se actualiza solo.';
+  }catch(e){console.warn('misNotas',e);}
+}
+
+/* Checklists */
+document.querySelectorAll('.check').forEach(box=>{
+  const barra=box.nextElementSibling.querySelector('i');
+  const txt=box.nextElementSibling.nextElementSibling;
+  const inputs=box.querySelectorAll('input');
+  function upd(){let n=0;inputs.forEach(i=>{const l=i.parentElement;i.checked?l.classList.add('done'):l.classList.remove('done');if(i.checked)n++;});
+    barra.style.width=Math.round(n/inputs.length*100)+'%';txt.textContent=`${n} de ${inputs.length} estructuras identificadas`;}
+  inputs.forEach(i=>i.onchange=()=>{upd();actualizarChecklist();if(ESTUDIANTE)guardarAvance();});upd();
+});
+actualizarChecklist();
+
+/* Utilidades */
+function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sanea(c){return c.trim().toLowerCase();}
+let ESTUDIANTE=null, RONDA=[], respondidas={}, aciertos=0, acumRespondidas=0, acumAciertos=0;
+let temaStats={};
+const TEMAS_LABEL={nucleos:'Núcleos basales',talamo:'Tálamo y diencéfalo',blanca:'Sustancia blanca y cápsulas',comisuras:'Comisuras y fascículos',ventriculos:'Sistema ventricular y cisternas',caso:'Caso: fotoprotección y piel'};
+function renderTemas(){
+  const box=document.getElementById('temasBox'); if(!box) return;
+  const keys=Object.keys(TEMAS_LABEL);
+  const conDatos=keys.filter(k=>temaStats[k]&&temaStats[k].total);
+  const card=document.getElementById('temasCard'); if(card) card.style.display=conDatos.length?'block':'none';
+  box.innerHTML=keys.map(k=>{
+    const s=temaStats[k]||{ok:0,total:0};
+    const pct=s.total?Math.round(s.ok/s.total*100):0;
+    const col=s.total?(pct>=80?'var(--verde)':pct>=60?'var(--ambar)':'var(--rojo)'):'#ccc';
+    return `<div style="margin:9px 0">
+      <div style="display:flex;justify-content:space-between;font-size:.87rem"><span>${TEMAS_LABEL[k]}</span><span style="font-weight:700">${s.total?pct+'% ('+s.ok+'/'+s.total+')':'—'}</span></div>
+      <div style="height:9px;background:#eaeef0;border-radius:5px;overflow:hidden;margin-top:3px"><i style="display:block;height:100%;width:${pct}%;background:${col};transition:.3s"></i></div>
+    </div>`;
+  }).join('');
+}
+
+/* Login */
+const login=document.getElementById('login');
+const zonaQuiz=document.getElementById('zonaQuiz');
+async function entrar(){
+  const nombre=document.getElementById('inNombre').value.trim();
+  const correo=document.getElementById('inCorreo').value.trim();
+  const err=document.getElementById('loginErr');
+  if(nombre.length<3){err.textContent='Escribe tu nombre completo.';return;}
+  const reMail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!reMail.test(correo)){err.textContent='Escribe un correo válido.';return;}
+  if(DOMINIO_INSTITUCIONAL && !correo.toLowerCase().endsWith(DOMINIO_INSTITUCIONAL.toLowerCase())){
+    err.textContent='Usa tu correo institucional ('+DOMINIO_INSTITUCIONAL+').';return;}
+  err.textContent='';
+  let esDoc=false;
+  if(FB_OK){
+    const btn=document.getElementById('btnEntrar');btn.disabled=true;err.style.color='var(--gris)';err.textContent='Verificando acceso…';
+    try{ const {data:doc}=await sb.from('docentes').select('correo').eq('correo',correo.toLowerCase()).maybeSingle(); esDoc=!!doc; }catch(e){console.warn('docente',e);}
+    if(!esDoc){
+      try{
+        const {data:aut}=await sb.from('autorizados').select('correo').eq('correo',correo.toLowerCase()).maybeSingle();
+        if(!aut){err.style.color='';err.textContent='Este correo no está autorizado para esta actividad. Contacta a tu docente.';btn.disabled=false;return;}
+      }catch(e){console.warn('autoriz',e);}
+    }
+    btn.disabled=false;err.style.color='';err.textContent='';
+  }
+  ESTUDIANTE={nombre,correo,id:sanea(correo)};
+  try{localStorage.setItem('soi2_estudiante',JSON.stringify({nombre,correo}));}catch(e){}
+  login.style.display='none'; zonaQuiz.style.display='block';
+  const rol=esDoc?' · <b>docente</b>':'';
+  const avisoCierre=moduloCerrado()?'<div class="aviso" style="margin-top:10px">🔒 Este módulo está cerrado. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>':'';
+  document.getElementById('saludo').innerHTML=`<span>👋 Hola, <b>${nombre}</b>${rol}</span><button id="salir">No soy yo / Salir</button>`;
+  document.getElementById('saludo').insertAdjacentHTML('afterend',avisoCierre);
+  document.getElementById('salir').onclick=()=>{try{localStorage.removeItem('soi2_estudiante');}catch(e){}location.reload();};
+  if(!esDoc) registrarInicio();
+  nuevaRonda();
+  if(FB_OK) cargarFotos();
+  cargarMisNotas();
+}
+document.getElementById('btnEntrar').onclick=entrar;
+document.getElementById('inCorreo').addEventListener('keydown',e=>{if(e.key==='Enter')entrar();});
+try{
+  const g=JSON.parse(localStorage.getItem('soi2_estudiante')||'null');
+  if(g&&g.nombre&&g.correo){ document.getElementById('inNombre').value=g.nombre; document.getElementById('inCorreo').value=g.correo; entrar(); }
+}catch(e){}
+
+/* Encuesta */
+const encuestaVal={satisfaccion:0,utilidad:0};
+document.querySelectorAll('.stars').forEach(cont=>{
+  const name=cont.dataset.name;
+  for(let n=1;n<=5;n++){
+    const b=document.createElement('button');b.type='button';b.textContent=n;
+    b.onclick=()=>{encuestaVal[name]=n;cont.querySelectorAll('button').forEach((x,k)=>x.classList.toggle('sel',k<n));};
+    cont.appendChild(b);
+  }
+});
+document.getElementById('btnEncuesta').onclick=async()=>{
+  const err=document.getElementById('encErr');
+  if(!ESTUDIANTE){err.textContent='Primero identifícate.';return;}
+  if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se puede enviar la encuesta.';return;}
+  if(!encuestaVal.satisfaccion){err.textContent='Marca al menos tu nivel de satisfacción.';return;}
+  err.textContent='';
+  const dudas=document.getElementById('inDudas').value.trim();
+  const comentario=document.getElementById('inComentario').value.trim();
+  if(FB_OK){ try{ await sb.from(TABLA).upsert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,satisfaccion:encuestaVal.satisfaccion,utilidad:encuestaVal.utilidad||null,dudas:dudas||null,comentario:comentario||null,encuesta_fecha:new Date().toISOString(),ultima_actividad:new Date().toISOString()},{onConflict:'correo'}); }catch(e){console.warn('encuesta',e);} }
+  document.getElementById('encuestaMsg').style.display='block';
+  document.getElementById('btnEncuesta').disabled=true;
+};
+
+/* Quiz */
+const quizCont=document.getElementById('quiz');
+const marcador=document.getElementById('marcador');
+function nuevaRonda(){
+  if(moduloCerrado()){
+    quizCont.innerHTML='<div class="aviso">🔒 <b>Este módulo está cerrado.</b> Ya no se pueden responder más preguntas ni completar esta actividad. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>';
+    marcador.textContent='Módulo cerrado';
+    document.getElementById('nuevaRonda').disabled=true; document.getElementById('numP').disabled=true;
+    document.getElementById('verResultado').style.display='none';
+    return;
+  }
+  const n=parseInt(document.getElementById('numP').value,10);
+  let sel=barajar(POOL);
+  if(n>0) sel=sel.slice(0,n);
+  RONDA=sel.map(p=>{const orden=barajar(p.o.map((_,i)=>i));return {...p,o:orden.map(i=>p.o[i]),c:orden.indexOf(p.c)};});
+  respondidas={};aciertos=0;
+  document.getElementById('resultado').style.display='none';
+  renderQuiz();actualizarMarcador();
+  quizCont.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderQuiz(){
+  quizCont.innerHTML='';
+  RONDA.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='pregunta';
+    const catLbl={nucleos:'⚪ Núcleos basales',talamo:'🔵 Tálamo',blanca:'🧵 Sustancia blanca',comisuras:'🌉 Comisuras',ventriculos:'💧 Ventrículos',caso:'☀️ Caso clínico'}[p.cat];
+    card.innerHTML=`<div class="qh"><span>Pregunta ${i+1} de ${RONDA.length}</span><span>${catLbl}</span></div><div class="q">${p.q}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts=card.querySelector('.opts'), fb=card.querySelector('.fb');
+    p.o.forEach((op,j)=>{
+      const b=document.createElement('button');b.textContent=op;
+      b.onclick=()=>{
+        if(respondidas[i]!==undefined) return;
+        respondidas[i]=j;
+        opts.querySelectorAll('button').forEach((bb,k)=>{bb.disabled=true;if(k===p.c)bb.classList.add('bien');if(k===j&&j!==p.c)bb.classList.add('mal');});
+        const ok=j===p.c;if(ok){aciertos++;acumAciertos++;}
+        acumRespondidas++;
+        const tm=p.tema||p.cat; if(!temaStats[tm])temaStats[tm]={ok:0,total:0}; temaStats[tm].total++; if(ok)temaStats[tm].ok++; renderTemas();
+        fb.style.display='block';fb.className='fb '+(ok?'ok':'no');
+        fb.innerHTML=`<b>${ok?'✅ Correcto':'❌ Incorrecto'}</b>${p.e}`;
+        actualizarMarcador();guardarAvance();
+      };
+      opts.appendChild(b);
+    });
+    quizCont.appendChild(card);
+  });
+}
+function actualizarMarcador(){const n=Object.keys(respondidas).length;marcador.textContent=`${n} / ${RONDA.length} · ${aciertos} aciertos`;}
+document.getElementById('nuevaRonda').onclick=nuevaRonda;
+document.getElementById('numP').onchange=()=>{ if(ESTUDIANTE) nuevaRonda(); };
+
+/* ===== Foto del laboratorio por grupo (subir · ver) ===== */
+function escHtmlF(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function resizeImg(file,max=900,q=0.62){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>{ let w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;} else {w=Math.round(w*max/h);h=max;} } const c=document.createElement('canvas');c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); c.toBlob(b=>b?res(b):rej(new Error('No se pudo procesar la imagen')),'image/jpeg',q); }; img.onerror=()=>rej(new Error('Archivo de imagen no válido')); img.src=URL.createObjectURL(file); }); }
+let FOTOSR=[];
+async function cargarFotos(){ if(!FB_OK) return; try{ const {data}=await sb.from('fotos_s6').select('*').order('creado',{ascending:false}); FOTOSR=data||[]; renderFotos(); }catch(e){console.warn('cargarFotos',e);} }
+function renderFotos(){
+  const cont=document.getElementById('galFotos'); if(!cont) return;
+  const gi=document.getElementById('fotoInfo'); if(gi) gi.textContent=FOTOSR.length+' foto(s) de grupo';
+  cont.innerHTML=FOTOSR.map(x=>`<div class="ftar"><img loading="lazy" src="${x.url}" data-full="${x.url}" alt="foto de laboratorio"><div class="meta"><div class="n">${escHtmlF(x.nombre)}</div><div class="g"><b>Grupo:</b> ${escHtmlF(x.integrantes)||'—'}</div></div></div>`).join('')||'<p class="mini">Aún no hay fotos. La sube una persona por grupo.</p>';
+  cont.querySelectorAll('.ftar img').forEach(im=>im.onclick=()=>window.open(im.dataset.full,'_blank','noopener'));
+}
+document.getElementById('btnFoto').onclick=async()=>{
+  const err=document.getElementById('fotoErr');
+  if(!FB_OK){err.textContent='Sin conexión a la base de datos.';return;}
+  if(!ESTUDIANTE){err.textContent='Primero identifícate para subir.';return;}
+  if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se pueden subir fotos.';return;}
+  const integrantes=document.getElementById('inIntegrantes').value.trim();
+  if(integrantes.length<3){err.textContent='Escribe los nombres de los integrantes del grupo.';return;}
+  const f=document.getElementById('fileFoto').files[0];
+  if(!f){err.textContent='Selecciona la foto del laboratorio.';return;}
+  if(!f.type.startsWith('image/')){err.textContent='El archivo debe ser una imagen.';return;}
+  err.style.color='var(--rojo)';err.textContent='';
+  const spin=document.getElementById('subiendoF'), btn=document.getElementById('btnFoto');
+  spin.style.display='inline'; btn.disabled=true;
+  try{
+    const blob=await resizeImg(f);
+    const path=`fotos_s6/${ESTUDIANTE.id.replace(/[^a-z0-9]/g,'_')}_${Date.now()}.jpg`;
+    const up=await sb.storage.from('dibujos').upload(path,blob,{contentType:'image/jpeg', cacheControl:'2592000'});
+    if(up.error) throw up.error;
+    const url=sb.storage.from('dibujos').getPublicUrl(path).data.publicUrl;
+    const ins=await sb.from('fotos_s6').insert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,integrantes,path,url});
+    if(ins.error) throw ins.error;
+    document.getElementById('fileFoto').value='';
+    err.style.color='var(--verde)';err.textContent='¡Foto subida! Ya aparece abajo. 🎉';
+    setTimeout(()=>{err.textContent='';err.style.color='var(--rojo)';},3000);
+    cargarFotos(); cargarMisNotas();
+  }catch(e){console.warn('subirFoto',e);err.textContent='No se pudo subir: '+(e.message||e);}
+  finally{spin.style.display='none';btn.disabled=false;}
+};
+if(FB_OK){ cargarFotos(); sb.channel('fotos-s6').on('postgres_changes',{event:'*',schema:'public',table:'fotos_s6'},()=>{cargarFotos();cargarMisNotas();}).subscribe(); }
+document.getElementById('verResultado').onclick=()=>{
+  const n=Object.keys(respondidas).length, res=document.getElementById('resultado');
+  const pct=n?Math.round(aciertos/n*100):0;
+  document.getElementById('scoreTxt').textContent=pct+'%';
+  let msg;
+  if(n<RONDA.length) msg=`Llevas ${n} de ${RONDA.length} en esta ronda (${aciertos} correctas). ¡Termínala!`;
+  else if(pct>=85) msg=`¡Excelente! ${aciertos}/${RONDA.length}. Lanza una nueva ronda para repasar otras.`;
+  else if(pct>=60) msg=`Bien: ${aciertos}/${RONDA.length}. Repite con Nueva ronda para afianzar.`;
+  else msg=`${aciertos}/${RONDA.length}. Repasa la guía y reintenta.`;
+  document.getElementById('scoreMsg').textContent=msg;
+  res.style.display='block';res.scrollIntoView({behavior:'smooth'});
+  guardarAvance(true);
+};
+
+/* Supabase */
+let rondasCompletadas=0; let avanceCargado=false;
+async function registrarInicio(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const {data}=await sb.from(TABLA).select('*').eq('correo',ESTUDIANTE.correo).maybeSingle();
+    if(data){
+      acumRespondidas=data.respondidas_total||0; acumAciertos=data.aciertos_total||0;
+      rondasCompletadas=data.rondas_completadas||0; baseSegundos=data.segundos_activos||0;
+      (data.videos_lista||[]).forEach(id=>videosVistos.add(id)); temaStats=data.temas||{}; renderTemas(); actualizarMarcador();
+    }
+    const payload={correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre, ultima_actividad:new Date().toISOString()};
+    if(!data||!data.primera_actividad) payload.primera_actividad=new Date().toISOString();
+    await sb.from(TABLA).upsert(payload,{onConflict:'correo'}); avanceCargado=true;
+    guardarAvance();
+  }catch(e){console.warn('registrarInicio',e); avanceCargado=true;}
+}
+async function guardarAvance(finRonda=false){ if(!avanceCargado) return;
+  if(!FB_OK||!ESTUDIANTE) return;
+  if(moduloCerrado()) return;
+  if(finRonda) rondasCompletadas++;
+  actualizarChecklist();
+  const pct=acumRespondidas?Math.round(acumAciertos/acumRespondidas*100):0;
+  try{
+    await sb.from(TABLA).upsert({
+      correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre,
+      respondidas_total:acumRespondidas, aciertos_total:acumAciertos, porcentaje:pct,
+      ronda_respondidas:Object.keys(respondidas).length, ronda_total:RONDA.length, ronda_aciertos:aciertos,
+      rondas_completadas:rondasCompletadas,
+      segundos_activos:baseSegundos+segundosSesion,
+      videos_vistos:videosVistos.size, videos_lista:[...videosVistos],
+      checklist_marcados:checklistMarcados, checklist_total:checklistTotal,
+      temas:temaStats,
+      ultima_actividad:new Date().toISOString()
+    },{onConflict:'correo'});
+  }catch(e){console.warn('guardarAvance',e);}
+}
+</script>
+<a href="recursos.html" style="position:fixed;right:16px;bottom:16px;z-index:500;background:#0f7391;color:#fff;text-decoration:none;padding:11px 16px;border-radius:999px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.28);font-family:system-ui,sans-serif;font-size:.9rem">📚 Recursos</a>
+</body>
+</html>

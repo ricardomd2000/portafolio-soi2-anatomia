@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cerebro Externo & Irrigación Arcade</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Cerebro Externo & Irrigación Arcade</h1>
+
+    <!-- Menu Screen -->
+    <div id="menu-screen" class="card">
+      <h2>¡Bienvenido al Desafío!</h2>
+      <p>Pon a prueba tus conocimientos sobre la anatomía del cerebro externo y su irrigación.</p>
+      <p>3 Niveles de dificultad:</p>
+      <ul style="text-align: left; list-style: none;">
+
+        <div id="user-profile" style="display:none">
+          <!-- Logged Out State -->
+          <div id="auth-forms">
+            <button id="google-login-btn"
+              style="background: white; color: #333; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                style="width: 18px; height: 18px;">
+              Continuar con Google
+            </button>
+
+            <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 10px;">
+              <button id="show-login-btn" class="active-tab">Iniciar Sesión</button>
+              <button id="show-register-btn">Registrarse</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form">
+              <input type="email" id="login-email" placeholder="Correo electrónico"
+                style="padding: 8px; margin: 5px; width: 200px;">
+              <input type="password" id="login-password" placeholder="Contraseña"
+                style="padding: 8px; margin: 5px; width: 200px;">
+              <br>
+              <button id="perform-login-btn" style="background: var(--secondary-color); color: black;">Entrar</button>
+            </div>
+
+            <!-- Register Form (Hidden by default) -->
+            <div id="register-form" class="hidden">
+              <input type="text" id="reg-name" placeholder="Tu Nombre Completo"
+                style="padding: 8px; margin: 5px; width: 200px;">
+              <input type="email" id="reg-email" placeholder="Correo electrónico"
+                style="padding: 8px; margin: 5px; width: 200px;">
+              <input type="password" id="reg-password" placeholder="Contraseña (min 6 chars)"
+                style="padding: 8px; margin: 5px; width: 200px;">
+              <br>
+              <button id="perform-register-btn"
+                style="background: var(--primary-color); color: white; border-color: var(--primary-color);">Crear
+                Cuenta</button>
+            </div>
+            <p id="auth-error" style="color: red; font-size: 0.8rem; height: 20px;"></p>
+          </div>
+
+          <!-- Logged In State -->
+          <div id="logged-in-view" class="hidden">
+            <p id="user-name" style="color: var(--accent-color); font-size: 1.2rem;">Hola, Estudiante</p>
+            <button id="logout-btn" style="font-size: 0.8rem; padding: 5px 10px;">Cerrar Sesión</button>
+          </div>
+        </div>
+      </ul>
+      <p id="playerHola" style="color:#7CFC00;font-weight:bold"></p>
+      <p style="opacity:.7;font-size:.9rem">Juegas con tu sesión del portafolio · tu resultado queda registrado.</p>
+
+      <div id="auth-forms">
+        <!-- Auth forms injected here by script.js -->
+      </div>
+
+      <div class="menu-buttons">
+        <button id="start-btn">INSERT COIN TO START</button>
+        <button id="leaderboard-btn" class="secondary-btn" style="margin-top: 10px; background: #444;">🏆 Tabla de
+          Líderes</button>
+      </div>
+      <p id="auth-error" class="error-message"></p>
+    </div>
+
+    <!-- Leaderboard Screen -->
+    <div id="leaderboard-screen" class="card hidden">
+      <h2>🏆 Mejores Neuroanatomistas</h2>
+      <div id="leaderboard-list">
+        <!-- Scores will be loaded here -->
+        <p>Cargando puntuaciones...</p>
+      </div>
+      <button id="close-leaderboard-btn" style="margin-top: 20px;">Cerrar</button>
+    </div>
+    <!-- Game Screen -->
+    <div id="game-screen" class="game-container hidden">
+      <h2 id="level-title">Nivel 1</h2>
+      <p id="level-description">Descripción del nivel</p>
+
+      <div class="stats-bar">
+        <span id="score-display">Score: 0</span>
+        <span id="timer-display">Tiempo: 00:00</span>
+        <span id="question-counter">Question: 1 / 10</span>
+      </div>
+
+      <div class="card">
+        <div class="image-container">
+          <img id="question-image" src="" alt="Identificar estructura">
+        </div>
+        <div id="options-container" class="options-grid">
+          <!-- Options will be generated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="card hidden">
+      <h2>GAME OVER</h2>
+      <h3>Final Score: <span id="final-score">0</span></h3>
+      <p id="final-message">Mensaje final</p>
+      <div id="feedback-container"
+        style="text-align: left; margin-top: 20px; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px;">
+      </div>
+      <button id="restart-btn">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+
+</html>

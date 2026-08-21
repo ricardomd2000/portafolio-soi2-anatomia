@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel docente · Avance en vivo</title>
+<style>
+:root{--rojo:#b3202c;--rojo-osc:#7d1620;--verde:#2e7d5b;--ambar:#c77d0a;--azul:#1f6f8b;
+  --crema:#fbf6f2;--tinta:#2a2320;--gris:#6b6360;--linea:#e7ddd5;}
+:root.resp{--rojo:#0f7391;--rojo-osc:#0a4f66;--azul:#155e75;--crema:#f4f9fb;--linea:#d9e6ea;--tinta:#20313a;--gris:#5c6b72;}
+:root.dig{--rojo:#c2410c;--rojo-osc:#9a3412;--azul:#a15b1e;--crema:#fdf7f2;--linea:#ecdfd4;--tinta:#2e2620;--gris:#6b6058;}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--crema);color:var(--tinta);line-height:1.5}
+header{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));color:#fff;padding:20px;position:relative}
+#docLogin{position:fixed;inset:0;z-index:400;background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));display:flex;align-items:center;justify-content:center;padding:20px}
+#docLogin .box{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#docLogin h2{margin:0 0 4px;color:var(--rojo-osc);font-size:1.25rem}
+#docLogin p{margin:0 0 12px;font-size:.85rem;color:var(--gris)}
+#docLogin input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+#docLogin input:focus{outline:none;border-color:var(--rojo)}
+#docLogin button{margin-top:12px;width:100%;background:var(--rojo);color:#fff;border:0;border-radius:10px;padding:12px;font-size:1rem;font-weight:600;cursor:pointer}
+#docLogin .e{color:#b3202c;font-size:.83rem;min-height:18px;margin-top:8px}
+.salirDoc{position:absolute;right:16px;top:16px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:999px;padding:5px 12px;font-size:.78rem;cursor:pointer}
+header h1{margin:0 0 10px;font-size:1.4rem}
+.switch{display:inline-flex;background:rgba(255,255,255,.15);border-radius:10px;padding:4px;gap:4px}
+.switch button{border:0;background:transparent;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9rem}
+.switch button.on{background:#fff;color:var(--rojo-osc)}
+header p{margin:8px 0 0;opacity:.9;font-size:.85rem}
+main{max-width:1120px;margin:0 auto;padding:20px 16px 60px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:18px 0}
+.kpi{background:#fff;border:1px solid var(--linea);border-radius:12px;padding:14px 16px;box-shadow:0 3px 12px rgba(80,20,25,.08)}
+.kpi .v{font-size:1.7rem;font-weight:800;color:var(--rojo)}
+.kpi .l{font-size:.78rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.barra-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:8px 0 14px}
+.barra-tools input{padding:9px 12px;border:1px solid var(--linea);border-radius:9px;font-size:.92rem;min-width:210px}
+.barra-tools button{background:#fff;border:1px solid var(--rojo);color:var(--rojo);border-radius:9px;padding:9px 16px;cursor:pointer;font-weight:600}
+.estado{font-size:.8rem;color:var(--gris)}
+.tabla-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 12px rgba(80,20,25,.08)}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--linea);font-size:.88rem;white-space:nowrap}
+th{background:var(--rojo);color:#fff;font-weight:600;cursor:pointer;user-select:none}
+th:hover{background:var(--rojo-osc)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:rgba(0,0,0,.03)}
+.prog{height:8px;background:#eee;border-radius:5px;overflow:hidden;min-width:70px}
+.prog i{display:block;height:100%;background:var(--verde)}
+.pct{font-weight:700}
+.pct.alto{color:var(--verde)}.pct.medio{color:var(--ambar)}.pct.bajo{color:var(--rojo)}
+.reciente{width:9px;height:9px;border-radius:50%;background:#ccc;display:inline-block;margin-right:6px}
+.reciente.on{background:var(--verde);box-shadow:0 0 0 3px rgba(46,125,91,.2)}
+.vacio{text-align:center;color:var(--gris);padding:40px 20px}
+.aviso{background:#fff7e8;border-left:4px solid var(--ambar);padding:12px 15px;border-radius:0 8px 8px 0;font-size:.88rem;margin:14px 0}
+.mini{font-size:.78rem;color:var(--gris)}
+a{color:var(--rojo)}
+#modal,#modalDudas{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:100;align-items:center;justify-content:center;padding:18px}
+#modalDudas{z-index:110}
+#modal .box,#modalDudas .box{background:#fff;border-radius:14px;max-width:620px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+#modal .top,#modalDudas .top{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));color:#fff;padding:18px 20px;border-radius:14px 14px 0 0;position:sticky;top:0}
+#modal .top h2,#modalDudas .top h2{margin:0;font-size:1.2rem}
+#modal .top .cerrar,#modalDudas .top .cerrar{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.2);border:0;color:#fff;font-size:1.2rem;width:32px;height:32px;border-radius:8px;cursor:pointer}
+#modal .cuerpo,#modalDudas .cuerpo{padding:16px 20px}
+.det{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.det .c{background:var(--crema);border:1px solid var(--linea);border-radius:10px;padding:10px 12px}
+.det .c .l{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.det .c .v{font-size:1.15rem;font-weight:700;color:var(--rojo-osc)}
+.bloque{margin-top:14px}
+.bloque h3{margin:0 0 8px;font-size:.95rem;color:var(--azul)}
+.vidchip{display:inline-block;background:rgba(31,111,139,.12);color:var(--azul);border-radius:6px;padding:3px 9px;margin:3px 4px 0 0;font-size:.8rem}
+.vidchip.off{background:#f2eeeb;color:#b0a89f}
+.dfiltro{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.dfiltro button{border:1px solid var(--linea);background:#fff;border-radius:999px;padding:5px 13px;cursor:pointer;font-size:.82rem}
+.dfiltro button.on{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.dcard{border:1px solid var(--linea);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:var(--crema)}
+.dcard .who{font-weight:700;color:var(--rojo-osc);font-size:.92rem}
+.dcard .who span{font-weight:400;color:var(--gris);font-size:.8rem}
+.dcard .q{margin:8px 0 0}
+.dcard .q b{color:var(--azul);font-size:.72rem;text-transform:uppercase;letter-spacing:.4px}
+.dcard .q p{margin:2px 0 0;font-size:.93rem;white-space:pre-wrap}
+.dcard .q.reco b{color:var(--verde)}
+#modalTemas{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:110;align-items:center;justify-content:center;padding:18px}
+#modalTemas .box{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+#modalTemas .top{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));color:#fff;padding:18px 20px;border-radius:14px 14px 0 0;position:sticky;top:0}
+#modalTemas .top h2{margin:0;font-size:1.2rem}
+#modalTemas .top .cerrar{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.2);border:0;color:#fff;font-size:1.2rem;width:32px;height:32px;border-radius:8px;cursor:pointer}
+#modalTemas .cuerpo{padding:16px 20px}
+#globalPanel{display:none}
+#globalPanel td.celg{text-align:center;font-weight:600}
+body.gmode .kpis,body.gmode .barra-tools,body.gmode .tabla-wrap,body.gmode #vacio,body.gmode #galeriaPanel,body.gmode #fotosPanel,body.gmode #fotosCerebroPanel,body.gmode #fotosS6Panel,body.gmode #hintFila{display:none!important}
+body.gmode #globalPanel{display:block}
+body.gmode #globalPanel .kpis{display:grid!important}
+body.gmode #globalPanel .barra-tools{display:flex!important}
+body.gmode #globalPanel .tabla-wrap{display:block!important}
+#corte2Panel{display:none}
+body.c2mode .kpis,body.c2mode .barra-tools,body.c2mode .tabla-wrap,body.c2mode #vacio,body.c2mode #galeriaPanel,body.c2mode #fotosPanel,body.c2mode #fotosCerebroPanel,body.c2mode #fotosS6Panel,body.c2mode #hintFila,body.c2mode #globalPanel{display:none!important}
+body.c2mode #corte2Panel{display:block}
+body.c2mode #corte2Panel .kpis{display:grid!important}
+body.c2mode #corte2Panel .barra-tools{display:flex!important}
+body.c2mode #corte2Panel .tabla-wrap{display:block!important}
+body.gmode #globalPanel .tabla-wrap{display:block!important}
+.thumbG{height:54px;width:80px;object-fit:cover;border-radius:6px;cursor:zoom-in;border:1px solid #d8dee1;vertical-align:middle}
+.thumbG:hover{outline:2px solid #2e7d5b}
+.verG{margin-left:6px;text-decoration:none;color:#2e7d5b;font-weight:700}
+#lbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:600;cursor:zoom-out}
+#lbox img{max-width:94vw;max-height:92vh;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+</style>
+</head>
+<body>
+<div id="docLogin"><div class="box">
+  <h2>🔒 Panel docente</h2>
+  <p>Acceso restringido. Ingresa tu correo institucional de docente.</p>
+  <input id="docCorreo" type="email" placeholder="tu.correo@unisabana.edu.co" autocomplete="email">
+  <button id="docEntrar">Entrar al panel</button>
+  <div class="e" id="docErr"></div>
+</div></div>
+<header>
+  <button class="salirDoc" id="salirDoc">Cerrar sesión</button>
+  <h1>📊 Panel docente · Avance en vivo</h1>
+  <div class="switch">
+    <button id="swCor" class="on">🫀 Semana 1 · Corazón</button>
+    <button id="swResp">🫁 Semana 2 · Respiratorio</button>
+    <button id="swDig">🩻 Semana 3 · Digestivo</button>
+    <button id="swRenal">🫘 Semana 4 · Renal</button>
+    <button id="swCerebro">🧠 Semana 5 · Cerebro</button>
+    <button id="swS6">🧠 Semana 6 · Cerebro interno</button>
+    <button id="swCuello">🦢 Semana 7 · Cuello</button>
+    <button id="swGlobal">🌐 Semanas 1–4</button>
+    <button id="swCorte2">🧠 2º corte · Cerebro</button>
+  </div>
+  <p><span id="titSem">Corazón, grandes vasos y pericardio</span> · <span class="estado" id="conn">conectando…</span></p>
+</header>
+<main>
+  <div id="setup" class="aviso" style="display:none">⚠️ Falta la configuración de Supabase en supabase-config.js.</div>
+  <div class="kpis">
+    <div class="kpi"><div class="v" id="kTot">0</div><div class="l">Estudiantes</div></div>
+    <div class="kpi"><div class="v" id="kActivos">0</div><div class="l">Activos (5 min)</div></div>
+    <div class="kpi"><div class="v" id="kProm">0%</div><div class="l">Promedio aciertos</div></div>
+    <div class="kpi"><div class="v" id="kSat">—</div><div class="l">Satisfacción media</div></div>
+    <div class="kpi"><div class="v" id="kResp">0</div><div class="l">Respuestas totales</div></div>
+  </div>
+  <div class="barra-tools">
+    <input id="buscar" type="search" placeholder="🔎 Buscar por nombre o correo…">
+    <div><button id="btnTemas">📊 Apropiación por tema</button> <button id="btnDudas">💬 Dudas y recomendaciones</button> <button id="csv">⬇️ Exportar CSV</button> <span class="mini" id="actualizado"></span></div>
+  </div>
+  <p class="mini" id="hintFila">Toca una fila para ver el detalle completo del estudiante.</p>
+  <div class="tabla-wrap">
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th data-k="nombre">Estudiante ▾</th>
+          <th data-k="porcentaje">% aciertos</th>
+          <th data-k="aciertos_total">Quiz</th>
+          <th data-k="rondas_completadas">Rondas</th>
+          <th data-k="segundos_activos">Tiempo</th>
+          <th data-k="videos_vistos" id="thRec">Videos</th>
+          <th data-k="checklist_marcados">Checklist</th>
+          <th data-k="arcade_puntaje">🕹️ Arcade</th>
+          <th data-k="_ms">Última actividad</th>
+        </tr>
+      </thead>
+      <tbody id="cuerpo"></tbody>
+    </table>
+  </div>
+  <div class="vacio" id="vacio">Esperando que los estudiantes ingresen…</div>
+
+  <div id="galeriaPanel" style="display:none;margin-top:24px">
+    <h2 style="font-size:1.05rem;margin:0 0 6px">🎨 Galería · Dibujo del tronco celíaco (obligatorio) <span class="mini" id="galResumen"></span> <button class="ordBtn" style="margin-left:8px;font-size:.78rem;padding:3px 10px;border:1px solid #b3202c;background:#fff;color:#b3202c;border-radius:8px;cursor:pointer;font-weight:600">↕️ Ordenar A–Z</button></h2>
+    <div class="tabla-wrap">
+      <table><thead><tr><th>Estudiante</th><th>Correo</th><th>Dibujo</th><th>Votos</th><th>Nota (0-5)</th><th>Subido</th></tr></thead><tbody id="galBody"></tbody></table>
+    </div>
+    <div class="vacio" id="galVacio">Aún no hay dibujos subidos.</div>
+  </div>
+
+  <div id="fotosPanel" style="display:none;margin-top:24px">
+    <h2 style="font-size:1.05rem;margin:0 0 6px">📸 Fotos de laboratorio · Renal (por grupo) <span class="mini" id="fotosResumen"></span> <button class="ordBtn" style="margin-left:8px;font-size:.78rem;padding:3px 10px;border:1px solid #b3202c;background:#fff;color:#b3202c;border-radius:8px;cursor:pointer;font-weight:600">↕️ Ordenar A–Z</button></h2>
+    <div class="tabla-wrap">
+      <table><thead><tr><th>Representante</th><th>Correo</th><th>Integrantes del grupo</th><th>Foto</th><th>Nota (0-5)</th><th>Subido</th></tr></thead><tbody id="fotosBody"></tbody></table>
+    </div>
+    <div class="vacio" id="fotosVacio">Aún no hay fotos subidas.</div>
+  </div>
+
+  <div id="fotosS6Panel" style="display:none;margin-top:24px">
+    <h2 style="font-size:1.05rem;margin:0 0 6px">📸 Fotos de laboratorio · Cerebro interno (por grupo) <span class="mini" id="fotosResumen6"></span> <button class="ordBtn" style="margin-left:8px;font-size:.78rem;padding:3px 10px;border:1px solid #b3202c;background:#fff;color:#b3202c;border-radius:8px;cursor:pointer;font-weight:600">↕️ Ordenar A–Z</button></h2>
+    <div class="tabla-wrap">
+      <table><thead><tr><th>Representante</th><th>Correo</th><th>Integrantes del grupo</th><th>Foto</th><th>Nota (0-5)</th><th>Subido</th></tr></thead><tbody id="fotosBody6"></tbody></table>
+    </div>
+    <div class="vacio" id="fotosVacio6">Aún no hay fotos subidas.</div>
+  </div>
+
+  <div id="fotosCerebroPanel" style="display:none;margin-top:24px">
+    <h2 style="font-size:1.05rem;margin:0 0 6px">📸 Galería · Foto de la práctica (Cerebro) <span class="mini" id="galResumenC"></span> <button class="ordBtn" style="margin-left:8px;font-size:.78rem;padding:3px 10px;border:1px solid #b3202c;background:#fff;color:#b3202c;border-radius:8px;cursor:pointer;font-weight:600">↕️ Ordenar A–Z</button></h2>
+    <div class="tabla-wrap">
+      <table><thead><tr><th>Estudiante</th><th>Correo</th><th>Foto</th><th>Votos</th><th>Nota (0-5)</th><th>Subido</th></tr></thead><tbody id="galBodyC"></tbody></table>
+    </div>
+    <div class="vacio" id="galVacioC">Aún no hay fotos subidas.</div>
+  </div>
+
+  <div id="globalPanel">
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="gTot">0</div><div class="l">Estudiantes (únicos)</div></div>
+      <div class="kpi"><div class="v" id="gProm">0%</div><div class="l">Promedio global</div></div>
+      <div class="kpi"><div class="v" id="g4">0</div><div class="l">Completaron todas</div></div>
+      <div class="kpi"><div class="v" id="gDib">0</div><div class="l">Subieron dibujo TC</div></div>
+      <div class="kpi"><div class="v" id="gPort">0</div><div class="l">Prom. portafolio (0-5)</div></div>
+    </div>
+    <div class="barra-tools">
+      <input id="buscarG" type="search" placeholder="🔎 Buscar por nombre o correo…">
+      <div><button id="csvG">⬇️ Exportar CSV global</button> <span class="mini" id="actG"></span></div>
+    </div>
+    <p class="mini">Consolidado por estudiante · <b>%</b> por semana (— = sin actividad), promedio y semanas activas.</p>
+    <div class="tabla-wrap">
+      <table><thead><tr>
+        <th>Estudiante</th><th>Correo</th><th>🫀 Cor</th><th>🫁 Resp</th><th>🩻 Dig</th><th>🫘 Renal</th><th>🧠 Cer</th><th>Prom</th><th>Sem.</th><th>Nota TC</th><th>Nota renal</th><th>🎓 Portafolio<br>1–4 sem</th><th>Última</th>
+      </tr></thead><tbody id="gbody"></tbody></table>
+    </div>
+    <div class="vacio" id="gVacio">Cargando…</div>
+  </div>
+
+  <div id="corte2Panel">
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="c2Tot">0</div><div class="l">Con actividad de Cerebro</div></div>
+      <div class="kpi"><div class="v" id="c2Quiz">0</div><div class="l">Hicieron el quiz</div></div>
+      <div class="kpi"><div class="v" id="c2Juego">0</div><div class="l">Jugaron el arcade</div></div>
+      <div class="kpi"><div class="v" id="c2Dib">0</div><div class="l">Subieron dibujo</div></div>
+    </div>
+    <div class="barra-tools">
+      <input id="buscarC2" type="search" placeholder="🔎 Buscar por nombre o correo…">
+      <div><button id="csvC2">⬇️ Exportar CSV 2º corte</button> <span class="mini" id="actC2"></span></div>
+    </div>
+    <p class="mini">Segundo corte (Cerebro): <b>quiz</b>, <b>juego (arcade)</b> y <b>dibujo</b>. Puedes ver la imagen y calificarla aquí mismo (aunque no esté calificada). Estas notas no se mezclan con las de Semanas 1–4.</p>
+    <div class="tabla-wrap">
+      <table><thead><tr>
+        <th>Estudiante</th><th>Correo</th><th>🧠 Quiz</th><th>🕹️ Juego</th><th>📸 Dibujo</th><th>Nota dibujo (0-5)</th><th>Última</th>
+      </tr></thead><tbody id="c2body"></tbody></table>
+    </div>
+    <div class="vacio" id="c2Vacio">Cargando…</div>
+  </div>
+
+  <p class="mini" style="margin-top:16px">Actualización automática en vivo. Cambia de semana con el selector de arriba.</p>
+</main>
+
+<div id="modal"><div class="box">
+  <div class="top"><button class="cerrar" id="cerrarModal">✕</button><h2 id="mNombre"></h2><div class="mini" id="mCorreo" style="opacity:.85"></div></div>
+  <div class="cuerpo" id="mCuerpo"></div>
+</div></div>
+<div id="modalDudas"><div class="box">
+  <div class="top"><button class="cerrar" id="cerrarDudas">✕</button><h2>💬 Dudas y recomendaciones</h2></div>
+  <div class="cuerpo" id="dudasCuerpo"></div>
+</div></div>
+<div id="modalTemas"><div class="box">
+  <div class="top"><button class="cerrar" id="cerrarTemas">✕</button><h2>📊 Apropiación por tema (curso)</h2></div>
+  <div class="cuerpo" id="temasClaseCuerpo"></div>
+</div></div>
+<div id="lbox"><img id="lboxImg" alt=""></div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA, TABLA_RESP, TABLA_DIG, TABLA_S4, TABLA_S5, TABLA_S6, TABLA_S7 } from './supabase-config.js';
+
+const SEMANAS={
+  corazon:{tabla:TABLA, titulo:'Corazón, grandes vasos y pericardio', recLbl:'Videos', recDet:'🎬 Videos vistos', total:13,
+    orden:[["ntEVGskIEfo","Orientación externa"],["0aWNj9gGo1c","Caras y surcos"],["inPX6Dq5Hrk","Aurícula derecha"],["WAWfLuuULdc","Ventrículo derecho"],["gDucPmMfhOM","Aurícula izquierda"],["YS5z-O75uqk","Ventrículo izquierdo"],["fCPclCATrhI","Válvulas"],["eIrMVnZzYyg","Pericardio"],["TThd0XGq-fU","Uso de pinzas"],["Tpuz0d4X6xE","Aprender anatomía"],["OYM0hmBOi8A","Config. ext/int (1)"],["oWezeCB1GU8","Config. ext/int (2)"],["OWPMrJdOFhI","Pericardio (min 5)"]],
+    temas:{orientacion:'Configuración externa',auriculas:'Aurículas',ventriculos:'Ventrículos',valvulas:'Válvulas y cuerdas',pericardio:'Pericardio y capas',grandes_vasos:'Grandes vasos',circulacion:'Circulación y conducción',caso:'Caso clínico'},
+    csv:'avance_semana1_corazon.csv'},
+  respiratorio:{tabla:TABLA_RESP, titulo:'Vía respiratoria baja y tórax', recLbl:'Recursos', recDet:'📚 Recursos', total:6,
+    orden:[["osteologia","Osteología caja torácica"],["intercostal","Espacio intercostal"],["diafragma","Diafragma"],["pulmones","Pulmones"],["yt_KR3fI4rm6RQ","Video complementario 1"],["yt_bDsXZoXG05A","Video complementario 2"]],
+    temas:{torax:'Pared torácica',via:'Vía aérea',pulmon:'Pulmón y pleura',caso:'Caso clínico'},
+    csv:'avance_semana2_respiratorio.csv'},
+  digestivo:{tabla:TABLA_DIG, titulo:'Sistema digestivo: irrigación, peritoneo y estómago', recLbl:'Recursos', recDet:'📚 Recursos', total:6,
+    orden:[["H_Mqz1I1YZE","Aorta abdominal"],["cZol_7jPJsM","Tronco celíaco"],["w9pN7_sJd_4","Vena cava y porta"],["peritoneo1","Peritoneo 1 (Lecturio)"],["peritoneo2","Peritoneo 2 (Lecturio)"],["estomago","Estómago (Lecturio)"]],
+    temas:{arterias:'Aorta y arterias',venas:'Vena cava y porta',peritoneo:'Peritoneo',estomago:'Estómago',caso:'Caso clínico'},
+    csv:'avance_semana3_digestivo.csv'},
+  renal:{tabla:TABLA_S4, titulo:'Anatomía renal: riñón, uréter y vejiga', recLbl:'Recursos', recDet:'📚 Recursos', total:7,
+    orden:[["signos_vitales","Signos vitales (Lecturio)"],["tutor_renal","Tutor Renal (GPT)"],["yt_GKwh20nPV4Y","Config. ext/int (guía)"],["yt_LtSN0nvnios","Riñones min 6-9 (guía)"],["yt_pIrlcahqHtc","Anatomía renal 1"],["yt_f8KngQuYnNk","Anatomía renal 2"],["yt_vYDE11i0tYk","Palpación renal"]],
+    temas:{macro:'Riñón, uréter y vejiga',vascular:'Vascularización renal',nefrona:'Nefrona (general)',histo:'Histología de la nefrona',via:'Vía urinaria',caso:'Caso: falla renal'},
+    csv:'avance_semana4_renal.csv'},
+  cerebro:{tabla:TABLA_S5, titulo:'Cerebro: superficie, irrigación y drenaje venoso', recLbl:'Recursos', recDet:'📚 Recursos', total:11,
+    orden:[["arcade","🕹️ Cerebro Arcade"],["snc_curso1","SNC encéfalo (Lecturio)"],["snc_curso2","Meninges/vasc (Lecturio)"],["yt_3OqSyK05TtY","Lóbulos"],["yt_802xG1ysVL0","Vascularización"],["yt_sSwPwSzAP_g","Círculo de Willis"],["yt_wJkrVCClE8M","Meninges"],["yt_0KkDYnoSPTA","Drenaje venoso"],["yt_1_r0y3P6TrY","Complemento 1"],["yt_ar0hIGXvvH0","Complemento 2"],["yt_I_aLv1tPnyM","Complemento 3"]],
+    temas:{lobulos:'Lóbulos y surcos',willis:'Círculo de Willis',territorios:'Territorios vasculares',meninges:'Meninges y venoso',caso:'Caso: ACV'},
+    csv:'avance_semana5_cerebro.csv'},
+  semana6:{tabla:TABLA_S6, titulo:'Cerebro interno: núcleos, cápsulas y ventrículos', recLbl:'Recursos', recDet:'📚 Recursos', total:5,
+    orden:[["lecturio_neuro","Neuroanatomía (Lecturio)"],["yt_QAV7yB2Hfb8","Cerebro interno/ventricular"],["yt__sw6bMvkCMA","Cerebro interno (R. Aldana)"],["yt_ShHFhE22bcM","Cortes coronales"],["yt_Xx1wgQndT-E","Cortes axiales"],["yt_x70rro4XT-g","Complemento"]],
+    temas:{nucleos:'Núcleos basales',talamo:'Tálamo y diencéfalo',blanca:'Sustancia blanca y cápsulas',comisuras:'Comisuras y fascículos',ventriculos:'Sistema ventricular y cisternas',caso:'Caso: fotoprotección y piel'},
+    csv:'avance_semana6_cerebro_interno.csv'},
+  cuello:{tabla:TABLA_S7, titulo:'Anatomía del cuello', recLbl:'Recursos', recDet:'📚 Recursos', total:4,
+    orden:[["lecturio_cuello","Anatomía del cuello (Lecturio)"],["yt_qajPa667ZMI","Miología y triángulos"],["yt_ZLrsHfDRijg","Esplacnología del cuello"],["yt_zozD2x2Ll4Q","Ultrasonido en el cuello"]],
+    temas:{triangulos:'Triángulos mayores',musculos:'Miología del cuello',escalenos:'Escalenos y espacios',triangulos_menores:'Triángulos menores',vascular:'Vascularización',nervios:'Nervios del cuello',fascias:'Fascias y espacios',tiroides:'Glándula tiroides',caso:'Caso: hipotiroidismo'},
+    csv:'avance_semana7_cuello.csv'}
+};
+let SEM=SEMANAS.corazon;
+
+const conn=document.getElementById('conn');
+if(!SUPABASE_URL || SUPABASE_URL.includes('PEGA_AQUI')){
+  document.getElementById('setup').style.display='block';
+  conn.textContent='sin configurar';
+}else{
+  const sb=createClient(SUPABASE_URL, SUPABASE_KEY);
+  let datos=[], filtro='', orden={k:'_ms',dir:-1}, canal=null;
+  let modoGlobal=false, GLOBAL=[], filtroG='', canalG=[];
+
+  function fila(x){
+    const ms=x.ultima_actividad?new Date(x.ultima_actividad).getTime():0;
+    return {nombre:x.nombre||'(sin nombre)',correo:x.correo||'',porcentaje:x.porcentaje||0,
+      aciertos_total:x.aciertos_total||0,respondidas_total:x.respondidas_total||0,
+      rondas_completadas:x.rondas_completadas||0,segundos_activos:x.segundos_activos||0,
+      videos_vistos:x.videos_vistos||0,videos_lista:x.videos_lista||[],
+      checklist_marcados:x.checklist_marcados||0,checklist_total:x.checklist_total||0,
+      satisfaccion:x.satisfaccion||0,utilidad:x.utilidad||0,dudas:x.dudas||'',comentario:x.comentario||'',
+      temas:x.temas||{},
+      arcade_puntaje:x.arcade_puntaje||0,
+      primera:x.primera_actividad?new Date(x.primera_actividad).getTime():0,_ms:ms};
+  }
+  async function cargar(){
+    const {data,error}=await sb.from(SEM.tabla).select('*');
+    if(error){conn.textContent='error: '+error.message;console.error(error);return;}
+    datos=(data||[]).map(fila);
+    conn.textContent='🟢 en vivo';
+    document.getElementById('actualizado').textContent='Actualizado '+new Date().toLocaleTimeString();
+    render();
+  }
+  function suscribir(){
+    if(canal){ sb.removeChannel(canal); canal=null; }
+    canal=sb.channel('av-'+SEM.tabla)
+      .on('postgres_changes',{event:'*',schema:'public',table:SEM.tabla},payload=>{
+        const r=payload.new;
+        if(!r||!r.correo){cargar();return;}
+        const f=fila(r);
+        const i=datos.findIndex(d=>d.correo===f.correo);
+        if(i>=0) datos[i]=f; else datos.push(f);
+        document.getElementById('actualizado').textContent='Actualizado '+new Date().toLocaleTimeString();
+        render();
+      }).subscribe(st=>{ if(st==='SUBSCRIBED') conn.textContent='🟢 en vivo'; });
+  }
+  /* ===== Galería del tronco celíaco (solo Digestivo) ===== */
+  const escG=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let dibujos=[], votosG=[], canalGal=null;
+  function docEmail(){ try{return (localStorage.getItem('docente_soi2')||'').toLowerCase();}catch(_){return '';} }
+  function abrirLbox(u){ const b=document.getElementById('lbox'); document.getElementById('lboxImg').src=u; b.style.display='flex'; }
+  (function(){ const b=document.getElementById('lbox'); if(b){ b.onclick=()=>{ b.style.display='none'; document.getElementById('lboxImg').src=''; }; } document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const x=document.getElementById('lbox'); if(x){ x.style.display='none'; } } }); })();
+  async function guardarNota(inp){
+    const doc=docEmail();
+    if(!doc){ inp.style.borderColor='#b3202c'; alert('Inicia sesión como docente para calificar.'); return; }
+    let v; if(inp.value===''){ v=null; }
+    else { v=parseFloat(String(inp.value).replace(',','.')); if(isNaN(v)||v<0||v>5){ inp.style.borderColor='#b3202c'; inp.title='La nota debe estar entre 0 y 5'; return; } v=Math.round(v*100)/100; }
+    inp.style.borderColor='#c9a227';
+    const {error}=await sb.from(inp.dataset.tabla).update({nota:v,calificado_por:doc,calificado_en:new Date().toISOString()}).eq('id',inp.dataset.id);
+    inp.style.borderColor=error?'#b3202c':'#2e7d5b'; inp.title=error?('Error: '+error.message):('Calificado por '+doc);
+  }
+  const alfaKey=s=>[...String(s||'').normalize('NFD')].filter(c=>{const x=c.codePointAt(0);return x<0x300||x>0x36f;}).join('').toLowerCase().trim();
+  let ordenAlfa=false;
+  function toggleOrden(){ ordenAlfa=!ordenAlfa; document.querySelectorAll('.ordBtn').forEach(b=>b.textContent=ordenAlfa?'🔤 Orden: A–Z':'↕️ Ordenar A–Z'); renderGaleria(); renderFotosR(); renderGaleriaC(); renderFotosS6(); }
+  document.querySelectorAll('.ordBtn').forEach(b=>b.onclick=toggleOrden);
+  const NOTA_IN=(tabla,x)=>`<input type="number" min="0" max="5" step="0.1" class="notaIn" data-tabla="${tabla}" data-id="${x.id}" value="${x.nota??''}" style="width:64px;padding:5px 7px;border:1px solid #ccc;border-radius:7px;text-align:center">${x.calificado_por?'<div class="mini" style="opacity:.7">✔ '+escG(String(x.calificado_por).split('@')[0])+'</div>':''}`;
+  async function cargarGaleria(){
+    try{
+      const [d,v]=await Promise.all([ sb.from('dibujos_digestivo').select('*'), sb.from('dibujo_votos_dig').select('*') ]);
+      dibujos=d.data||[]; votosG=v.data||[]; renderGaleria();
+    }catch(e){console.warn('galeria',e);}
+  }
+  function renderGaleria(){
+    const body=document.getElementById('galBody'); if(!body) return;
+    const cnt={}; votosG.forEach(v=>cnt[v.dibujo_id]=(cnt[v.dibujo_id]||0)+1);
+    const lista=dibujos.slice().sort((a,b)=> ordenAlfa ? alfaKey(a.nombre).localeCompare(alfaKey(b.nombre)) : (cnt[b.id]||0)-(cnt[a.id]||0));
+    document.getElementById('galVacio').style.display=lista.length?'none':'block';
+    document.getElementById('galResumen').textContent=lista.length?('· '+lista.length+' dibujo(s), '+votosG.length+' voto(s)'):'';
+    body.innerHTML=lista.map((x,i)=>{
+      const n=cnt[x.id]||0, top=(i===0&&n>0)?' 🏆':'';
+      const f=x.creado?new Date(x.creado).toLocaleString():'';
+      return `<tr><td><b>${escG(x.nombre)}</b>${top}</td><td class="mini">${escG(x.correo)}</td><td><img class="thumbG" src="${escG(x.url)}" data-full="${escG(x.url)}" loading="lazy" alt="ver"><a class="verG" href="${escG(x.url)}" target="_blank" rel="noopener" title="Abrir en pestaña">↗</a></td><td><b>${n}</b></td><td>${NOTA_IN('dibujos_digestivo',x)}</td><td class="mini">${f}</td></tr>`;
+    }).join('');
+    body.querySelectorAll('.notaIn').forEach(i=>i.onchange=()=>guardarNota(i));
+    body.querySelectorAll('.thumbG').forEach(im=>im.onclick=()=>abrirLbox(im.dataset.full));
+  }
+  function suscribirGal(){
+    if(canalGal){ sb.removeChannel(canalGal); canalGal=null; }
+    canalGal=sb.channel('gal-dig')
+      .on('postgres_changes',{event:'*',schema:'public',table:'dibujos_digestivo'},()=>cargarGaleria())
+      .on('postgres_changes',{event:'*',schema:'public',table:'dibujo_votos_dig'},()=>cargarGaleria())
+      .subscribe();
+  }
+  /* ===== Galería · Foto de la práctica (Cerebro) ===== */
+  let dibujosC=[], votosGC=[], canalGalC=null;
+  async function cargarGaleriaC(){
+    try{
+      const [d,v]=await Promise.all([ sb.from('fotos_cerebro').select('*'), sb.from('foto_votos_cerebro').select('*') ]);
+      dibujosC=d.data||[]; votosGC=v.data||[]; renderGaleriaC();
+    }catch(e){console.warn('galeriaC',e);}
+  }
+  function renderGaleriaC(){
+    const body=document.getElementById('galBodyC'); if(!body) return;
+    const cnt={}; votosGC.forEach(v=>cnt[v.foto_id]=(cnt[v.foto_id]||0)+1);
+    const lista=dibujosC.slice().sort((a,b)=> ordenAlfa ? alfaKey(a.nombre).localeCompare(alfaKey(b.nombre)) : (cnt[b.id]||0)-(cnt[a.id]||0));
+    document.getElementById('galVacioC').style.display=lista.length?'none':'block';
+    document.getElementById('galResumenC').textContent=lista.length?('· '+lista.length+' foto(s), '+votosGC.length+' voto(s)'):'';
+    body.innerHTML=lista.map((x,i)=>{
+      const n=cnt[x.id]||0, top=(i===0&&n>0)?' 🏆':'';
+      const f=x.creado?new Date(x.creado).toLocaleString():'';
+      return `<tr><td><b>${escG(x.nombre)}</b>${top}</td><td class="mini">${escG(x.correo)}</td><td><img class="thumbG" src="${escG(x.thumb_url||x.url)}" data-full="${escG(x.url)}" loading="lazy" alt="ver"><a class="verG" href="${escG(x.url)}" target="_blank" rel="noopener" title="Abrir en pestaña">↗</a></td><td><b>${n}</b></td><td>${NOTA_IN('fotos_cerebro',x)}</td><td class="mini">${f}</td></tr>`;
+    }).join('');
+    body.querySelectorAll('.notaIn').forEach(i=>i.onchange=()=>guardarNota(i));
+    body.querySelectorAll('.thumbG').forEach(im=>im.onclick=()=>abrirLbox(im.dataset.full));
+  }
+  function suscribirGalC(){
+    if(canalGalC){ sb.removeChannel(canalGalC); canalGalC=null; }
+    canalGalC=sb.channel('gal-cerebro')
+      .on('postgres_changes',{event:'*',schema:'public',table:'fotos_cerebro'},()=>cargarGaleriaC())
+      .on('postgres_changes',{event:'*',schema:'public',table:'foto_votos_cerebro'},()=>cargarGaleriaC())
+      .subscribe();
+  }
+  /* ===== Fotos de laboratorio · Renal (por grupo) ===== */
+  let fotosR=[], canalFot=null;
+  async function cargarFotosR(){ try{ const {data}=await sb.from('fotos_renal').select('*').order('creado',{ascending:false}); fotosR=data||[]; renderFotosR(); }catch(e){console.warn('fotosR',e);} }
+  function renderFotosR(){
+    const body=document.getElementById('fotosBody'); if(!body) return;
+    document.getElementById('fotosVacio').style.display=fotosR.length?'none':'block';
+    document.getElementById('fotosResumen').textContent=fotosR.length?('· '+fotosR.length+' foto(s) de grupo'):'';
+    body.innerHTML=fotosR.slice().sort((a,b)=> ordenAlfa ? alfaKey(a.nombre).localeCompare(alfaKey(b.nombre)) : (new Date(b.creado)-new Date(a.creado))).map(x=>{ const f=x.creado?new Date(x.creado).toLocaleString():''; return `<tr><td><b>${escG(x.nombre)}</b></td><td class="mini">${escG(x.correo)}</td><td>${escG(x.integrantes)||'—'}</td><td><img class="thumbG" src="${escG(x.url)}" data-full="${escG(x.url)}" loading="lazy" alt="ver"><a class="verG" href="${escG(x.url)}" target="_blank" rel="noopener" title="Abrir en pestaña">↗</a></td><td>${NOTA_IN('fotos_renal',x)}</td><td class="mini">${f}</td></tr>`; }).join('');
+    body.querySelectorAll('.notaIn').forEach(i=>i.onchange=()=>guardarNota(i));
+    body.querySelectorAll('.thumbG').forEach(im=>im.onclick=()=>abrirLbox(im.dataset.full));
+  }
+  function suscribirFot(){ if(canalFot){ sb.removeChannel(canalFot); canalFot=null; } canalFot=sb.channel('fot-renal').on('postgres_changes',{event:'*',schema:'public',table:'fotos_renal'},()=>cargarFotosR()).subscribe(); }
+  /* ===== Fotos de laboratorio · Cerebro interno S6 (por grupo) ===== */
+  let fotosS6=[], canalFot6=null;
+  async function cargarFotosS6(){ try{ const {data}=await sb.from('fotos_s6').select('*').order('creado',{ascending:false}); fotosS6=data||[]; renderFotosS6(); }catch(e){console.warn('fotosS6',e);} }
+  function renderFotosS6(){
+    const body=document.getElementById('fotosBody6'); if(!body) return;
+    document.getElementById('fotosVacio6').style.display=fotosS6.length?'none':'block';
+    document.getElementById('fotosResumen6').textContent=fotosS6.length?('· '+fotosS6.length+' foto(s) de grupo'):'';
+    body.innerHTML=fotosS6.slice().sort((a,b)=> ordenAlfa ? alfaKey(a.nombre).localeCompare(alfaKey(b.nombre)) : (new Date(b.creado)-new Date(a.creado))).map(x=>{ const f=x.creado?new Date(x.creado).toLocaleString():''; return `<tr><td><b>${escG(x.nombre)}</b></td><td class="mini">${escG(x.correo)}</td><td>${escG(x.integrantes)||'—'}</td><td><img class="thumbG" src="${escG(x.url)}" data-full="${escG(x.url)}" loading="lazy" alt="ver"><a class="verG" href="${escG(x.url)}" target="_blank" rel="noopener" title="Abrir en pestaña">↗</a></td><td>${NOTA_IN('fotos_s6',x)}</td><td class="mini">${f}</td></tr>`; }).join('');
+    body.querySelectorAll('.notaIn').forEach(i=>i.onchange=()=>guardarNota(i));
+    body.querySelectorAll('.thumbG').forEach(im=>im.onclick=()=>abrirLbox(im.dataset.full));
+  }
+  function suscribirFot6(){ if(canalFot6){ sb.removeChannel(canalFot6); canalFot6=null; } canalFot6=sb.channel('fot-s6').on('postgres_changes',{event:'*',schema:'public',table:'fotos_s6'},()=>cargarFotosS6()).subscribe(); }
+  function aplicarSemana(){
+    document.documentElement.classList.toggle('resp', SEM===SEMANAS.respiratorio);
+    document.documentElement.classList.toggle('dig', SEM===SEMANAS.digestivo);
+    document.getElementById('titSem').textContent=SEM.titulo;
+    document.getElementById('thRec').textContent=SEM.recLbl;
+    document.getElementById('thRec').dataset.k='videos_vistos';
+    datos=[]; render(); cargar(); suscribir();
+    const esDig=(SEM===SEMANAS.digestivo);
+    document.getElementById('galeriaPanel').style.display=esDig?'block':'none';
+    if(esDig){ cargarGaleria(); suscribirGal(); }
+    else if(canalGal){ sb.removeChannel(canalGal); canalGal=null; }
+    const esRenal=(SEM===SEMANAS.renal);
+    document.getElementById('fotosPanel').style.display=esRenal?'block':'none';
+    if(esRenal){ cargarFotosR(); suscribirFot(); }
+    else if(canalFot){ sb.removeChannel(canalFot); canalFot=null; }
+    const esCerebro=(SEM===SEMANAS.cerebro);
+    document.getElementById('fotosCerebroPanel').style.display=esCerebro?'block':'none';
+    if(esCerebro){ cargarGaleriaC(); suscribirGalC(); }
+    else if(canalGalC){ sb.removeChannel(canalGalC); canalGalC=null; }
+    const esS6=(SEM===SEMANAS.semana6);
+    document.getElementById('fotosS6Panel').style.display=esS6?'block':'none';
+    if(esS6){ cargarFotosS6(); suscribirFot6(); }
+    else if(canalFot6){ sb.removeChannel(canalFot6); canalFot6=null; }
+  }
+  function cambiar(key,btnId){
+    const veniaConsolidado=modoGlobal||modoCorte2;
+    if(modoCorte2){ modoCorte2=false; document.body.classList.remove('c2mode'); limpiarC2(); document.getElementById('swCorte2').classList.remove('on'); }
+    if(modoGlobal){ modoGlobal=false; document.body.classList.remove('gmode'); limpiarCanalesG(); }
+    if(!veniaConsolidado && SEM===SEMANAS[key]) return;
+    SEM=SEMANAS[key];
+    ['swCor','swResp','swDig','swRenal','swCerebro','swS6','swCuello'].forEach(id=>document.getElementById(id).classList.toggle('on',id===btnId));
+    document.getElementById('swGlobal').classList.remove('on'); aplicarSemana(); }
+  document.getElementById('swCor').onclick=()=>cambiar('corazon','swCor');
+  document.getElementById('swResp').onclick=()=>cambiar('respiratorio','swResp');
+  document.getElementById('swDig').onclick=()=>cambiar('digestivo','swDig');
+  document.getElementById('swRenal').onclick=()=>cambiar('renal','swRenal');
+  document.getElementById('swCerebro').onclick=()=>cambiar('cerebro','swCerebro');
+  document.getElementById('swS6').onclick=()=>cambiar('semana6','swS6');
+  document.getElementById('swCuello').onclick=()=>cambiar('cuello','swCuello');
+
+  /* ===== Vista GLOBAL (consolidado de las 4 semanas) ===== */
+  const normC=c=>String(c||'').toLowerCase().trim();
+  const CLAVES=['corazon','respiratorio','digestivo','renal','cerebro'];
+  const CUATRO=['corazon','respiratorio','digestivo','renal']; // portafolio: primeras 4 semanas
+  function promDe(m){ const a=CLAVES.filter(k=>m.s[k]&&m.s[k].resp>0); return a.length?Math.round(a.reduce((s,k)=>s+m.s[k].pct,0)/a.length):0; }
+  function semActivas(m){ return CLAVES.filter(k=>m.s[k]&&m.s[k].resp>0).length; }
+  // ---- Nota de portafolio (0-5): 5 por módulo con quiz hecho + nota TC + nota foto renal, promediado ----
+  function hizoQuiz(m,k){ return !!(m.s[k]&&m.s[k].resp>0); }
+  function notaMod(m,k){ return hizoQuiz(m,k)?5:0; }
+  function notaPortafolio(m){
+    const comps=[notaMod(m,'corazon'),notaMod(m,'respiratorio'),notaMod(m,'digestivo'),notaMod(m,'renal'),
+                 (m.notaTronco!=null?Number(m.notaTronco):0),(m.notaRenalDib!=null?Number(m.notaRenalDib):0)];
+    const s=comps.reduce((a,b)=>a+b,0);
+    return Math.round((s/comps.length)*100)/100; // sobre 6 componentes, escala 0-5
+  }
+  // ---- Emparejamiento de integrantes (foto renal grupal) por nombre ----
+  const STOPN=new Set(['de','del','la','los','las','y','e','grupo']);
+  const sinAc=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  function toksN(n){ return sinAc(n).toLowerCase().split(/[^a-z]+/).filter(t=>t.length>1&&!STOPN.has(t)); }
+  function partirIntegrantes(txt){ return String(txt||'').split(/[,\n;]+/).map(s=>s.replace(/^\s*grupo\s*:?/i,'').trim()).filter(s=>s.length>=3); }
+  function indiceNombres(mapa){ return Object.values(mapa).map(m=>({correo:normC(m.correo),tk:new Set(toksN(m.nombre))})).filter(o=>o.tk.size>0); }
+  function matchNombre(nombre,idx){
+    const t=new Set(toksN(nombre)); if(t.size<1)return null;
+    const sub=idx.filter(o=>{let sh=0;t.forEach(x=>{if(o.tk.has(x))sh++;}); return sh>=2 && [...t].every(x=>o.tk.has(x));});
+    if(sub.length===1)return sub[0].correo;
+    let best=-1,bc=null,tie=false;
+    idx.forEach(o=>{let sh=0;t.forEach(x=>{if(o.tk.has(x))sh++;}); if(sh>best){best=sh;bc=o.correo;tie=false;}else if(sh===best){tie=true;}});
+    return (best>=2&&!tie)?bc:null;
+  }
+  async function cargarGlobal(){
+    try{
+      const proms=CLAVES.map(k=>sb.from(SEMANAS[k].tabla).select('correo,nombre,porcentaje,respondidas_total,ultima_actividad'));
+      const res=await Promise.all([...proms,
+        sb.from('dibujos_digestivo').select('correo,nota'),
+        sb.from('fotos_renal').select('correo,integrantes,nota') ]);
+      const mapa={};
+      CLAVES.forEach((k,i)=>{ (res[i].data||[]).forEach(r=>{ const c=normC(r.correo); if(!c)return; if(!mapa[c])mapa[c]={correo:r.correo,nombre:r.nombre||'',s:{},ms:0}; if(r.nombre)mapa[c].nombre=r.nombre; mapa[c].s[k]={pct:r.porcentaje||0,resp:r.respondidas_total||0}; const t=r.ultima_actividad?new Date(r.ultima_actividad).getTime():0; if(t>mapa[c].ms)mapa[c].ms=t; }); });
+      const dibRows=res[CLAVES.length].data||[];      // tronco celíaco (individual)
+      const fotRows=res[CLAVES.length+1].data||[];    // foto renal (por grupo)
+      const dibSet=new Set(), troncoNota={};
+      dibRows.forEach(r=>{ const c=normC(r.correo); if(!c)return; dibSet.add(c); if(r.nota!=null) troncoNota[c]=r.nota; });
+      const idx=indiceNombres(mapa), renalNota={};
+      fotRows.forEach(r=>{ if(r.nota==null)return; const c=normC(r.correo); if(c) renalNota[c]=r.nota; partirIntegrantes(r.integrantes).forEach(nm=>{ const mc=matchNombre(nm,idx); if(mc) renalNota[mc]=r.nota; }); });
+      Object.values(mapa).forEach(m=>{ const c=normC(m.correo); m.dib=dibSet.has(c); m.notaTronco=(c in troncoNota)?troncoNota[c]:null; m.notaRenalDib=(c in renalNota)?renalNota[c]:null; });
+      GLOBAL=Object.values(mapa); renderGlobal();
+    }catch(e){console.warn('global',e);}
+  }
+  function renderGlobal(){
+    const body=document.getElementById('gbody'); if(!body)return;
+    let v=GLOBAL.filter(m=>m.nombre.toLowerCase().includes(filtroG)||m.correo.toLowerCase().includes(filtroG));
+    v.sort((a,b)=>promDe(b)-promDe(a)||b.ms-a.ms);
+    document.getElementById('gVacio').style.display=v.length?'none':'block';
+    const cel=(m,k)=>{const x=m.s[k]; if(!x||x.resp===0)return '<td class="celg" style="color:#c9c2bb">—</td>'; const col=x.pct>=80?'#e7f4e4':x.pct>=60?'#fff6e0':'#fbe4e4'; return `<td class="celg" style="background:${col}">${x.pct}%</td>`;};
+    const celN=n=>n==null?'<td class="celg" style="color:#c9c2bb">—</td>':`<td class="celg">${Number(n).toFixed(1)}</td>`;
+    const celP=p=>{const col=p>=4?'#e7f4e4':p>=3?'#fff6e0':'#fbe4e4'; return `<td class="celg" style="background:${col}"><b>${p.toFixed(2)}</b></td>`;};
+    body.innerHTML=v.map(m=>{const p=promDe(m),na=semActivas(m),np=notaPortafolio(m); return `<tr><td><b>${esc(m.nombre||'(sin nombre)')}</b></td><td class="mini">${esc(m.correo)}</td>${cel(m,'corazon')}${cel(m,'respiratorio')}${cel(m,'digestivo')}${cel(m,'renal')}${cel(m,'cerebro')}<td class="celg"><b>${p}%</b></td><td class="celg">${na}/5</td>${celN(m.notaTronco)}${celN(m.notaRenalDib)}${celP(np)}<td class="mini">${m.ms?hace(m.ms):'—'}</td></tr>`;}).join('');
+    document.getElementById('gTot').textContent=GLOBAL.length;
+    const ps=GLOBAL.map(promDe).filter(p=>p>0);
+    document.getElementById('gProm').textContent=(ps.length?Math.round(ps.reduce((s,p)=>s+p,0)/ps.length):0)+'%';
+    document.getElementById('g4').textContent=GLOBAL.filter(m=>semActivas(m)===CLAVES.length).length;
+    document.getElementById('gDib').textContent=GLOBAL.filter(m=>m.dib).length;
+    const nps=GLOBAL.map(notaPortafolio); const gp=document.getElementById('gPort');
+    if(gp) gp.textContent=(nps.length?(nps.reduce((s,x)=>s+x,0)/nps.length):0).toFixed(2);
+    document.getElementById('actG').textContent='Actualizado '+new Date().toLocaleTimeString();
+  }
+  function limpiarCanalesG(){ canalG.forEach(c=>sb.removeChannel(c)); canalG=[]; }
+  function suscribirGlobal(){
+    limpiarCanalesG();
+    CLAVES.forEach(k=>canalG.push(sb.channel('g-'+k).on('postgres_changes',{event:'*',schema:'public',table:SEMANAS[k].tabla},()=>cargarGlobal()).subscribe()));
+    canalG.push(sb.channel('g-dib').on('postgres_changes',{event:'*',schema:'public',table:'dibujos_digestivo'},()=>cargarGlobal()).subscribe());
+    canalG.push(sb.channel('g-fot').on('postgres_changes',{event:'*',schema:'public',table:'fotos_renal'},()=>cargarGlobal()).subscribe());
+  }
+  function entrarGlobal(){
+    if(modoGlobal)return; modoGlobal=true;
+    if(modoCorte2){ modoCorte2=false; document.body.classList.remove('c2mode'); limpiarC2(); document.getElementById('swCorte2').classList.remove('on'); }
+    ['swCor','swResp','swDig','swRenal','swCerebro','swS6'].forEach(id=>document.getElementById(id).classList.remove('on'));
+    document.getElementById('swGlobal').classList.add('on');
+    document.body.classList.add('gmode');
+    document.getElementById('titSem').textContent='Consolidado · todas las semanas';
+    document.getElementById('conn').textContent='🟢 en vivo';
+    if(canal){ sb.removeChannel(canal); canal=null; }
+    if(canalGal){ sb.removeChannel(canalGal); canalGal=null; }
+    cargarGlobal(); suscribirGlobal();
+  }
+  document.getElementById('swGlobal').onclick=entrarGlobal;
+  document.getElementById('buscarG').oninput=e=>{filtroG=e.target.value.toLowerCase();renderGlobal();};
+  document.getElementById('csvG').onclick=()=>{
+    const filas=[['Nombre','Correo','Corazon %','Respiratorio %','Digestivo %','Renal %','Cerebro %','Promedio %','Semanas activas','Corazon (5/0)','Respiratorio (5/0)','Digestivo (5/0)','Renal (5/0)','Nota dibujo TC','Nota foto renal','Nota portafolio 1-4 sem','Ultima actividad']];
+    GLOBAL.forEach(m=>filas.push([m.nombre,m.correo,...CLAVES.map(k=>m.s[k]&&m.s[k].resp>0?m.s[k].pct:''),promDe(m),semActivas(m),notaMod(m,'corazon'),notaMod(m,'respiratorio'),notaMod(m,'digestivo'),notaMod(m,'renal'),m.notaTronco!=null?m.notaTronco:'',m.notaRenalDib!=null?m.notaRenalDib:'',notaPortafolio(m),m.ms?new Date(m.ms).toLocaleString():'']));
+    const csv=filas.map(f=>f.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:'text/csv'}));a.download='avance_global_SOI2.csv';a.click();
+  };
+
+  /* ===== 2º corte · Cerebro (quiz + juego + dibujo) ===== */
+  let modoCorte2=false, C2=[], filtroC2='', canalC2=[];
+  async function cargarCorte2(){
+    try{
+      const [a,f]=await Promise.all([
+        sb.from('avances_soi2_s5').select('correo,nombre,respondidas_total,aciertos_total,porcentaje,arcade_puntaje,ultima_actividad'),
+        sb.from('fotos_cerebro').select('*')
+      ]);
+      const mapa={};
+      (a.data||[]).forEach(r=>{ const c=normC(r.correo); if(!c)return; mapa[c]={correo:r.correo,nombre:r.nombre||'',quizR:r.respondidas_total||0,quizA:r.aciertos_total||0,quizP:r.porcentaje||0,arcade:r.arcade_puntaje||0,ms:r.ultima_actividad?new Date(r.ultima_actividad).getTime():0,foto:null}; });
+      (f.data||[]).slice().sort((x,y)=>new Date(y.creado)-new Date(x.creado)).forEach(x=>{ const c=normC(x.correo); if(!c)return; if(!mapa[c])mapa[c]={correo:x.correo,nombre:x.nombre||'',quizR:0,quizA:0,quizP:0,arcade:0,ms:0,foto:null}; if(!mapa[c].foto)mapa[c].foto=x; if(x.nombre&&!mapa[c].nombre)mapa[c].nombre=x.nombre; });
+      C2=Object.values(mapa); renderCorte2();
+    }catch(e){console.warn('corte2',e);}
+  }
+  function renderCorte2(){
+    const b=document.getElementById('c2body'); if(!b)return;
+    let v=C2.filter(m=>!filtroC2||(m.nombre||'').toLowerCase().includes(filtroC2)||(m.correo||'').toLowerCase().includes(filtroC2));
+    v.sort((x,y)=> ordenAlfa ? alfaKey(x.nombre).localeCompare(alfaKey(y.nombre)) : (y.quizP-x.quizP));
+    document.getElementById('c2Vacio').style.display=v.length?'none':'block';
+    b.innerHTML=v.map(m=>{
+      const quiz=m.quizR>0?`${m.quizA}/${m.quizR} <span class="mini">(${m.quizP}%)</span>`:'<span class="mini">—</span>';
+      const juego=m.arcade?`<b>${m.arcade}</b> pts`:'<span class="mini">—</span>';
+      const dib=m.foto?`<img class="thumbG" src="${escG(m.foto.thumb_url||m.foto.url)}" data-full="${escG(m.foto.url)}" loading="lazy" alt="ver"><a class="verG" href="${escG(m.foto.url)}" target="_blank" rel="noopener" title="Abrir">↗</a>`:'<span class="mini">sin dibujo</span>';
+      const nota=m.foto?NOTA_IN('fotos_cerebro',m.foto):'<span class="mini">—</span>';
+      return `<tr><td><b>${esc(m.nombre||'—')}</b></td><td class="mini">${esc(m.correo)}</td><td>${quiz}</td><td>${juego}</td><td>${dib}</td><td>${nota}</td><td class="mini">${m.ms?hace(m.ms):'—'}</td></tr>`;
+    }).join('');
+    b.querySelectorAll('.notaIn').forEach(i=>i.onchange=()=>guardarNota(i));
+    b.querySelectorAll('.thumbG').forEach(im=>im.onclick=()=>abrirLbox(im.dataset.full));
+    document.getElementById('c2Tot').textContent=C2.length;
+    document.getElementById('c2Quiz').textContent=C2.filter(m=>m.quizR>0).length;
+    document.getElementById('c2Juego').textContent=C2.filter(m=>m.arcade>0).length;
+    document.getElementById('c2Dib').textContent=C2.filter(m=>m.foto).length;
+    document.getElementById('actC2').textContent='Actualizado '+new Date().toLocaleTimeString();
+  }
+  function limpiarC2(){ canalC2.forEach(c=>sb.removeChannel(c)); canalC2=[]; }
+  function suscribirCorte2(){ limpiarC2(); ['avances_soi2_s5','fotos_cerebro','foto_votos_cerebro'].forEach(t=>canalC2.push(sb.channel('c2-'+t).on('postgres_changes',{event:'*',schema:'public',table:t},()=>cargarCorte2()).subscribe())); }
+  function entrarCorte2(){
+    if(modoCorte2)return; modoCorte2=true;
+    if(modoGlobal){ modoGlobal=false; document.body.classList.remove('gmode'); limpiarCanalesG(); document.getElementById('swGlobal').classList.remove('on'); }
+    ['swCor','swResp','swDig','swRenal','swCerebro','swS6'].forEach(id=>document.getElementById(id).classList.remove('on'));
+    document.getElementById('swCorte2').classList.add('on');
+    document.body.classList.add('c2mode');
+    document.getElementById('titSem').textContent='2º corte · Cerebro (quiz, juego y dibujo)';
+    document.getElementById('conn').textContent='🟢 en vivo';
+    if(canal){ sb.removeChannel(canal); canal=null; }
+    if(canalGal){ sb.removeChannel(canalGal); canalGal=null; }
+    if(canalFot){ sb.removeChannel(canalFot); canalFot=null; }
+    if(canalGalC){ sb.removeChannel(canalGalC); canalGalC=null; }
+    cargarCorte2(); suscribirCorte2();
+  }
+  document.getElementById('swCorte2').onclick=entrarCorte2;
+  document.getElementById('buscarC2').oninput=e=>{filtroC2=e.target.value.toLowerCase();renderCorte2();};
+  document.getElementById('csvC2').onclick=()=>{
+    const filas=[['Nombre','Correo','Quiz aciertos','Quiz respondidas','Quiz %','Juego (pts)','Dibujo subido','Nota dibujo','Ultima actividad']];
+    C2.forEach(m=>filas.push([m.nombre,m.correo,m.quizA,m.quizR,m.quizP,m.arcade,m.foto?'Si':'No',m.foto&&m.foto.nota!=null?m.foto.nota:'',m.ms?new Date(m.ms).toLocaleString():'']));
+    const csv=filas.map(f=>f.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:'text/csv'}));a.download='corte2_cerebro_SOI2.csv';a.click();
+  };
+
+  document.getElementById('buscar').oninput=e=>{filtro=e.target.value.toLowerCase();render();};
+  document.querySelectorAll('th[data-k]').forEach(th=>{
+    th.onclick=()=>{const k=th.dataset.k;orden.dir=(orden.k===k)?-orden.dir:1;orden.k=k;
+      document.querySelectorAll('th[data-k]').forEach(t=>t.textContent=t.textContent.replace(/ [▾▴]$/,''));
+      th.textContent+=orden.dir>0?' ▴':' ▾';render();};
+  });
+  document.getElementById('csv').onclick=()=>{
+    const filas=[['Nombre','Correo','% aciertos','Aciertos','Respondidas','Rondas','Minutos',SEM.recLbl,'Checklist marcados','Checklist total','Arcade (pts)','Satisfaccion','Utilidad','Dudas','Comentario','Primera actividad','Ultima actividad']];
+    vista().forEach(d=>filas.push([d.nombre,d.correo,d.porcentaje,d.aciertos_total,d.respondidas_total,d.rondas_completadas,Math.round(d.segundos_activos/60),d.videos_vistos,d.checklist_marcados,d.checklist_total,d.arcade_puntaje||0,d.satisfaccion||'',d.utilidad||'',d.dudas,d.comentario,d.primera?new Date(d.primera).toLocaleString():'',d._ms?new Date(d._ms).toLocaleString():'']));
+    const csv=filas.map(f=>f.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(["﻿"+csv],{type:'text/csv'}));
+    a.download=SEM.csv;a.click();
+  };
+  function vista(){
+    let v=datos.filter(d=>d.nombre.toLowerCase().includes(filtro)||d.correo.toLowerCase().includes(filtro));
+    v.sort((a,b)=>{const x=a[orden.k],y=b[orden.k];return (x>y?1:x<y?-1:0)*orden.dir;});
+    return v;
+  }
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function barrasTemas(temas){
+    temas=temas||{};
+    return Object.keys(SEM.temas).map(k=>{
+      const s=temas[k]||{ok:0,total:0};
+      const pct=s.total?Math.round(s.ok/s.total*100):0;
+      const col=s.total?(pct>=80?'var(--verde)':pct>=60?'var(--ambar)':'var(--rojo)'):'#ccc';
+      return `<div style="margin:7px 0"><div style="display:flex;justify-content:space-between;font-size:.83rem"><span>${SEM.temas[k]}</span><span style="font-weight:700">${s.total?pct+'% ('+s.ok+'/'+s.total+')':'—'}</span></div><div style="height:8px;background:#eee;border-radius:5px;overflow:hidden;margin-top:2px"><i style="display:block;height:100%;width:${pct}%;background:${col}"></i></div></div>`;
+    }).join('');
+  }
+  function claseP(p){return p>=80?'alto':p>=60?'medio':'bajo';}
+  function mins(s){return Math.round((s||0)/60);}
+  function tiempoTxt(s){s=s||0;if(s<60)return s+' s';const m=Math.floor(s/60);if(m<60)return m+' min';return Math.floor(m/60)+' h '+(m%60)+' min';}
+  function hace(ms){if(!ms)return '—';const s=(Date.now()-ms)/1000;
+    if(s<60)return 'hace '+Math.floor(s)+'s';if(s<3600)return 'hace '+Math.floor(s/60)+' min';
+    if(s<86400)return 'hace '+Math.floor(s/3600)+' h';return new Date(ms).toLocaleDateString();}
+  function render(){
+    const v=vista();
+    document.getElementById('vacio').style.display=v.length?'none':'block';
+    const activos=datos.filter(d=>d._ms&&Date.now()-d._ms<300000).length;
+    const prom=datos.length?Math.round(datos.reduce((s,d)=>s+d.porcentaje,0)/datos.length):0;
+    const resp=datos.reduce((s,d)=>s+d.respondidas_total,0);
+    const sats=datos.filter(d=>d.satisfaccion>0);
+    document.getElementById('kSat').textContent=sats.length?(sats.reduce((s,d)=>s+d.satisfaccion,0)/sats.length).toFixed(1)+' ★':'—';
+    const nDudas=datos.filter(d=>(d.dudas&&d.dudas.trim())||(d.comentario&&d.comentario.trim())).length;
+    document.getElementById('btnDudas').textContent='💬 Dudas y recomendaciones'+(nDudas?' ('+nDudas+')':'');
+    document.getElementById('kTot').textContent=datos.length;
+    document.getElementById('kActivos').textContent=activos;
+    document.getElementById('kProm').textContent=prom+'%';
+    document.getElementById('kResp').textContent=resp;
+    document.getElementById('cuerpo').innerHTML=v.map((d,idx)=>{
+      const act=d._ms&&Date.now()-d._ms<300000;
+      return `<tr data-i="${idx}">
+        <td><span class="reciente ${act?'on':''}"></span>${esc(d.nombre)}</td>
+        <td><span class="pct ${claseP(d.porcentaje)}">${d.porcentaje}%</span><div class="prog"><i style="width:${d.porcentaje}%"></i></div></td>
+        <td>${d.aciertos_total}/${d.respondidas_total}</td>
+        <td>${d.rondas_completadas}</td>
+        <td>${tiempoTxt(d.segundos_activos)}</td>
+        <td>${d.videos_vistos}/${SEM.total}</td>
+        <td>${d.checklist_marcados}${d.checklist_total?'/'+d.checklist_total:''}</td>
+        <td>${SEM===SEMANAS.cerebro?(d.arcade_puntaje?('<b>'+d.arcade_puntaje+'</b> pts'):'—'):'—'}</td>
+        <td class="mini">${hace(d._ms)}</td>
+      </tr>`;
+    }).join('');
+    const filasV=v;
+    document.querySelectorAll('#cuerpo tr').forEach(tr=>{tr.onclick=()=>abrirDetalle(filasV[+tr.dataset.i]);});
+  }
+  function abrirDetalle(d){
+    document.getElementById('mNombre').textContent=d.nombre;
+    document.getElementById('mCorreo').textContent=d.correo;
+    const vistos=new Set(d.videos_lista||[]);
+    const chips=SEM.orden.map(([id,nom])=>`<span class="vidchip ${vistos.has(id)?'':'off'}">${vistos.has(id)?'▶':'○'} ${nom}</span>`).join('');
+    document.getElementById('mCuerpo').innerHTML=`
+      <div class="det">
+        <div class="c"><div class="l">% aciertos</div><div class="v">${d.porcentaje}%</div></div>
+        <div class="c"><div class="l">Quiz</div><div class="v">${d.aciertos_total}/${d.respondidas_total}</div></div>
+        <div class="c"><div class="l">Rondas completadas</div><div class="v">${d.rondas_completadas}</div></div>
+        <div class="c"><div class="l">Tiempo en el recurso</div><div class="v">${tiempoTxt(d.segundos_activos)}</div></div>
+        <div class="c"><div class="l">${SEM.recLbl}</div><div class="v">${d.videos_vistos}/${SEM.total}</div></div>
+        <div class="c"><div class="l">Checklist</div><div class="v">${d.checklist_marcados}${d.checklist_total?'/'+d.checklist_total:''}</div></div>
+        ${d.arcade_puntaje?`<div class="c"><div class="l">🕹️ Cerebro Arcade</div><div class="v">${d.arcade_puntaje} pts</div></div>`:''}
+      </div>
+      <div class="bloque"><h3>${SEM.recDet}</h3>${chips}</div>
+      <div class="bloque"><h3>🕒 Actividad</h3>
+        <div class="mini">Primera entrada: <b>${d.primera?new Date(d.primera).toLocaleString():'—'}</b></div>
+        <div class="mini">Última actividad: <b>${d._ms?new Date(d._ms).toLocaleString():'—'}</b> (${hace(d._ms)})</div>
+      </div>
+      <div class="bloque"><h3>🗳️ Encuesta</h3>
+        ${d.satisfaccion?`<div class="mini">Satisfacción: <b>${'★'.repeat(d.satisfaccion)}${'☆'.repeat(5-d.satisfaccion)}</b> (${d.satisfaccion}/5)</div>
+        <div class="mini">Utilidad: <b>${d.utilidad?d.utilidad+'/5':'—'}</b></div>
+        <div class="mini" style="margin-top:6px">Dudas: <b>${d.dudas?esc(d.dudas):'—'}</b></div>
+        <div class="mini">Comentario: <b>${d.comentario?esc(d.comentario):'—'}</b></div>`:'<div class="mini">Sin encuesta respondida.</div>'}
+      </div>
+      <div class="bloque"><h3>📊 Apropiación por tema</h3>${barrasTemas(d.temas)}</div>`;
+    document.getElementById('modal').style.display='flex';
+  }
+  document.getElementById('cerrarModal').onclick=()=>document.getElementById('modal').style.display='none';
+  document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')document.getElementById('modal').style.display='none';};
+
+  function abrirDudas(f){
+    f=f||'todas';
+    const base=datos.filter(d=>(d.dudas&&d.dudas.trim())||(d.comentario&&d.comentario.trim()));
+    base.sort((a,b)=>b._ms-a._ms);
+    let items=base;
+    if(f==='dudas') items=base.filter(d=>d.dudas&&d.dudas.trim());
+    if(f==='reco') items=base.filter(d=>d.comentario&&d.comentario.trim());
+    const nD=base.filter(d=>d.dudas&&d.dudas.trim()).length;
+    const nR=base.filter(d=>d.comentario&&d.comentario.trim()).length;
+    const filtro=`<div class="dfiltro">
+      <button data-df="todas" class="${f==='todas'?'on':''}">Todas (${base.length})</button>
+      <button data-df="dudas" class="${f==='dudas'?'on':''}">Solo dudas (${nD})</button>
+      <button data-df="reco" class="${f==='reco'?'on':''}">Solo recomendaciones (${nR})</button>
+      <button id="copiarDudas" style="margin-left:auto">⧉ Copiar</button></div>`;
+    const cards=items.map(d=>`<div class="dcard">
+      <div class="who">${esc(d.nombre)} <span>· ${esc(d.correo)}${d.satisfaccion?' · '+'★'.repeat(d.satisfaccion):''} · ${hace(d._ms)}</span></div>
+      ${d.dudas&&d.dudas.trim()?`<div class="q"><b>Duda</b><p>${esc(d.dudas)}</p></div>`:''}
+      ${d.comentario&&d.comentario.trim()?`<div class="q reco"><b>Recomendación</b><p>${esc(d.comentario)}</p></div>`:''}
+    </div>`).join('');
+    const cont=document.getElementById('dudasCuerpo');
+    cont.innerHTML=filtro+(cards||'<p class="mini">Aún no hay dudas ni recomendaciones registradas.</p>');
+    cont.querySelectorAll('.dfiltro button[data-df]').forEach(b=>b.onclick=()=>abrirDudas(b.dataset.df));
+    const cp=document.getElementById('copiarDudas');
+    if(cp) cp.onclick=()=>{
+      const txt=items.map(d=>{let s=d.nombre+' ('+d.correo+'):';
+        if(d.dudas&&d.dudas.trim())s+='\n  Duda: '+d.dudas.trim();
+        if(d.comentario&&d.comentario.trim())s+='\n  Recomendación: '+d.comentario.trim();
+        return s;}).join('\n\n');
+      navigator.clipboard.writeText(txt).then(()=>{cp.textContent='✓ Copiado';setTimeout(()=>cp.textContent='⧉ Copiar',1500);});
+    };
+    document.getElementById('modalDudas').style.display='flex';
+  }
+  document.getElementById('btnDudas').onclick=()=>abrirDudas('todas');
+  document.getElementById('cerrarDudas').onclick=()=>document.getElementById('modalDudas').style.display='none';
+  document.getElementById('modalDudas').onclick=e=>{if(e.target.id==='modalDudas')document.getElementById('modalDudas').style.display='none';};
+
+  function abrirTemasClase(){
+    const agg={}; Object.keys(SEM.temas).forEach(k=>agg[k]={ok:0,total:0});
+    datos.forEach(d=>{ const t=d.temas||{}; Object.keys(agg).forEach(k=>{ if(t[k]){agg[k].ok+=t[k].ok||0; agg[k].total+=t[k].total||0;} }); });
+    document.getElementById('temasClaseCuerpo').innerHTML='<p class="mini">Promedio de aciertos del curso en cada tema (suma de todas las respuestas registradas).</p>'+barrasTemas(agg);
+    document.getElementById('modalTemas').style.display='flex';
+  }
+  document.getElementById('btnTemas').onclick=abrirTemasClase;
+  document.getElementById('cerrarTemas').onclick=()=>document.getElementById('modalTemas').style.display='none';
+  document.getElementById('modalTemas').onclick=e=>{if(e.target.id==='modalTemas')document.getElementById('modalTemas').style.display='none';};
+
+  /* ===== Login docente (acceso restringido) ===== */
+  async function esDocente(email){
+    try{ const {data}=await sb.from('docentes').select('correo').eq('correo',email.toLowerCase().trim()).maybeSingle(); return !!data; }
+    catch(e){ console.warn('docente',e); return false; }
+  }
+  let panelIniciado=false;
+  function iniciarPanel(){
+    if(panelIniciado) return; panelIniciado=true;
+    document.getElementById('docLogin').style.display='none';
+    cargar(); suscribir(); setInterval(render,30000);
+  }
+  document.getElementById('docEntrar').onclick=async()=>{
+    const em=document.getElementById('docCorreo').value.trim();
+    const e=document.getElementById('docErr');
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){e.style.color='';e.textContent='Escribe un correo válido.';return;}
+    e.style.color='var(--gris)';e.textContent='Verificando…';
+    if(await esDocente(em)){ try{localStorage.setItem('docente_soi2',em.toLowerCase());}catch(_){}; iniciarPanel(); }
+    else{ e.style.color='';e.textContent='Este correo no tiene acceso al panel docente.'; }
+  };
+  document.getElementById('docCorreo').addEventListener('keydown',ev=>{if(ev.key==='Enter')document.getElementById('docEntrar').click();});
+  document.getElementById('salirDoc').onclick=()=>{try{localStorage.removeItem('docente_soi2');}catch(_){}location.reload();};
+  (async()=>{
+    let g=''; try{g=localStorage.getItem('docente_soi2')||'';}catch(_){}
+    if(g && await esDocente(g)) iniciarPanel();
+    else document.getElementById('docLogin').style.display='flex';
+  })();
+}
+</script>
+</body>
+</html>

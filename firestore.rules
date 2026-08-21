@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Colección de avances de estudiantes.
+    // Modo aula abierto: cualquiera con el enlace puede registrar y leer.
+    // Suficiente para una práctica de curso. Para mayor seguridad,
+    // ver README_DESPLIEGUE.md (sección "Endurecer reglas").
+    match /avances/{correo} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.nombre is string &&
+        request.resource.data.correo is string &&
+        request.resource.data.nombre.size() > 1 &&
+        request.resource.data.nombre.size() < 120;
+      allow delete: if false;
+    }
+  }
+}

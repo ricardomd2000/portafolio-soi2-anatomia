@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomía del Cuello · SOI II</title>
+<style>
+:root{
+  --pri:#00695c; --pri-osc:#004d40; --pri-cl:#26a69a;
+  --azul:#0f7391; --crema:#f4faf8; --tinta:#20313a; --gris:#5c6b72;
+  --verde:#2e7d5b; --ambar:#c77d0a; --linea:#dceae4;
+  --sombra:0 4px 18px rgba(0,77,64,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--crema);color:var(--tinta);line-height:1.6;font-size:16.5px}
+header.top{background:linear-gradient(135deg,var(--pri-osc),var(--pri));
+  color:#fff;padding:34px 20px 26px;text-align:center;position:relative}
+header.top h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:.3px}
+header.top p{margin:2px 0;opacity:.92;font-size:.95rem}
+.pill{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+  padding:3px 12px;border-radius:999px;font-size:.8rem;margin-top:10px}
+.volver{position:absolute;left:14px;top:14px;color:#fff;font-size:.82rem;text-decoration:none;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+#estado{display:none}
+nav.fases{position:sticky;top:0;z-index:50;background:#fff;display:flex;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);flex-wrap:wrap}
+nav.fases button{flex:1 1 33%;min-width:120px;border:0;background:#fff;cursor:pointer;
+  padding:14px 8px;font-size:.98rem;font-weight:600;color:var(--gris);
+  border-bottom:3px solid transparent;transition:.15s}
+nav.fases button .n{display:block;font-size:.72rem;font-weight:700;opacity:.6}
+nav.fases button:hover{background:var(--crema)}
+nav.fases button.activa{color:var(--pri);border-bottom-color:var(--pri)}
+main{max-width:920px;margin:0 auto;padding:26px 18px 70px}
+.fase{display:none;animation:fade .35s}
+.fase.activa{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2.sec{font-size:1.35rem;color:var(--pri-osc);border-left:5px solid var(--pri);padding-left:12px;margin:34px 0 14px}
+h3{color:var(--azul);margin:22px 0 8px;font-size:1.1rem}
+.intro{color:var(--gris);margin-top:-6px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:var(--sombra)}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:6px;margin-bottom:8px}
+.tag.a{background:#e0f2f0;color:var(--pri)}
+.tag.tiempo{background:#e9f4ee;color:var(--verde)}
+.tag.extra{background:#fff3e0;color:var(--ambar)}
+ul.limpia{list-style:none;padding-left:0;margin:8px 0}
+ul.limpia li{padding:5px 0 5px 26px;position:relative}
+ul.limpia li::before{content:"›";position:absolute;left:6px;color:var(--pri);font-weight:700}
+.recursos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.recursos a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--pri);color:var(--pri);
+  border-radius:10px;padding:11px 16px;text-decoration:none;font-weight:600;font-size:.92rem;cursor:pointer}
+.recursos a:hover{background:var(--pri);color:#fff}
+.videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:12px 0}
+.vid{border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;position:relative;aspect-ratio:16/9}
+.vid img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:.2s}
+.vid:hover img{opacity:1}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid .play::after{content:"";width:0;height:0;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent;filter:drop-shadow(0 0 6px rgba(0,0,0,.5));margin-left:5px}
+.vid .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.82rem;padding:16px 10px 8px;font-weight:600}
+.vid iframe{width:100%;height:100%;border:0}
+.check label{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--pri);flex:0 0 auto}
+.check .done{text-decoration:line-through;color:var(--gris)}
+.progreso{height:9px;background:#eaeef0;border-radius:6px;overflow:hidden;margin:10px 0}
+.progreso i{display:block;height:100%;width:0;background:var(--verde);transition:.3s}
+.progtxt{font-size:.82rem;color:var(--gris)}
+.flujo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.9rem;margin:10px 0}
+.flujo span{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:6px 11px;font-weight:600}
+.flujo .fl{color:var(--pri);font-weight:700}
+.saludo{background:#e9f4ee;border:1px solid var(--verde);color:#1c5c40;padding:8px 14px;border-radius:10px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.saludo button{background:none;border:0;color:#b3202c;cursor:pointer;font-size:.82rem;text-decoration:underline}
+#login{position:fixed;inset:0;z-index:300;background:linear-gradient(135deg,var(--pri-osc),var(--pri));display:flex;align-items:center;justify-content:center;padding:20px}
+#login .box{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#login h2{margin:0 0 4px;color:var(--pri-osc);font-size:1.3rem}
+#login label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+#login input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+#login input:focus{outline:none;border-color:var(--pri)}
+#login .err{color:#b3202c;font-size:.83rem;min-height:18px;margin-top:6px}
+.quiz-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px 0}
+.controles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controles label{font-size:.85rem;color:var(--gris)}
+.controles select{padding:6px 10px;border:1px solid var(--linea);border-radius:8px;font-size:.9rem}
+.marcador{font-weight:700;color:var(--pri-osc);font-size:.92rem}
+.pregunta{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px;margin:14px 0;box-shadow:var(--sombra)}
+.pregunta .qh{display:flex;justify-content:space-between;gap:10px;font-size:.75rem;color:var(--gris);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.pregunta .q{font-weight:600;margin-bottom:12px;font-size:1.02rem}
+.opts button{display:block;width:100%;text-align:left;border:1px solid var(--linea);background:#fff;border-radius:10px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:.96rem;transition:.12s;color:var(--tinta)}
+.opts button:hover:not(:disabled){border-color:var(--pri);background:#eefaf7}
+.opts button:disabled{cursor:default}
+.opts button.bien{background:#e7f6ee;border-color:var(--verde);color:#1c5c40;font-weight:600}
+.opts button.mal{background:#fdeceb;border-color:#b3202c;color:#7d1620}
+.fb{margin-top:10px;padding:11px 14px;border-radius:10px;font-size:.9rem;display:none}
+.fb.ok{background:#e7f6ee;color:#1c5c40;border:1px solid var(--verde)}
+.fb.no{background:#fdeceb;color:#7d1620;border:1px solid #e14b57}
+.fb b{display:block;margin-bottom:2px}
+.qacts{text-align:center;margin:22px 0}
+.btn{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;margin:4px}
+.btn.sec{background:#fff;color:var(--pri);border:1px solid var(--pri)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.resultado{display:none;text-align:center;background:#fff;border:2px solid var(--pri);border-radius:14px;padding:24px;margin:16px 0;box-shadow:var(--sombra)}
+.resultado .score{font-size:2.4rem;font-weight:800;color:var(--pri)}
+.nota{background:#fff7e8;border-left:4px solid var(--ambar);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0}
+.aviso{background:#eef0f8;border-left:4px solid var(--azul);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.86rem;margin:12px 0;color:#0a5f57}
+.grave{background:#fdeceb;border-left:4px solid #b3202c;padding:11px 15px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0;color:#7d1620}
+.stars{display:flex;gap:6px;margin:2px 0 4px}
+.stars button{border:1px solid var(--linea);background:#fff;border-radius:8px;width:44px;height:40px;font-size:1.05rem;cursor:pointer;color:var(--gris);font-weight:700}
+.stars button.sel{background:var(--pri);color:#fff;border-color:var(--pri)}
+.enc label{display:block;font-weight:600;margin:14px 0 4px;font-size:.9rem}
+.enc textarea{width:100%;min-height:70px;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;font-size:.95rem;font-family:inherit;resize:vertical}
+.enc .ok{background:#e7f6ee;border:1px solid var(--verde);color:#1c5c40;padding:10px 14px;border-radius:10px;margin-top:12px;display:none}
+footer{text-align:center;color:var(--gris);font-size:.82rem;padding:26px 20px}
+.mini{font-size:.8rem;color:var(--gris)}
+.mn{background:#fff;border:1px solid var(--linea);border-radius:10px;padding:10px 12px;text-align:center}
+.mn .l{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.mn .v{font-size:1.2rem;font-weight:800;color:var(--pri-osc);margin-top:2px}
+</style>
+</head>
+<body>
+
+<div id="login"><div class="box">
+  <h2>🦢 Anatomía del Cuello</h2>
+  <p class="mini" style="margin:0 0 6px">SOI II · Semana 7 — Identifícate para comenzar.</p>
+  <label>Nombre completo</label>
+  <input id="inNombre" type="text" placeholder="Ej: María Fernanda Gómez" autocomplete="name">
+  <label>Correo institucional</label>
+  <input id="inCorreo" type="email" placeholder="tu.correo@universidad.edu" autocomplete="email">
+  <div class="err" id="loginErr"></div>
+  <button class="btn" id="btnEntrar" style="width:100%">Entrar y comenzar</button>
+</div></div>
+
+<header class="top">
+  <a class="volver" href="index.html">← Portafolio</a>
+  <span id="estado">Modo local</span>
+  <h1>Anatomía del Cuello</h1>
+  <p>Laboratorio de Anatomía · SOI II · Semana 7 · Integración con el caso de hipotiroidismo</p>
+  <p class="mini">Triángulos, miología, vísceras, vasos y nervios del cuello</p>
+  <span class="pill">Prepárate → practica → repasa · preguntas nuevas cada vez</span>
+</header>
+
+<nav class="fases">
+  <button class="tab activa" data-f="prep"><span class="n">Fase 1 · Antes</span>🧠 Preparación</button>
+  <button class="tab" data-f="dur"><span class="n">Fase 2 · Laboratorio</span>🔬 Durante la práctica</button>
+  <button class="tab" data-f="rep"><span class="n">Fase 3 · Después</span>✅ Repaso y evaluación</button>
+  <button class="tab" data-f="notas"><span class="n">Tus resultados</span>🎓 Notas del módulo</button>
+</nav>
+
+<main>
+
+<!-- NOTAS DEL MÓDULO -->
+<section class="fase notas" id="notas">
+  <div class="card" style="border:2px solid var(--pri);background:#f2fbf9">
+    <h3 style="margin-top:0">📋 Notas del módulo actual · Anatomía del cuello</h3>
+    <p class="mini" style="margin-top:0">Este módulo se evalúa con el quiz. No hay entrega adicional.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+      <div class="mn"><div class="l">🦢 Quiz Cuello</div><div class="v" id="mnQuiz">—</div></div>
+    </div>
+    <p class="mini" id="mnAviso" style="margin:8px 0 0">Identifícate para ver tus notas.</p>
+  </div>
+</section>
+
+<!-- FASE 1 -->
+<section class="fase prep activa" id="prep">
+  <h2 class="sec">🧠 Antes de entrar a la práctica</h2>
+  <p class="intro">Esta semana la situación en salud es el <b>hipotiroidismo</b>. La anatomía del cuello es la base para entender por qué un bocio se palpa donde se palpa, y qué estructuras están en riesgo si esa glándula tiroides crece o se opera.</p>
+
+  <div class="card">
+    <h3>Resultados de aprendizaje</h3>
+    <ul class="limpia">
+      <li>Identificar los triángulos anatómicos del cuello, sus límites y su contenido.</li>
+      <li>Identificar las estructuras viscerales, vasculares, nerviosas y linfáticas del cuello, y comprender sus funciones y relaciones anatómicas.</li>
+      <li>Integrar el conocimiento anatómico con el examen físico del cuello y su exploración por imágenes (ecografía, tomografía).</li>
+      <li>Reconocer la anatomía macroscópica de la glándula tiroides y su relación con estructuras vecinas clave (tráquea, nervio laríngeo recurrente, paratiroides).</li>
+      <li>Conectar la anatomía del cuello con el caso de hipotiroidismo: por qué se palpa el bocio, y qué estructuras están en riesgo en una cirugía tiroidea.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="border:2px solid var(--ambar)">
+    <h3 style="margin-top:0">🔗 El camino de la semana</h3>
+    <p>Primero recorrerás los <b>triángulos y músculos del cuello</b> (las referencias topográficas), luego los <b>vasos y nervios</b> que ellos delimitan, y por último la <b>glándula tiroides</b> propiamente dicha, que vive dentro del triángulo anterior, envuelta por la fascia cervical y en estrecha relación con la tráquea y el nervio laríngeo recurrente. Esa última estación es la que conecta directamente con el caso de Carlos.</p>
+  </div>
+
+  <div class="card">
+    <h3>Materiales para la práctica</h3>
+    <ul class="limpia">
+      <li>Modelos anatómicos y/o piezas cadavéricas del cuello (disección por planos).</li>
+      <li>Atlas físico (Netter) y cuaderno para dibujar/rotular.</li>
+      <li>Guantes, bata y EPP según norma del laboratorio.</li>
+    </ul>
+    <div class="nota"><b>Caso introductorio:</b> Carlos, 54 años, de Zipaquirá, consulta por 6 meses de aumento de peso, cansancio, dificultad para concentrarse y estreñimiento. FC 62, PA 105/55, piel fría, SatO2 92%. Al examen: <b>bocio</b> y piel seca. Laboratorios: TSH 20 mUI/L (alta), T4L 32 nmol/L (baja), T3L 0,6 nmol/L (baja). Ecografía: aumento difuso de ambos lóbulos tiroideos, sin nódulos ni calcificaciones.</div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Recursos (Lecturio)</h3>
+    <p class="mini">Ábrelos antes de venir. Se abren en una pestaña nueva con tu usuario de la biblioteca.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos complementarios</h3>
+    <p class="mini">Toca cada tarjeta para reproducir: miología y triángulos, esplacnología del cuello, y un video de ultrasonido de cuello.</p>
+    <div class="videos" id="vids-yt"></div>
+  </div>
+
+  <div class="card">
+    <h3>Roles del equipo</h3>
+    <ul class="limpia">
+      <li><b>Líder:</b> administra el tiempo y el orden de las estaciones.</li>
+      <li><b>Operador:</b> manipula el material anatómico con cuidado.</li>
+      <li><b>Relator clínico:</b> conecta hallazgos con el caso de hipotiroidismo.</li>
+      <li><b>Auditor:</b> diligencia los checklists y controla la calidad.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section class="fase dur" id="dur">
+  <h2 class="sec">🔬 Durante la práctica</h2>
+  <p class="intro">Trabaja estación por estación. Marca cada estructura al identificarla con seguridad.</p>
+
+  <div class="card">
+    <span class="tag a">Estación A</span><span class="tag tiempo">Triángulos mayores</span>
+    <h3>División del cuello en triángulos</h3>
+    <div class="check" data-chk="A">
+      <label><input type="checkbox"> Triángulo anterior: límites (borde anterior del ECM, borde inferior de la mandíbula, línea media)</label>
+      <label><input type="checkbox"> Triángulo posterior: límites (borde posterior del ECM, borde superior de la clavícula, borde anterior del trapecio)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">El cuello se organiza en dos grandes triángulos, cada uno subdividido en subtriángulos que albergan estructuras clave.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación B</span><span class="tag tiempo">Músculos superficiales e hioideos</span>
+    <h3>Miología del cuello (I)</h3>
+    <div class="check" data-chk="B">
+      <label><input type="checkbox"> Platisma: músculo más superficial, tensa la piel del cuello, inervado por el nervio facial</label>
+      <label><input type="checkbox"> Esternocleidomastoideo (ECM): origen esternón/clavícula, inserción en el proceso mastoides, rotación y flexión del cuello, inervado por el nervio accesorio</label>
+      <label><input type="checkbox"> Músculos suprahioideos (digástrico, estilohioideo): elevan el hioides en la deglución</label>
+      <label><input type="checkbox"> Músculos infrahioideos (omohioideo, esternohioideo): descienden el hioides y la laringe</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">El <b>digástrico</b> tiene dos vientres inervados por nervios distintos (mandibular y facial); los infrahioideos están inervados principalmente por el <b>asa cervical</b>.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación C</span><span class="tag tiempo">Músculos prevertebrales</span>
+    <h3>Escalenos y estructuras asociadas</h3>
+    <div class="check" data-chk="C">
+      <label><input type="checkbox"> Escalenos anterior, medio y posterior</label>
+      <label><input type="checkbox"> Espacio entre escaleno anterior y medio: paso del plexo braquial y la arteria subclavia</label>
+      <label><input type="checkbox"> Nervio frénico: cabalga sobre el escaleno anterior</label>
+      <label><input type="checkbox"> Vena subclavia: pasa por delante del escaleno anterior (a diferencia de la arteria, que pasa por detrás)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="grave"><b>Referencia clínica:</b> el espacio interescalénico (entre escaleno anterior y medio) es clave en bloqueos anestésicos del plexo braquial y en el síndrome del opérculo torácico.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación D</span><span class="tag tiempo">Triángulos menores</span>
+    <h3>Subdivisiones de los triángulos anterior y posterior</h3>
+    <div class="check" data-chk="D">
+      <label><input type="checkbox"> Triángulo digástrico (submandibular): arteria y vena facial, glándula submandibular</label>
+      <label><input type="checkbox"> Triángulo carotídeo: arteria carótida externa, nervio vago, vena yugular interna</label>
+      <label><input type="checkbox"> Triángulo occipital: nervio accesorio</label>
+      <label><input type="checkbox"> Triángulo supraclavicular: vena subclavia</label>
+      <label><input type="checkbox"> Triángulos pequeños: de Beclard, Pirogoff y Farabeuf</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">El <b>triángulo carotídeo</b> es punto de referencia quirúrgico clave para la irrigación cerebral y cervical.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación E</span><span class="tag tiempo">Vascularización</span>
+    <h3>Arterias y venas del cuello</h3>
+    <div class="check" data-chk="E">
+      <label><input type="checkbox"> Arteria carótida común y su bifurcación en externa e interna</label>
+      <label><input type="checkbox"> Arteria subclavia y arteria vertebral (irrigación cerebral posterior)</label>
+      <label><input type="checkbox"> Arteria tiroidea superior (irriga tiroides y laringe) y arteria facial</label>
+      <label><input type="checkbox"> Vena yugular interna, yugular externa y subclavia</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación F</span><span class="tag tiempo">Inervación</span>
+    <h3>Nervios del cuello</h3>
+    <div class="check" data-chk="F">
+      <label><input type="checkbox"> Nervio vago: inervación de vísceras del cuello y del tórax</label>
+      <label><input type="checkbox"> Nervio laríngeo recurrente (rama del vago): inerva la laringe</label>
+      <label><input type="checkbox"> Plexo cervical: auricular mayor, occipital menor, cervical transverso, supraclaviculares (sensitivos)</label>
+      <label><input type="checkbox"> Cadena simpática cervical: ganglios cervicales inferior, medio y superior</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="grave"><b>Nota clínica:</b> el nervio laríngeo recurrente es la estructura que más se protege durante una tiroidectomía: su lesión produce cambios de voz por parálisis de las cuerdas vocales.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación G</span><span class="tag tiempo">Fascias y espacios</span>
+    <h3>Fascias cervicales y espacios fasciales</h3>
+    <div class="check" data-chk="G">
+      <label><input type="checkbox"> Fascia cervical superficial: cubre los músculos más superficiales</label>
+      <label><input type="checkbox"> Fascia cervical profunda: capas superficial, media y profunda</label>
+      <label><input type="checkbox"> Espacios fasciales: comunican la cavidad oral con el mediastino (vía de propagación de infecciones)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+  </div>
+
+  <div class="card" style="border:2px solid var(--ambar)">
+    <span class="tag extra">Estación H · Complemento</span><span class="tag tiempo">Glándula tiroides</span>
+    <h3>Anatomía macroscópica de la glándula tiroides</h3>
+    <p class="mini" style="margin-top:0">Esta estación no está en la guía original de la semana, pero se agrega para conectar directamente la anatomía con el caso de hipotiroidismo de Carlos.</p>
+    <div class="check" data-chk="H">
+      <label><input type="checkbox"> Dos lóbulos (derecho e izquierdo) unidos por el istmo, sobre los anillos traqueales 2-4; posible lóbulo piramidal</label>
+      <label><input type="checkbox"> Envuelta por la fascia pretraqueal (cápsula "falsa"), además de su propia cápsula fibrosa</label>
+      <label><input type="checkbox"> Relaciones: tráquea (medial/posterior), carótidas comunes (laterales), esófago y nervio laríngeo recurrente (surco traqueoesofágico)</label>
+      <label><input type="checkbox"> Glándulas paratiroides: 4, en la cara posterior de los lóbulos tiroideos</label>
+      <label><input type="checkbox"> Irrigación: arteria tiroidea superior (de la carótida externa) e inferior (del tronco tirocervical, rama de la subclavia)</label>
+      <label><input type="checkbox"> Drenaje venoso: venas tiroideas superior y media (a la yugular interna) e inferior (a las venas braquiocefálicas)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota"><b>Correlación con el caso:</b> el bocio de Carlos es el <b>aumento difuso de ambos lóbulos</b> que se palpa justo por delante de la tráquea, por debajo del cartílago tiroides; su cercanía con el nervio laríngeo recurrente y las paratiroides explica por qué la cirugía tiroidea exige tanto cuidado anatómico.</div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section class="fase rep" id="rep">
+  <h2 class="sec">✅ Repaso y evaluación</h2>
+  <p class="intro">Pon a prueba lo aprendido. <b>Cada ronda muestra preguntas distintas.</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">🔗 Integración con el caso (Hipotiroidismo)</h3>
+    <p><b>Caso:</b> Carlos, 54 años, cuadro de 6 meses de aumento de peso, cansancio, dificultad para concentrarse y estreñimiento. FC 62, PA 105/55, piel fría, SatO2 92%. Bocio y piel seca al examen. TSH 20 mUI/L (alta), T4L y T3L bajas. Ecografía: aumento difuso bilateral, sin nódulos.</p>
+    <div class="flujo"><span>Falla primaria de la tiroides</span><span class="fl">→</span><span>↓ T4L / T3L</span><span class="fl">→</span><span>Pérdida de retroalimentación negativa</span><span class="fl">→</span><span>↑ TSH hipofisiaria</span><span class="fl">→</span><span>Estímulo mantenido sobre la tiroides</span><span class="fl">→</span><span>Hipertrofia e hiperplasia difusa: bocio</span></div>
+    <div class="grave"><b>Impresión diagnóstica:</b> hipotiroidismo primario (TSH alta con T4L/T3L bajas) con bocio difuso, sin nódulos — compatible con tiroiditis autoinmune (tipo Hashimoto).</div>
+    <div class="nota"><b>Correlación anatómica:</b> el bocio se localiza en el triángulo anterior del cuello, por delante de la tráquea y por debajo del cartílago tiroides — exactamente donde ubicaste la glándula en la Estación H. Su crecimiento difuso explica el hallazgo palpable; su vecindad con el nervio laríngeo recurrente y las paratiroides es la razón por la que, si Carlos requiriera cirugía, esas serían las estructuras a proteger.</div>
+  </div>
+
+  <h3>📝 Banco de preguntas</h3>
+  <div id="zonaQuiz" style="display:none">
+    <div class="saludo" id="saludo"></div>
+    <div class="quiz-top">
+      <div class="controles">
+        <label for="numP">Preguntas por ronda:</label>
+        <select id="numP">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+          <option value="0">Todas</option>
+        </select>
+        <button class="btn sec" id="nuevaRonda">🔀 Nueva ronda</button>
+      </div>
+      <div class="marcador" id="marcador">0 / 0 · 0 aciertos</div>
+    </div>
+    <div id="quiz"></div>
+    <div class="qacts"><button class="btn" id="verResultado">Ver resultado de la ronda</button></div>
+    <div class="resultado" id="resultado"><div class="score" id="scoreTxt">0%</div><p id="scoreMsg"></p></div>
+    <div class="card" id="temasCard" style="display:none">
+      <h3 style="margin-top:0">📊 Tu apropiación por tema</h3>
+      <p class="mini">Se actualiza con cada pregunta; acumula todas tus rondas. Verde ≥80%, ámbar ≥60%, rojo &lt;60%.</p>
+      <div id="temasBox"></div>
+    </div>
+  </div>
+
+  <div class="card enc" id="encuesta">
+    <h3>🗳️ Encuesta de satisfacción y dudas</h3>
+    <p style="margin-top:0">Al terminar, cuéntanos cómo te fue. Solo lo ve tu docente.</p>
+    <label>¿Qué tan satisfecho/a quedaste con la práctica? <span class="mini">(1 = poco · 5 = mucho)</span></label>
+    <div class="stars" data-name="satisfaccion"></div>
+    <label>¿Qué tan útil te resultó para prepararte? <span class="mini">(1–5)</span></label>
+    <div class="stars" data-name="utilidad"></div>
+    <label>¿Qué dudas te quedaron?</label>
+    <textarea id="inDudas" placeholder="Escribe aquí tus dudas sobre la anatomía o la práctica…"></textarea>
+    <label>Comentarios o sugerencias</label>
+    <textarea id="inComentario" placeholder="¿Qué mejorarías?"></textarea>
+    <div class="err" id="encErr" style="color:#b3202c;font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnEncuesta">Enviar encuesta</button>
+    <div class="ok" id="encuestaMsg">¡Gracias! Tu respuesta quedó registrada. 💙</div>
+  </div>
+
+  <div class="card">
+    <h3>🎫 Exit ticket</h3>
+    <ul class="limpia">
+      <li>Una estructura del cuello que hoy dejé de confundir: __________</li>
+      <li>La hormona alta en el caso de Carlos y por qué: __________</li>
+      <li>El nervio que hay que proteger en una cirugía tiroidea: __________</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>Recurso de estudio · Anatomía del cuello + caso de hipotiroidismo · SOI II Semana 7 · Uso educativo.</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA_S7, DOMINIO_INSTITUCIONAL } from './supabase-config.js';
+const TABLA=TABLA_S7;
+let sb=null, FB_OK=false;
+const badge=document.getElementById('estado');
+if(SUPABASE_URL && !SUPABASE_URL.includes('PEGA_AQUI')){
+  try{ sb=createClient(SUPABASE_URL, SUPABASE_KEY); FB_OK=true; badge.textContent='🟢 Conectado'; }
+  catch(e){ badge.textContent='Modo local'; console.warn('Supabase no inició:',e); }
+}
+
+/* Cierre de módulo (calendario académico) */
+const CIERRE_MODULO = new Date('2026-08-28T09:00:00-05:00');
+function moduloCerrado(){ return Date.now() >= CIERRE_MODULO.getTime(); }
+
+/* Rastreador de uso */
+const videosVistos=new Set();
+let baseSegundos=0, segundosSesion=0, checklistMarcados=0, checklistTotal=0;
+let visible=true;
+document.addEventListener('visibilitychange',()=>{visible=document.visibilityState==='visible';});
+setInterval(()=>{ if(visible) segundosSesion++; },1000);
+setInterval(()=>{ if(FB_OK && ESTUDIANTE) guardarAvance(); },30000);
+function registrarRecurso(id){ if(!videosVistos.has(id)){ videosVistos.add(id); if(ESTUDIANTE) guardarAvance(); } }
+function actualizarChecklist(){ const ins=document.querySelectorAll('.check input'); checklistTotal=ins.length; checklistMarcados=[...ins].filter(i=>i.checked).length; }
+
+/* Recursos Lecturio */
+const RECURSOS=[
+  {id:"lecturio_cuello",t:"Anatomía del cuello (Lecturio)",url:"https://unisabana.lecturio.com/#/course/s/83509"}
+];
+const contRec=document.getElementById('recursos');
+RECURSOS.forEach(r=>{
+  const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';
+  a.innerHTML='▶ '+r.t;
+  a.addEventListener('click',()=>registrarRecurso(r.id));
+  contRec.appendChild(a);
+});
+
+/* Videos complementarios (YouTube incrustado) */
+const YT=[
+  {id:"qajPa667ZMI",t:"Cuello: miología y triángulos"},
+  {id:"ZLrsHfDRijg",t:"Esplacnología del cuello"},
+  {id:"zozD2x2Ll4Q",t:"Ultrasonido en el cuello"}
+];
+function tarjetaVideo(v){
+  const d=document.createElement('div');d.className='vid';
+  d.innerHTML=`<img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${v.t}"><div class="play"></div><div class="lbl">${v.t}</div>`;
+  d.onclick=()=>{d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;d.style.cursor='default';registrarRecurso('yt_'+v.id);};
+  return d;
+}
+YT.forEach(v=>document.getElementById('vids-yt').appendChild(tarjetaVideo(v)));
+
+/* Banco de preguntas */
+const POOL=[
+ {id:1,cat:"triangulos",q:"El triángulo anterior del cuello está delimitado por:",o:["Borde posterior del ECM, clavícula y trapecio","Borde anterior del ECM, borde inferior de la mandíbula y línea media","Borde superior de la clavícula y el trapecio únicamente","El hueso hioides y el cartílago tiroides"],c:1,e:"El triángulo anterior lo delimitan el borde anterior del esternocleidomastoideo, el borde inferior de la mandíbula y la línea media del cuello."},
+ {id:2,cat:"triangulos",q:"El triángulo posterior del cuello está delimitado por:",o:["Borde posterior del ECM, borde superior de la clavícula y borde anterior del trapecio","Borde anterior del ECM y la mandíbula","El hioides y el esternón","Los escalenos únicamente"],c:0,e:"El triángulo posterior lo delimitan el borde posterior del ECM, la clavícula y el borde anterior del trapecio."},
+ {id:3,cat:"musculos",q:"El músculo más superficial del cuello, que tensa la piel y está inervado por el nervio facial, es:",o:["El esternocleidomastoideo","El platisma","El omohioideo","El escaleno anterior"],c:1,e:"El platisma es el músculo más superficial del cuello; se extiende de la mandíbula al tórax y lo inerva el nervio facial."},
+ {id:4,cat:"musculos",q:"El esternocleidomastoideo está inervado por:",o:["El nervio facial","El nervio accesorio (XI)","El nervio vago","El asa cervical"],c:1,e:"El ECM (junto con el trapecio) está inervado por el nervio accesorio (XI par craneal)."},
+ {id:5,cat:"musculos",q:"Los músculos suprahioideos, como el digástrico, principalmente:",o:["Descienden el hioides y la laringe","Elevan el hioides durante la deglución","Elevan las costillas","Flexionan lateralmente el cuello"],c:1,e:"Los suprahioideos (digástrico, estilohioideo, entre otros) elevan el hioides durante la deglución."},
+ {id:6,cat:"musculos",q:"Los músculos infrahioideos (omohioideo, esternohioideo) están inervados principalmente por:",o:["El nervio accesorio","El nervio facial","El asa cervical","El nervio vago"],c:2,e:"Los infrahioideos reciben inervación principalmente del asa cervical, y descienden el hioides y la laringe."},
+ {id:7,cat:"musculos",q:"El digástrico tiene dos vientres inervados por nervios diferentes: ¿cuáles?",o:["Facial y vago","Mandibular y facial","Accesorio y vago","Frénico y facial"],c:1,e:"El vientre anterior del digástrico lo inerva el nervio mandibular (V3); el posterior, el nervio facial (VII)."},
+ {id:8,cat:"escalenos",q:"Entre los músculos escaleno anterior y medio pasan:",o:["El nervio vago y la carótida","El plexo braquial y la arteria subclavia","El nervio frénico y la vena yugular interna","El nervio accesorio y la arteria facial"],c:1,e:"El espacio interescalénico (entre escaleno anterior y medio) da paso al plexo braquial y a la arteria subclavia."},
+ {id:9,cat:"escalenos",q:"El nervio frénico, crucial para la inervación del diafragma, cabalga sobre:",o:["El escaleno medio","El escaleno anterior","El trapecio","El digástrico"],c:1,e:"El nervio frénico se encuentra sobre la cara anterior del músculo escaleno anterior."},
+ {id:10,cat:"escalenos",q:"En relación con el escaleno anterior, la arteria subclavia pasa por _____ y la vena subclavia por _____:",o:["Detrás / delante","Delante / detrás","Ambas por detrás","Ambas por delante"],c:0,e:"La arteria subclavia pasa por detrás del escaleno anterior; la vena subclavia, por delante."},
+ {id:11,cat:"triangulos_menores",q:"El triángulo digástrico (submandibular) contiene:",o:["La arteria carótida interna y el nervio vago","La arteria y vena facial, y la glándula submandibular","El nervio accesorio","La vena subclavia"],c:1,e:"El triángulo submandibular contiene la arteria y vena facial y aloja la glándula submandibular."},
+ {id:12,cat:"triangulos_menores",q:"El triángulo carotídeo alberga:",o:["La arteria carótida externa, el nervio vago y la vena yugular interna","Solo la vena yugular externa","El nervio frénico y la arteria vertebral","La glándula parótida"],c:0,e:"El triángulo carotídeo contiene la arteria carótida externa, el nervio vago y la vena yugular interna; es referencia quirúrgica vital."},
+ {id:13,cat:"triangulos_menores",q:"El triángulo occipital (parte del triángulo posterior) contiene principalmente:",o:["El nervio accesorio","La arteria subclavia","El nervio frénico","La vena yugular interna"],c:0,e:"El triángulo occipital contiene el nervio accesorio, crucial para la movilidad del cuello y los hombros."},
+ {id:14,cat:"triangulos_menores",q:"El triángulo supraclavicular es importante porque contiene:",o:["La vena subclavia","La arteria carótida interna","El nervio vago","La glándula tiroides"],c:0,e:"El triángulo supraclavicular contiene estructuras como la vena subclavia."},
+ {id:15,cat:"triangulos_menores",q:"Los triángulos de Beclard, Pirogoff y Farabeuf son:",o:["Los dos triángulos principales del cuello","Triángulos pequeños con relevancia por estructuras nerviosas y vasculares específicas","Exclusivos del triángulo posterior","Subdivisiones del triángulo supraclavicular únicamente"],c:1,e:"Son triángulos más pequeños, adicionales a los principales, con relevancia anatómica por contener estructuras vasculonerviosas específicas."},
+ {id:16,cat:"vascular",q:"La arteria carótida común se bifurca en:",o:["Carótida interna y externa","Vertebral y subclavia","Facial y lingual","Tiroidea superior e inferior"],c:0,e:"La carótida común se bifurca (generalmente a nivel de C4) en carótida interna y externa."},
+ {id:17,cat:"vascular",q:"La arteria que contribuye a la irrigación cerebral posterior, pasando por los forámenes transversos cervicales, es la:",o:["Arteria carótida interna","Arteria vertebral","Arteria facial","Arteria tiroidea superior"],c:1,e:"La arteria vertebral, rama de la subclavia, asciende por los forámenes transversos y contribuye a la irrigación cerebral posterior."},
+ {id:18,cat:"vascular",q:"La arteria tiroidea superior es rama de:",o:["La carótida interna","La carótida externa","La subclavia","La vertebral"],c:1,e:"La arteria tiroidea superior nace de la carótida externa e irriga la tiroides y la laringe."},
+ {id:19,cat:"vascular",q:"La vena que recibe el drenaje venoso principal del cuello, acompañando a la carótida, es la:",o:["Vena yugular externa","Vena yugular interna","Vena subclavia","Vena ácigos"],c:1,e:"La vena yugular interna acompaña a la carótida dentro de la vaina carotídea y es la principal vía de drenaje venoso cervical."},
+ {id:20,cat:"nervios",q:"El nervio vago es fundamental para la inervación de:",o:["Los músculos de la masticación","Las vísceras del cuello y del tórax","La piel de la cara","Los músculos oculares"],c:1,e:"El nervio vago (X par) inerva ampliamente las vísceras del cuello y del tórax (y del abdomen)."},
+ {id:21,cat:"nervios",q:"El nervio laríngeo recurrente, rama del vago, se encarga de:",o:["La inervación de la laringe","La inervación del diafragma","La sensibilidad de la piel del cuello","La motilidad del ECM"],c:0,e:"El nervio laríngeo recurrente inerva la laringe; su lesión (p. ej. en cirugía tiroidea) altera la voz."},
+ {id:22,cat:"nervios",q:"¿Cuál de los siguientes NO es una rama sensitiva del plexo cervical?",o:["Nervio auricular mayor","Nervio occipital menor","Nervio laríngeo recurrente","Nervios supraclaviculares"],c:2,e:"El laríngeo recurrente es rama del vago, no del plexo cervical. El plexo cervical aporta ramas sensitivas como auricular mayor, occipital menor, cervical transverso y supraclaviculares."},
+ {id:23,cat:"nervios",q:"La cadena simpática cervical incluye ganglios:",o:["Solo un ganglio cervical único","Cervicales inferior, medio y superior","Vagales exclusivamente","Frénicos"],c:1,e:"La cadena simpática cervical tiene ganglios cervicales inferior, medio y superior, claves en la inervación simpática de cuello, cara y vasos."},
+ {id:24,cat:"fascias",q:"La fascia cervical profunda se divide en:",o:["Dos capas","Tres capas (superficial, media y profunda)","Cuatro capas","No se subdivide"],c:1,e:"La fascia cervical profunda tiene tres capas: superficial, media y profunda, que envuelven músculos, vísceras y estructuras prevertebrales."},
+ {id:25,cat:"fascias",q:"Los espacios fasciales del cuello son clínicamente relevantes porque:",o:["No tienen ninguna función clínica","Permiten la comunicación entre la cavidad oral y el mediastino, vía de propagación de infecciones","Solo contienen tejido adiposo","Están completamente aislados entre sí"],c:1,e:"Los espacios fasciales pueden ser vías de propagación de infecciones o tumores entre la cavidad oral y el mediastino."},
+ {id:26,cat:"tiroides",q:"La glándula tiroides está formada por dos lóbulos unidos por:",o:["El cartílago tiroides","El istmo","El hueso hioides","La cápsula pretraqueal únicamente"],c:1,e:"El istmo conecta ambos lóbulos tiroideos, situado sobre los anillos traqueales 2-4."},
+ {id:27,cat:"tiroides",q:"La glándula tiroides tiene una relación anatómica directa con:",o:["El cartílago tiroides","La tráquea","El hueso hioides","La epiglotis"],c:1,e:"A pesar de su nombre, la tiroides se relaciona anatómicamente con la tráquea, no con el cartílago tiroides."},
+ {id:28,cat:"tiroides",q:"Las glándulas paratiroides se ubican típicamente en:",o:["El istmo tiroideo","La cara posterior de los lóbulos tiroideos","El interior de la tráquea","El vértice del lóbulo piramidal"],c:1,e:"Las 4 glándulas paratiroides se sitúan en la cara posterior de los lóbulos tiroideos."},
+ {id:29,cat:"tiroides",q:"La arteria tiroidea inferior es rama de:",o:["La carótida externa","El tronco tirocervical (de la subclavia)","La carótida interna","La arteria facial"],c:1,e:"La arteria tiroidea inferior nace del tronco tirocervical, rama de la arteria subclavia."},
+ {id:30,cat:"tiroides",q:"El nervio que discurre en el surco traqueoesofágico, cerca de la tiroides, y debe protegerse en la cirugía tiroidea es:",o:["El nervio vago","El nervio laríngeo recurrente","El nervio frénico","El nervio accesorio"],c:1,e:"El nervio laríngeo recurrente asciende por el surco traqueoesofágico, muy cerca de la tiroides; su lesión quirúrgica altera la voz."},
+ {id:31,cat:"tiroides",q:"Las venas tiroideas superior y media drenan hacia:",o:["La vena subclavia","La vena yugular interna","Las venas braquiocefálicas","La vena ácigos"],c:1,e:"Las venas tiroideas superior y media drenan en la vena yugular interna; la inferior drena en las venas braquiocefálicas."},
+ {id:32,cat:"caso",q:"En el caso de Carlos, el patrón de TSH alta con T4L y T3L bajas es compatible con:",o:["Hipertiroidismo primario","Hipotiroidismo primario (falla de la glándula tiroides)","Hipotiroidismo central (hipofisiario)","Función tiroidea normal"],c:1,e:"TSH alta + T4L/T3L bajas indica que la falla está en la propia tiroides (hipotiroidismo primario); la hipófisis intenta compensar elevando la TSH."},
+ {id:33,cat:"caso",q:"El bocio de Carlos, sin nódulos y con aumento difuso, se explica anatómicamente por:",o:["Hipertrofia e hiperplasia difusa de ambos lóbulos tiroideos por estímulo mantenido de TSH","Un tumor único localizado","Ausencia congénita del istmo","Compresión externa de la tráquea"],c:0,e:"La TSH elevada de forma sostenida estimula la glándula, produciendo hipertrofia e hiperplasia difusa (bocio) sin nódulos focales."},
+ {id:34,cat:"caso",q:"Si Carlos requiriera una tiroidectomía, ¿qué estructuras estarían en mayor riesgo por su cercanía anatómica?",o:["El nervio laríngeo recurrente y las glándulas paratiroides","El nervio vago íntegro y la arteria carótida interna","El nervio frénico y la vena subclavia","El nervio accesorio y el trapecio"],c:0,e:"Por su proximidad directa a la tiroides, el nervio laríngeo recurrente (voz) y las paratiroides (calcio) son las estructuras que más se protegen en cirugía tiroidea."},
+ {id:35,cat:"caso",q:"¿Dónde se palpa clínicamente el bocio de Carlos?",o:["En el triángulo posterior, cerca del trapecio","En el triángulo anterior, por delante de la tráquea y debajo del cartílago tiroides","En el triángulo occipital","Detrás del músculo esternocleidomastoideo únicamente"],c:1,e:"El bocio se palpa en la línea media del triángulo anterior, justo por delante de la tráquea y por debajo del cartílago tiroides, donde se ubica la glándula."}
+];
+
+/* Navegación */
+document.querySelectorAll('nav.fases .tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav.fases .tab').forEach(x=>x.classList.remove('activa'));
+    document.querySelectorAll('.fase').forEach(x=>x.classList.remove('activa'));
+    b.classList.add('activa');
+    document.getElementById(b.dataset.f).classList.add('activa');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(b.dataset.f==='notas') cargarMisNotas();
+  };
+});
+
+/* Checklists */
+document.querySelectorAll('.check').forEach(box=>{
+  const barra=box.nextElementSibling.querySelector('i');
+  const txt=box.nextElementSibling.nextElementSibling;
+  const inputs=box.querySelectorAll('input');
+  function upd(){let n=0;inputs.forEach(i=>{const l=i.parentElement;i.checked?l.classList.add('done'):l.classList.remove('done');if(i.checked)n++;});
+    barra.style.width=Math.round(n/inputs.length*100)+'%';txt.textContent=`${n} de ${inputs.length} estructuras identificadas`;}
+  inputs.forEach(i=>i.onchange=()=>{upd();actualizarChecklist();if(ESTUDIANTE)guardarAvance();});upd();
+});
+actualizarChecklist();
+
+/* Utilidades */
+function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sanea(c){return c.trim().toLowerCase();}
+let ESTUDIANTE=null, RONDA=[], respondidas={}, aciertos=0, acumRespondidas=0, acumAciertos=0;
+let temaStats={};
+const TEMAS_LABEL={triangulos:'Triángulos mayores',musculos:'Miología del cuello',escalenos:'Escalenos y espacios',triangulos_menores:'Triángulos menores',vascular:'Vascularización',nervios:'Nervios del cuello',fascias:'Fascias y espacios',tiroides:'Glándula tiroides',caso:'Caso: hipotiroidismo'};
+function renderTemas(){
+  const box=document.getElementById('temasBox'); if(!box) return;
+  const keys=Object.keys(TEMAS_LABEL);
+  const conDatos=keys.filter(k=>temaStats[k]&&temaStats[k].total);
+  const card=document.getElementById('temasCard'); if(card) card.style.display=conDatos.length?'block':'none';
+  box.innerHTML=keys.map(k=>{
+    const s=temaStats[k]||{ok:0,total:0};
+    const pct=s.total?Math.round(s.ok/s.total*100):0;
+    const col=s.total?(pct>=80?'var(--verde)':pct>=60?'var(--ambar)':'#b3202c'):'#ccc';
+    return `<div style="margin:9px 0">
+      <div style="display:flex;justify-content:space-between;font-size:.87rem"><span>${TEMAS_LABEL[k]}</span><span style="font-weight:700">${s.total?pct+'% ('+s.ok+'/'+s.total+')':'—'}</span></div>
+      <div style="height:9px;background:#eaeef0;border-radius:5px;overflow:hidden;margin-top:3px"><i style="display:block;height:100%;width:${pct}%;background:${col};transition:.3s"></i></div>
+    </div>`;
+  }).join('');
+}
+
+/* Login */
+const login=document.getElementById('login');
+const zonaQuiz=document.getElementById('zonaQuiz');
+async function entrar(){
+  const nombre=document.getElementById('inNombre').value.trim();
+  const correo=document.getElementById('inCorreo').value.trim();
+  const err=document.getElementById('loginErr');
+  if(nombre.length<3){err.textContent='Escribe tu nombre completo.';return;}
+  const reMail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!reMail.test(correo)){err.textContent='Escribe un correo válido.';return;}
+  if(DOMINIO_INSTITUCIONAL && !correo.toLowerCase().endsWith(DOMINIO_INSTITUCIONAL.toLowerCase())){
+    err.textContent='Usa tu correo institucional ('+DOMINIO_INSTITUCIONAL+').';return;}
+  err.textContent='';
+  let esDoc=false;
+  if(FB_OK){
+    const btn=document.getElementById('btnEntrar');btn.disabled=true;err.style.color='var(--gris)';err.textContent='Verificando acceso…';
+    try{ const {data:doc}=await sb.from('docentes').select('correo').eq('correo',correo.toLowerCase()).maybeSingle(); esDoc=!!doc; }catch(e){console.warn('docente',e);}
+    if(!esDoc){
+      try{
+        const {data:aut}=await sb.from('autorizados').select('correo').eq('correo',correo.toLowerCase()).maybeSingle();
+        if(!aut){err.style.color='';err.textContent='Este correo no está autorizado para esta actividad. Contacta a tu docente.';btn.disabled=false;return;}
+      }catch(e){console.warn('autoriz',e);}
+    }
+    btn.disabled=false;err.style.color='';err.textContent='';
+  }
+  ESTUDIANTE={nombre,correo,id:sanea(correo)};
+  try{localStorage.setItem('soi2_estudiante',JSON.stringify({nombre,correo}));}catch(e){}
+  login.style.display='none'; zonaQuiz.style.display='block';
+  const rol=esDoc?' · <b>docente</b>':'';
+  const avisoCierre=moduloCerrado()?'<div class="aviso" style="margin-top:10px">🔒 Este módulo está cerrado. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>':'';
+  document.getElementById('saludo').innerHTML=`<span>👋 Hola, <b>${nombre}</b>${rol}</span><button id="salir">No soy yo / Salir</button>`;
+  document.getElementById('saludo').insertAdjacentHTML('afterend',avisoCierre);
+  document.getElementById('salir').onclick=()=>{try{localStorage.removeItem('soi2_estudiante');}catch(e){}location.reload();};
+  if(!esDoc) registrarInicio();
+  nuevaRonda();
+  cargarMisNotas();
+}
+document.getElementById('btnEntrar').onclick=entrar;
+document.getElementById('inCorreo').addEventListener('keydown',e=>{if(e.key==='Enter')entrar();});
+try{
+  const g=JSON.parse(localStorage.getItem('soi2_estudiante')||'null');
+  if(g&&g.nombre&&g.correo){ document.getElementById('inNombre').value=g.nombre; document.getElementById('inCorreo').value=g.correo; entrar(); }
+}catch(e){}
+
+/* Encuesta */
+const encuestaVal={satisfaccion:0,utilidad:0};
+document.querySelectorAll('.stars').forEach(cont=>{
+  const name=cont.dataset.name;
+  for(let n=1;n<=5;n++){
+    const b=document.createElement('button');b.type='button';b.textContent=n;
+    b.onclick=()=>{encuestaVal[name]=n;cont.querySelectorAll('button').forEach((x,k)=>x.classList.toggle('sel',k<n));};
+    cont.appendChild(b);
+  }
+});
+document.getElementById('btnEncuesta').onclick=async()=>{
+  const err=document.getElementById('encErr');
+  if(!ESTUDIANTE){err.textContent='Primero identifícate.';return;}
+  if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se puede enviar la encuesta.';return;}
+  if(!encuestaVal.satisfaccion){err.textContent='Marca al menos tu nivel de satisfacción.';return;}
+  err.textContent='';
+  const dudas=document.getElementById('inDudas').value.trim();
+  const comentario=document.getElementById('inComentario').value.trim();
+  if(FB_OK){ try{ await sb.from(TABLA).upsert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,satisfaccion:encuestaVal.satisfaccion,utilidad:encuestaVal.utilidad||null,dudas:dudas||null,comentario:comentario||null,encuesta_fecha:new Date().toISOString(),ultima_actividad:new Date().toISOString()},{onConflict:'correo'}); }catch(e){console.warn('encuesta',e);} }
+  document.getElementById('encuestaMsg').style.display='block';
+  document.getElementById('btnEncuesta').disabled=true;
+};
+
+/* Quiz */
+const quizCont=document.getElementById('quiz');
+const marcador=document.getElementById('marcador');
+function nuevaRonda(){
+  if(moduloCerrado()){
+    quizCont.innerHTML='<div class="aviso">🔒 <b>Este módulo está cerrado.</b> Ya no se pueden responder más preguntas ni completar esta actividad. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>';
+    marcador.textContent='Módulo cerrado';
+    document.getElementById('nuevaRonda').disabled=true; document.getElementById('numP').disabled=true;
+    document.getElementById('verResultado').style.display='none';
+    return;
+  }
+  const n=parseInt(document.getElementById('numP').value,10);
+  let sel=barajar(POOL);
+  if(n>0) sel=sel.slice(0,n);
+  RONDA=sel.map(p=>{const orden=barajar(p.o.map((_,i)=>i));return {...p,o:orden.map(i=>p.o[i]),c:orden.indexOf(p.c)};});
+  respondidas={};aciertos=0;
+  document.getElementById('resultado').style.display='none';
+  renderQuiz();actualizarMarcador();
+  quizCont.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderQuiz(){
+  quizCont.innerHTML='';
+  RONDA.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='pregunta';
+    const catLbl=TEMAS_LABEL[p.cat]||p.cat;
+    card.innerHTML=`<div class="qh"><span>Pregunta ${i+1} de ${RONDA.length}</span><span>${catLbl}</span></div><div class="q">${p.q}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts=card.querySelector('.opts'), fb=card.querySelector('.fb');
+    p.o.forEach((op,j)=>{
+      const b=document.createElement('button');b.textContent=op;
+      b.onclick=()=>{
+        if(respondidas[i]!==undefined) return;
+        respondidas[i]=j;
+        opts.querySelectorAll('button').forEach((bb,k)=>{bb.disabled=true;if(k===p.c)bb.classList.add('bien');if(k===j&&j!==p.c)bb.classList.add('mal');});
+        const ok=j===p.c;if(ok){aciertos++;acumAciertos++;}
+        acumRespondidas++;
+        const tm=p.tema||p.cat; if(!temaStats[tm])temaStats[tm]={ok:0,total:0}; temaStats[tm].total++; if(ok)temaStats[tm].ok++; renderTemas();
+        fb.style.display='block';fb.className='fb '+(ok?'ok':'no');
+        fb.innerHTML=`<b>${ok?'✅ Correcto':'❌ Incorrecto'}</b>${p.e}`;
+        actualizarMarcador();guardarAvance();
+      };
+      opts.appendChild(b);
+    });
+    quizCont.appendChild(card);
+  });
+}
+function actualizarMarcador(){const n=Object.keys(respondidas).length;marcador.textContent=`${n} / ${RONDA.length} · ${aciertos} aciertos`;}
+document.getElementById('nuevaRonda').onclick=nuevaRonda;
+document.getElementById('numP').onchange=()=>{ if(ESTUDIANTE) nuevaRonda(); };
+document.getElementById('verResultado').onclick=()=>{
+  const n=Object.keys(respondidas).length, res=document.getElementById('resultado');
+  const pct=n?Math.round(aciertos/n*100):0;
+  document.getElementById('scoreTxt').textContent=pct+'%';
+  let msg;
+  if(n<RONDA.length) msg=`Llevas ${n} de ${RONDA.length} en esta ronda (${aciertos} correctas). ¡Termínala!`;
+  else if(pct>=85) msg=`¡Excelente! ${aciertos}/${RONDA.length}. Lanza una nueva ronda para repasar otras.`;
+  else if(pct>=60) msg=`Bien: ${aciertos}/${RONDA.length}. Repite con Nueva ronda para afianzar.`;
+  else msg=`${aciertos}/${RONDA.length}. Repasa la guía y reintenta.`;
+  document.getElementById('scoreMsg').textContent=msg;
+  res.style.display='block';res.scrollIntoView({behavior:'smooth'});
+  guardarAvance(true);
+};
+
+async function cargarMisNotas(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const {data:d}=await sb.from(TABLA).select('respondidas_total,aciertos_total,porcentaje').eq('correo',ESTUDIANTE.correo).maybeSingle();
+    const r=d||{};
+    const q=document.getElementById('mnQuiz'); if(q) q.textContent=(r.respondidas_total>0)?`${r.aciertos_total||0}/${r.respondidas_total} (${r.porcentaje||0}%)`:'Sin hacer';
+    const av=document.getElementById('mnAviso'); if(av) av.textContent='Se actualiza solo.';
+  }catch(e){console.warn('misNotas',e);}
+}
+
+/* Supabase */
+let rondasCompletadas=0; let avanceCargado=false;
+async function registrarInicio(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const {data}=await sb.from(TABLA).select('*').eq('correo',ESTUDIANTE.correo).maybeSingle();
+    if(data){
+      acumRespondidas=data.respondidas_total||0; acumAciertos=data.aciertos_total||0;
+      rondasCompletadas=data.rondas_completadas||0; baseSegundos=data.segundos_activos||0;
+      (data.videos_lista||[]).forEach(id=>videosVistos.add(id)); temaStats=data.temas||{}; renderTemas(); actualizarMarcador();
+    }
+    const payload={correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre, ultima_actividad:new Date().toISOString()};
+    if(!data||!data.primera_actividad) payload.primera_actividad=new Date().toISOString();
+    await sb.from(TABLA).upsert(payload,{onConflict:'correo'}); avanceCargado=true;
+    guardarAvance();
+  }catch(e){console.warn('registrarInicio',e); avanceCargado=true;}
+}
+async function guardarAvance(finRonda=false){ if(!avanceCargado) return;
+  if(!FB_OK||!ESTUDIANTE) return;
+  if(moduloCerrado()) return;
+  if(finRonda) rondasCompletadas++;
+  actualizarChecklist();
+  const pct=acumRespondidas?Math.round(acumAciertos/acumRespondidas*100):0;
+  try{
+    await sb.from(TABLA).upsert({
+      correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre,
+      respondidas_total:acumRespondidas, aciertos_total:acumAciertos, porcentaje:pct,
+      ronda_respondidas:Object.keys(respondidas).length, ronda_total:RONDA.length, ronda_aciertos:aciertos,
+      rondas_completadas:rondasCompletadas,
+      segundos_activos:baseSegundos+segundosSesion,
+      videos_vistos:videosVistos.size, videos_lista:[...videosVistos],
+      checklist_marcados:checklistMarcados, checklist_total:checklistTotal,
+      temas:temaStats,
+      ultima_actividad:new Date().toISOString()
+    },{onConflict:'correo'});
+  }catch(e){console.warn('guardarAvance',e);}
+}
+</script>
+</body>
+</html>

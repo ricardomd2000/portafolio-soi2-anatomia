@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerebro · SOI II · Semana 5</title>
+<style>
+:root{
+  --rojo:#c2185b; --rojo-osc:#880e4f; --rojo-cl:#e91e63;
+  --azul:#6a1b9a; --crema:#fdf4f8; --tinta:#20313a; --gris:#5c6b72;
+  --verde:#2e7d5b; --ambar:#c77d0a; --linea:#f0dce6;
+  --sombra:0 4px 18px rgba(136,14,79,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--crema);color:var(--tinta);line-height:1.6;font-size:16.5px}
+header.top{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));
+  color:#fff;padding:34px 20px 26px;text-align:center;position:relative}
+header.top h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:.3px}
+header.top p{margin:2px 0;opacity:.92;font-size:.95rem}
+.pill{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+  padding:3px 12px;border-radius:999px;font-size:.8rem;margin-top:10px}
+.volver{position:absolute;left:14px;top:14px;color:#fff;font-size:.82rem;text-decoration:none;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+#estado{display:none}
+nav.fases{position:sticky;top:0;z-index:50;background:#fff;display:flex;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);flex-wrap:wrap}
+nav.fases button{flex:1 1 33%;min-width:120px;border:0;background:#fff;cursor:pointer;
+  padding:14px 8px;font-size:.98rem;font-weight:600;color:var(--gris);
+  border-bottom:3px solid transparent;transition:.15s}
+nav.fases button .n{display:block;font-size:.72rem;font-weight:700;opacity:.6}
+nav.fases button:hover{background:var(--crema)}
+nav.fases button.activa{color:var(--rojo);border-bottom-color:var(--rojo)}
+main{max-width:920px;margin:0 auto;padding:26px 18px 70px}
+.fase{display:none;animation:fade .35s}
+.fase.activa{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2.sec{font-size:1.35rem;color:var(--rojo-osc);border-left:5px solid var(--rojo);padding-left:12px;margin:34px 0 14px}
+h3{color:var(--azul);margin:22px 0 8px;font-size:1.1rem}
+.intro{color:var(--gris);margin-top:-6px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:var(--sombra)}
+.card.plano{box-shadow:none}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:6px;margin-bottom:8px}
+.tag.a{background:#e6f3f7;color:var(--azul)}
+.tag.tiempo{background:#e9f4ee;color:var(--verde)}
+ul.limpia{list-style:none;padding-left:0;margin:8px 0}
+ul.limpia li{padding:5px 0 5px 26px;position:relative}
+ul.limpia li::before{content:"›";position:absolute;left:6px;color:var(--rojo);font-weight:700}
+.recursos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.recursos a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--rojo);color:var(--rojo);
+  border-radius:10px;padding:11px 16px;text-decoration:none;font-weight:600;font-size:.92rem;cursor:pointer}
+.recursos a:hover{background:var(--rojo);color:#fff}
+.videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:12px 0}
+.vid{border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;position:relative;aspect-ratio:16/9}
+.vid img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:.2s}
+.vid:hover img{opacity:1}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid .play::after{content:"";width:0;height:0;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent;filter:drop-shadow(0 0 6px rgba(0,0,0,.5));margin-left:5px}
+.vid .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.82rem;padding:16px 10px 8px;font-weight:600}
+.vid iframe{width:100%;height:100%;border:0}
+.check label{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--rojo);flex:0 0 auto}
+.check .done{text-decoration:line-through;color:var(--gris)}
+.progreso{height:9px;background:#eaeef0;border-radius:6px;overflow:hidden;margin:10px 0}
+.progreso i{display:block;height:100%;width:0;background:var(--verde);transition:.3s}
+.progtxt{font-size:.82rem;color:var(--gris)}
+.flujo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.9rem;margin:10px 0}
+.flujo span{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:6px 11px;font-weight:600}
+.flujo .fl{color:var(--rojo);font-weight:700}
+.gate{max-width:520px;margin:0 auto}
+.saludo{background:#e9f4ee;border:1px solid var(--verde);color:#1c5c40;padding:8px 14px;border-radius:10px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.saludo button{background:none;border:0;color:var(--rojo);cursor:pointer;font-size:.82rem;text-decoration:underline}
+#login{position:fixed;inset:0;z-index:300;background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));display:flex;align-items:center;justify-content:center;padding:20px}
+#login .box{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#login h2{margin:0 0 4px;color:var(--rojo-osc);font-size:1.3rem}
+#login label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+#login input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+#login input:focus{outline:none;border-color:var(--rojo)}
+#login .err{color:#b3202c;font-size:.83rem;min-height:18px;margin-top:6px}
+.quiz-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px 0}
+.controles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controles label{font-size:.85rem;color:var(--gris)}
+.controles select{padding:6px 10px;border:1px solid var(--linea);border-radius:8px;font-size:.9rem}
+.marcador{font-weight:700;color:var(--rojo-osc);font-size:.92rem}
+.pregunta{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px;margin:14px 0;box-shadow:var(--sombra)}
+.pregunta .qh{display:flex;justify-content:space-between;gap:10px;font-size:.75rem;color:var(--gris);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.pregunta .q{font-weight:600;margin-bottom:12px;font-size:1.02rem}
+.opts button{display:block;width:100%;text-align:left;border:1px solid var(--linea);background:#fff;border-radius:10px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:.96rem;transition:.12s;color:var(--tinta)}
+.opts button:hover:not(:disabled){border-color:var(--rojo);background:#f0f8fb}
+.opts button:disabled{cursor:default}
+.opts button.bien{background:#e7f6ee;border-color:var(--verde);color:#1c5c40;font-weight:600}
+.opts button.mal{background:#fdeceb;border-color:#b3202c;color:#7d1620}
+.fb{margin-top:10px;padding:11px 14px;border-radius:10px;font-size:.9rem;display:none}
+.fb.ok{background:#e7f6ee;color:#1c5c40;border:1px solid var(--verde)}
+.fb.no{background:#fdeceb;color:#7d1620;border:1px solid #e14b57}
+.fb b{display:block;margin-bottom:2px}
+.qacts{text-align:center;margin:22px 0}
+.btn{background:var(--rojo);color:#fff;border:0;border-radius:10px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;margin:4px}
+.btn.sec{background:#fff;color:var(--rojo);border:1px solid var(--rojo)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.resultado{display:none;text-align:center;background:#fff;border:2px solid var(--rojo);border-radius:14px;padding:24px;margin:16px 0;box-shadow:var(--sombra)}
+.resultado .score{font-size:2.4rem;font-weight:800;color:var(--rojo)}
+.nota{background:#fff7e8;border-left:4px solid var(--ambar);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0}
+.aviso{background:#eaf3f6;border-left:4px solid var(--azul);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.86rem;margin:12px 0;color:var(--azul)}
+.stars{display:flex;gap:6px;margin:2px 0 4px}
+.stars button{border:1px solid var(--linea);background:#fff;border-radius:8px;width:44px;height:40px;font-size:1.05rem;cursor:pointer;color:var(--gris);font-weight:700}
+.stars button.sel{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.enc label{display:block;font-weight:600;margin:14px 0 4px;font-size:.9rem}
+.enc textarea{width:100%;min-height:70px;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;font-size:.95rem;font-family:inherit;resize:vertical}
+.enc .ok{background:#e7f6ee;border:1px solid var(--verde);color:#1c5c40;padding:10px 14px;border-radius:10px;margin-top:12px;display:none}
+table.rubrica{width:100%;border-collapse:collapse;font-size:.86rem;margin:10px 0;background:#fff}
+table.rubrica th,table.rubrica td{border:1px solid var(--linea);padding:8px 10px;text-align:left;vertical-align:top}
+table.rubrica th{background:var(--rojo);color:#fff;font-weight:600}
+.galDibujos{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:12px}
+.dib{background:#fff;border:1px solid var(--linea);border-radius:12px;overflow:hidden;box-shadow:var(--sombra);position:relative}
+.dib img{width:100%;height:180px;object-fit:cover;cursor:zoom-in;display:block;background:#f4e6ee}
+.dib .meta{padding:9px 11px}
+.dib .meta .n{font-weight:600;font-size:.86rem;color:var(--rojo-osc)}
+.dib .meta .t{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.dib .votar{display:flex;align-items:center;gap:8px;margin-top:8px}
+.dib .votar button{border:1px solid var(--rojo);background:#fff;color:var(--rojo);border-radius:8px;padding:5px 12px;cursor:pointer;font-weight:600;font-size:.85rem}
+.dib .votar button.voted{background:var(--rojo);color:#fff}
+.dib .votar button:disabled{opacity:.55;cursor:default}
+.dib .votos{font-weight:800;color:var(--rojo-osc)}
+.dib .corona{position:absolute;top:8px;left:8px;background:#ffd35c;color:#7a5a00;border-radius:8px;padding:2px 8px;font-size:.74rem;font-weight:700}
+.mini{font-size:.8rem;color:var(--gris)}
+#fileFotoC{display:block;margin:10px 0}
+.mn{background:#fff;border:1px solid var(--linea);border-radius:10px;padding:10px 12px;text-align:center}
+.mn .l{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.mn .v{font-size:1.2rem;font-weight:800;color:var(--rojo-osc);margin-top:2px}
+footer{text-align:center;color:var(--gris);font-size:.82rem;padding:26px 20px}
+.mini{font-size:.8rem;color:var(--gris)}
+</style>
+</head>
+<body>
+
+<div id="login"><div class="box">
+  <h2>🧠 Cerebro: superficie, irrigación y venoso</h2>
+  <p class="mini" style="margin:0 0 6px">SOI II · Semana 5 — Identifícate para comenzar.</p>
+  <label>Nombre completo</label>
+  <input id="inNombre" type="text" placeholder="Ej: María Fernanda Gómez" autocomplete="name">
+  <label>Correo institucional</label>
+  <input id="inCorreo" type="email" placeholder="tu.correo@universidad.edu" autocomplete="email">
+  <div class="err" id="loginErr"></div>
+  <button class="btn" id="btnEntrar" style="width:100%">Entrar y comenzar</button>
+</div></div>
+
+<header class="top">
+  <a class="volver" href="portafolio.html">← Portafolio</a>
+  <span id="estado">Modo local</span>
+  <h1>Cerebro externo, irrigación y drenaje venoso</h1>
+  <p>Laboratorio de Anatomía · SOI II · Semana 5 · Sistema Nervioso I · Integración con caso de ACV</p>
+  <p class="mini">Lóbulos y surcos, círculo de Willis, meninges y senos venosos</p>
+  <span class="pill">Prepárate → practica → repasa · preguntas nuevas cada vez</span>
+</header>
+
+<nav class="fases">
+  <button class="tab activa" data-f="prep"><span class="n">Fase 1 · Antes</span>🧠 Preparación</button>
+  <button class="tab" data-f="dur"><span class="n">Fase 2 · Laboratorio</span>🔬 Durante la práctica</button>
+  <button class="tab" data-f="rep"><span class="n">Fase 3 · Después</span>✅ Repaso y evaluación</button>
+  <button class="tab" data-f="notas"><span class="n">Tus resultados</span>🎓 Notas del módulo</button>
+</nav>
+
+<main>
+
+<!-- NOTAS DEL MÓDULO -->
+<section class="fase notas" id="notas">
+  <div class="card" style="border:2px solid var(--rojo);background:#fff7fb">
+    <h3 style="margin-top:0">📋 Notas del módulo actual · Cerebro (Semana 5)</h3>
+    <p class="mini" style="margin-top:0">Estos son tus componentes de este módulo. Plazo para completarlos: <b>viernes 14 de agosto, 9:00 am</b>.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+      <div class="mn"><div class="l">🧠 Quiz de Cerebro</div><div class="v" id="mnQuiz">—</div></div>
+      <div class="mn"><div class="l">🕹️ Juego Cerebro</div><div class="v" id="mnArcade">—</div></div>
+      <div class="mn"><div class="l">📸 Dibujo de Cerebro</div><div class="v" id="mnDibujo">—</div></div>
+    </div>
+    <p class="mini" id="mnAviso" style="margin:8px 0 0">Identifícate para ver tus notas.</p>
+  </div>
+</section>
+
+<!-- FASE 1 -->
+<section class="fase prep activa" id="prep">
+  <h2 class="sec">🧠 Antes de entrar al laboratorio</h2>
+  <p class="intro">Llega dominando los lóbulos y surcos del cerebro, el círculo arterial de Willis con sus territorios, y las meninges con el drenaje venoso; así la correlación con el ACV te rendirá el doble.</p>
+
+  <div class="card" style="border:2px solid var(--rojo)">
+    <h3 style="margin-top:0">🕹️ Cerebro Arcade · juego de preparación</h3>
+    <p class="mini" style="margin-top:0">Repasa jugando la anatomía del cerebro y su irrigación. Se abre con tu sesión del portafolio; tu apertura queda registrada para tu docente.</p>
+    <div id="arcadeWrap" style="display:none;border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#0b0b0b;margin:10px 0">
+      <iframe id="arcadeFrame" title="Cerebro Arcade" loading="lazy" style="width:100%;height:640px;border:0;display:block"></iframe>
+    </div>
+    <button class="btn" id="btnArcade">🎮 Abrir Cerebro Arcade</button>
+    <a id="arcadeLink" href="arcade/index.html" target="_blank" rel="noopener" style="margin-left:12px;color:var(--rojo);font-weight:600;font-size:.9rem">↗ Abrir en pestaña nueva</a>
+  </div>
+
+  <div class="card">
+    <h3>Resultados de aprendizaje</h3>
+    <ul class="limpia">
+      <li>Identificar los surcos y circunvoluciones y relacionar cada lóbulo con su función general.</li>
+      <li>Identificar el círculo arterial cerebral (Willis) y los territorios de las arterias cerebrales.</li>
+      <li>Comprender las meninges, las divisiones de la duramadre y su relación con el drenaje venoso.</li>
+      <li>Integrar la anatomía vascular con el caso de enfermedad cerebrovascular (ACV).</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Materiales para el laboratorio</h3>
+    <ul class="limpia">
+      <li>Modelos de encéfalo y cortes; preparaciones según disponibilidad.</li>
+      <li>Atlas físico impreso y cuaderno para dibujar/rotular.</li>
+      <li>Guantes, bata y EPP según norma del laboratorio.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos de apoyo (Lecturio · requieren inicio de sesión institucional)</h3>
+    <p class="mini">Ábrelos antes de venir. Se abren en una pestaña nueva con tu usuario de la biblioteca.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos complementarios (YouTube)</h3>
+    <p class="mini">Toca cada tarjeta para reproducir. Refuerzan la anatomía del cerebro y su vascularización.</p>
+    <div class="videos" id="vids-yt"></div>
+  </div>
+
+  <div class="card">
+    <h3>Roles del equipo</h3>
+    <ul class="limpia">
+      <li><b>Líder:</b> administra el tiempo y el orden de las estaciones.</li>
+      <li><b>Operador:</b> manipula modelos/preparaciones con cuidado.</li>
+      <li><b>Relator clínico:</b> conecta hallazgos con el caso de ACV.</li>
+      <li><b>Auditor:</b> diligencia los checklists y controla la calidad.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section class="fase dur" id="dur">
+  <h2 class="sec">🔬 Durante la práctica</h2>
+  <p class="intro">Trabaja estación por estación. Marca cada estructura al identificarla con seguridad.</p>
+
+  <div class="card">
+    <span class="tag a">Estación A</span><span class="tag tiempo">Lóbulos y surcos</span>
+    <h3>Superficie del hemisferio cerebral</h3>
+    <div class="check" data-chk="A">
+      <label><input type="checkbox"> Surco central (de Rolando): separa lóbulo frontal y parietal</label>
+      <label><input type="checkbox"> Giro precentral (motor) y giro postcentral (sensitivo)</label>
+      <label><input type="checkbox"> Surco lateral (de Silvio) y la ínsula en su profundidad</label>
+      <label><input type="checkbox"> Surco parietooccipital: separa parietal y occipital</label>
+      <label><input type="checkbox"> Lóbulos frontal, parietal, temporal y occipital</label>
+      <label><input type="checkbox"> Surco longitudinal, cuerpo calloso, hoz del cerebro y tienda (tentorio) del cerebelo</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">El giro <b>precentral</b> es la corteza motora primaria; el <b>postcentral</b>, la sensitiva primaria. Ambos representan el hemicuerpo contralateral.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación B</span><span class="tag tiempo">Círculo de Willis</span>
+    <h3>Polígono arterial de la base</h3>
+    <div class="check" data-chk="B">
+      <label><input type="checkbox"> Arterias carótidas internas (sistema carotídeo)</label>
+      <label><input type="checkbox"> Arterias cerebrales anteriores (ACA) y comunicante anterior</label>
+      <label><input type="checkbox"> Arterias comunicantes posteriores</label>
+      <label><input type="checkbox"> Arterias cerebrales posteriores (ACP)</label>
+      <label><input type="checkbox"> Arterias vertebrales que se unen en la arteria basilar</label>
+      <label><input type="checkbox"> Cerebelosas: PICA (vertebral), AICA y SCA (basilar)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">El círculo de Willis conecta el sistema <b>carotídeo</b> y el <b>vertebro-basilar</b>: da circulación colateral si se ocluye una arteria principal.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación C</span><span class="tag tiempo">Territorios vasculares</span>
+    <h3>Qué irriga cada arteria cerebral</h3>
+    <div class="check" data-chk="C">
+      <label><input type="checkbox"> ACA: cara medial (frontal/parietal) → pierna contralateral</label>
+      <label><input type="checkbox"> ACM: cara lateral (motor/sensitivo de cara y brazo, lenguaje si es dominante)</label>
+      <label><input type="checkbox"> ACP: lóbulo occipital → visión</label>
+      <label><input type="checkbox"> Relación territorio ↔ déficit clínico</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">Debilidad de <b>pierna</b> → ACA. Déficit de <b>cara/brazo</b> (± afasia) → ACM. <b>Hemianopsia</b> → ACP.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación D</span><span class="tag tiempo">Meninges y drenaje venoso</span>
+    <h3>Meninges, duramadre y senos</h3>
+    <div class="check" data-chk="D">
+      <label><input type="checkbox"> Meninges (de fuera a dentro): duramadre, aracnoides, piamadre</label>
+      <label><input type="checkbox"> Espacio subaracnoideo (circula el LCR)</label>
+      <label><input type="checkbox"> Pliegues de duramadre: hoz del cerebro y tienda del cerebelo</label>
+      <label><input type="checkbox"> Senos venosos durales: sagital superior y seno recto</label>
+      <label><input type="checkbox"> Confluencia de los senos (prensa de Herófilo)</label>
+      <label><input type="checkbox"> Drenaje final hacia las venas yugulares internas</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">Los senos venosos durales corren <b>entre las dos capas de la duramadre</b> y drenan finalmente en las yugulares internas.</div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section class="fase rep" id="rep">
+  <h2 class="sec">✅ Repaso y evaluación</h2>
+  <p class="intro">Pon a prueba lo aprendido. <b>Cada ronda muestra preguntas distintas.</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">🔗 Integración con el caso (ACV)</h3>
+    <p><b>Caso:</b> paciente con déficit neurológico <b>focal y súbito</b> por oclusión de una arteria cerebral (ACV isquémico). La clínica depende del <b>territorio</b> comprometido.</p>
+    <div class="flujo"><span>Oclusión arterial</span><span class="fl">→</span><span>Isquemia del territorio</span><span class="fl">→</span><span>Déficit contralateral</span><span class="fl">→</span><span>ACM: cara/brazo + afasia · ACA: pierna · ACP: visión</span></div>
+    <div class="nota"><b>Correlación:</b> el <b>círculo de Willis</b> puede ofrecer circulación colateral; el <b>giro precentral</b> del territorio afectado explica la debilidad contralateral. Un ACV por sangrado es <b>hemorrágico</b>.</div>
+  </div>
+
+  <div class="card" style="border:2px solid var(--rojo)">
+    <h3 style="margin-top:0">📸 Galería · Foto de la práctica</h3>
+    <p style="margin-top:0">Sube <b>la foto de la práctica</b> que te vamos a solicitar. Todos podrán verla y votar por su favorita; el docente la califica.</p>
+    <input type="file" id="fileFotoC" accept="image/*">
+    <div id="fotoCErr" style="color:var(--rojo);font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnSubirFotoC">📤 Subir mi foto</button>
+    <span id="subiendoFotoC" class="mini" style="display:none">Subiendo…</span>
+    <div style="margin:12px 0 0"><span class="mini" id="galInfoC"></span></div>
+    <div class="galDibujos" id="galFotoC"></div>
+  </div>
+
+  <h3>📝 Banco de preguntas</h3>
+  <div id="zonaQuiz" style="display:none">
+    <div class="saludo" id="saludo"></div>
+    <div class="quiz-top">
+      <div class="controles">
+        <label for="numP">Preguntas por ronda:</label>
+        <select id="numP">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+          <option value="0">Todas</option>
+        </select>
+        <button class="btn sec" id="nuevaRonda">🔀 Nueva ronda</button>
+      </div>
+      <div class="marcador" id="marcador">0 / 0 · 0 aciertos</div>
+    </div>
+    <div id="quiz"></div>
+    <div class="qacts"><button class="btn" id="verResultado">Ver resultado de la ronda</button></div>
+    <div class="resultado" id="resultado"><div class="score" id="scoreTxt">0%</div><p id="scoreMsg"></p></div>
+    <div class="card" id="temasCard" style="display:none">
+      <h3 style="margin-top:0">📊 Tu apropiación por tema</h3>
+      <p class="mini">Se actualiza con cada pregunta; acumula todas tus rondas. Verde ≥80%, ámbar ≥60%, rojo &lt;60%.</p>
+      <div id="temasBox"></div>
+    </div>
+  </div>
+
+  <div class="card enc" id="encuesta">
+    <h3>🗳️ Encuesta de satisfacción y dudas</h3>
+    <p style="margin-top:0">Al terminar, cuéntanos cómo te fue. Solo lo ve tu docente.</p>
+    <label>¿Qué tan satisfecho/a quedaste con la práctica? <span class="mini">(1 = poco · 5 = mucho)</span></label>
+    <div class="stars" data-name="satisfaccion"></div>
+    <label>¿Qué tan útil te resultó para prepararte? <span class="mini">(1–5)</span></label>
+    <div class="stars" data-name="utilidad"></div>
+    <label>¿Qué dudas te quedaron?</label>
+    <textarea id="inDudas" placeholder="Escribe aquí tus dudas sobre la anatomía o la práctica…"></textarea>
+    <label>Comentarios o sugerencias</label>
+    <textarea id="inComentario" placeholder="¿Qué mejorarías?"></textarea>
+    <div class="err" id="encErr" style="color:#b3202c;font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnEncuesta">Enviar encuesta</button>
+    <div class="ok" id="encuestaMsg">¡Gracias! Tu respuesta quedó registrada. 💙</div>
+  </div>
+
+  <div class="card">
+    <h3>🎫 Exit ticket</h3>
+    <ul class="limpia">
+      <li>Una estructura que hoy dejé de confundir: __________</li>
+      <li>El territorio de la arteria cerebral media incluye: __________</li>
+      <li>Si el paciente tiene debilidad en la pierna, sospecho oclusión de: __________</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>Recurso de estudio · Cerebro externo, irrigación y drenaje venoso · SOI II Semana 5 · Uso educativo.</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA_S5, DOMINIO_INSTITUCIONAL } from './supabase-config.js';
+const TABLA=TABLA_S5;
+let sb=null, FB_OK=false;
+const badge=document.getElementById('estado');
+if(SUPABASE_URL && !SUPABASE_URL.includes('PEGA_AQUI')){
+  try{ sb=createClient(SUPABASE_URL, SUPABASE_KEY); FB_OK=true; badge.textContent='🟢 Conectado'; }
+  catch(e){ badge.textContent='Modo local'; console.warn('Supabase no inició:',e); }
+}
+
+/* Cierre de módulo (calendario académico) */
+const CIERRE_MODULO = new Date('2026-08-21T09:00:00-05:00');
+function moduloCerrado(){ return Date.now() >= CIERRE_MODULO.getTime();
+}
+
+/* Rastreador de uso (tiempo, recursos, checklists) */
+const videosVistos=new Set();
+let baseSegundos=0, segundosSesion=0, checklistMarcados=0, checklistTotal=0;
+let visible=true;
+document.addEventListener('visibilitychange',()=>{visible=document.visibilityState==='visible';});
+setInterval(()=>{ if(visible) segundosSesion++; },1000);
+setInterval(()=>{ if(FB_OK && ESTUDIANTE) guardarAvance(); },30000);
+function registrarRecurso(id){ if(!videosVistos.has(id)){ videosVistos.add(id); if(ESTUDIANTE) guardarAvance(); } }
+function actualizarChecklist(){ const ins=document.querySelectorAll('.check input'); checklistTotal=ins.length; checklistMarcados=[...ins].filter(i=>i.checked).length; }
+
+/* Recursos Lecturio (enlaces) */
+const RECURSOS=[
+  {id:"snc_curso1",t:"Sistema nervioso · encéfalo (Lecturio)",url:"https://unisabana.lecturio.com/#/course/c/7812/7602/7164"},
+  {id:"snc_curso2",t:"Meninges y vascularización (Lecturio)",url:"https://unisabana.lecturio.com/#/course/c/7812/7602/7166"}
+];
+const TOTAL_RECURSOS=RECURSOS.length;
+const contRec=document.getElementById('recursos');
+RECURSOS.forEach(r=>{
+  const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';
+  a.innerHTML='▶ '+r.t;
+  a.addEventListener('click',()=>registrarRecurso(r.id));
+  contRec.appendChild(a);
+});
+
+/* Videos complementarios (YouTube incrustado) */
+const YT=[
+  {id:"3OqSyK05TtY",t:"Cerebro · lóbulos y surcos"},
+  {id:"802xG1ysVL0",t:"Vascularización cerebral"},
+  {id:"sSwPwSzAP_g",t:"Círculo de Willis"},
+  {id:"wJkrVCClE8M",t:"Meninges"},
+  {id:"0KkDYnoSPTA",t:"Drenaje venoso / senos"},
+  {id:"1_r0y3P6TrY",t:"Complemento cerebro"},
+  {id:"ar0hIGXvvH0",t:"Complemento cerebro 2"},
+  {id:"I_aLv1tPnyM",t:"Complemento cerebro 3"}
+];
+function tarjetaVideo(v){
+  const d=document.createElement('div');d.className='vid';
+  d.innerHTML=`<img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${v.t}"><div class="play"></div><div class="lbl">${v.t}</div>`;
+  d.onclick=()=>{d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;d.style.cursor='default';registrarRecurso('yt_'+v.id);};
+  return d;
+}
+YT.forEach(v=>document.getElementById('vids-yt').appendChild(tarjetaVideo(v)));
+
+/* Cerebro Arcade (incrustado, sin login propio: usa la sesión del portafolio) */
+function arcadeURL(){ const p=new URLSearchParams(); if(ESTUDIANTE){ p.set('nombre',ESTUDIANTE.nombre); p.set('correo',ESTUDIANTE.correo); } const q=p.toString(); return 'arcade/index.html'+(q?('?'+q):''); }
+/* Recibe el puntaje del arcade y lo registra (guarda el mejor) */
+let mejorArcade=0;
+window.addEventListener('message',async ev=>{
+  const d=ev.data||{};
+  if(d.tipo!=='arcade_cerebro'||!ESTUDIANTE||!FB_OK) return;
+  const pts=parseInt(d.puntaje,10)||0;
+  registrarRecurso('arcade');
+  if(pts<=mejorArcade) return; mejorArcade=pts;
+  try{ await sb.from(TABLA).upsert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,arcade_puntaje:pts,ultima_actividad:new Date().toISOString()},{onConflict:'correo'}); }catch(e){console.warn('arcade save',e);}
+  cargarMisNotas();
+});
+async function cargarMisNotas(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const [a,fc]=await Promise.all([
+      sb.from(TABLA).select('respondidas_total,aciertos_total,porcentaje,arcade_puntaje').eq('correo',ESTUDIANTE.correo).maybeSingle(),
+      sb.from('fotos_cerebro').select('nota').eq('correo',ESTUDIANTE.correo).order('creado',{ascending:false}).limit(1)
+    ]);
+    const d=a.data||{};
+    const q=document.getElementById('mnQuiz'); if(q) q.textContent=(d.respondidas_total>0)?`${d.aciertos_total||0}/${d.respondidas_total} (${d.porcentaje||0}%)`:'Sin hacer';
+    const ar=document.getElementById('mnArcade'); if(ar) ar.textContent=d.arcade_puntaje?`${d.arcade_puntaje} pts`:'Sin jugar';
+    const foto=(fc.data&&fc.data[0])||null;
+    const di=document.getElementById('mnDibujo'); if(di) di.textContent= foto ? (foto.nota!=null?`${foto.nota}/5`:'Pendiente de calificar') : 'Sin subir';
+    const av=document.getElementById('mnAviso'); if(av) av.textContent='Se actualiza solo. Plazo: viernes 14 de agosto, 9:00 am.';
+  }catch(e){console.warn('misNotas',e);}
+}
+const btnArcade=document.getElementById('btnArcade'), arcadeLink=document.getElementById('arcadeLink');
+if(arcadeLink) arcadeLink.href='arcade/index.html';
+if(btnArcade) btnArcade.onclick=()=>{
+  const wrap=document.getElementById('arcadeWrap'), fr=document.getElementById('arcadeFrame');
+  fr.src=arcadeURL(); wrap.style.display='block'; arcadeLink.href=arcadeURL();
+  btnArcade.textContent='🎮 Arcade abierto'; btnArcade.disabled=true;
+  registrarRecurso('arcade');
+  wrap.scrollIntoView({behavior:'smooth',block:'center'});
+};
+
+/* Banco de preguntas (conceptual) */
+const POOL=[
+ {id:1,cat:"lobulos",q:"El surco que separa el lóbulo frontal del parietal es el:",o:["Surco lateral","Surco central","Surco parietooccipital","Surco calcarino"],c:1,e:"El surco central (de Rolando) separa el lóbulo frontal del parietal y limita las cortezas motora y sensitiva."},
+ {id:2,cat:"lobulos",q:"El giro PREcentral corresponde a la corteza:",o:["Sensitiva primaria","Motora primaria","Visual primaria","Auditiva primaria"],c:1,e:"El giro precentral (delante del surco central) es la corteza motora primaria; controla el hemicuerpo contralateral."},
+ {id:3,cat:"lobulos",q:"El giro POSTcentral corresponde a la corteza:",o:["Motora primaria","Somatosensorial primaria","Visual primaria","Del lenguaje"],c:1,e:"El giro postcentral es la corteza sensitiva general (somatosensorial) primaria."},
+ {id:4,cat:"lobulos",q:"En la profundidad del surco lateral (de Silvio) se encuentra:",o:["El cuerpo calloso","La ínsula","El tálamo","El cerebelo"],c:1,e:"La ínsula queda oculta en el fondo del surco lateral; solo se ve separando sus bordes."},
+ {id:5,cat:"lobulos",q:"El surco parietooccipital separa los lóbulos:",o:["Frontal y parietal","Parietal y occipital","Temporal y occipital","Frontal y temporal"],c:1,e:"El surco parietooccipital separa el lóbulo parietal del occipital."},
+ {id:6,cat:"lobulos",q:"El procesamiento visual primario ocurre en el lóbulo:",o:["Frontal","Temporal","Occipital","Parietal"],c:2,e:"El lóbulo occipital contiene la corteza visual primaria."},
+ {id:7,cat:"lobulos",q:"Los dos hemisferios cerebrales están separados por el:",o:["Surco central","Surco longitudinal cerebral","Surco lateral","Surco calcarino"],c:1,e:"El surco longitudinal cerebral (interhemisférico) separa ambos hemisferios; aloja la hoz del cerebro y las arterias cerebrales anteriores."},
+ {id:8,cat:"lobulos",q:"La mayor comisura que conecta ambos hemisferios es el:",o:["Fórnix","Cuerpo calloso","Comisura anterior","Septum pelúcido"],c:1,e:"El cuerpo calloso es la mayor comisura interhemisférica."},
+ {id:9,cat:"lobulos",q:"El pliegue de duramadre en forma de hoz entre los hemisferios es la:",o:["Tienda del cerebelo","Hoz del cerebro","Diafragma selar","Hoz del cerebelo"],c:1,e:"La hoz del cerebro es el pliegue sagital de duramadre en el surco longitudinal."},
+ {id:10,cat:"lobulos",q:"El pliegue de duramadre que separa el cerebro del cerebelo es la:",o:["Hoz del cerebro","Tienda del cerebelo","Diafragma selar","Hoz del cerebelo"],c:1,e:"La tienda (tentorio) del cerebelo separa los lóbulos occipitales del cerebelo."},
+ {id:11,cat:"willis",q:"El polígono de Willis conecta el sistema:",o:["Carotídeo y el yugular","Carotídeo y el vertebro-basilar","Venoso y el meníngeo","Carotídeo externo e interno"],c:1,e:"El círculo de Willis interconecta el sistema carotídeo interno y el vertebro-basilar, dando circulación colateral."},
+ {id:12,cat:"willis",q:"La arteria comunicante anterior une:",o:["Las dos cerebrales anteriores","Las dos cerebrales posteriores","La carótida interna y la basilar","Las dos arterias vertebrales"],c:0,e:"La comunicante anterior conecta las dos ACA por delante."},
+ {id:13,cat:"willis",q:"Las arterias comunicantes posteriores conectan:",o:["Las dos cerebrales anteriores","La carótida interna y la cerebral posterior","Las dos arterias vertebrales","La basilar y la cerebral media"],c:1,e:"Las comunicantes posteriores unen el sistema carotídeo (carótida interna) con la cerebral posterior."},
+ {id:14,cat:"willis",q:"Las arterias vertebrales se unen para formar la arteria:",o:["Basilar","Carótida interna","Cerebral media","Comunicante posterior"],c:0,e:"Ambas arterias vertebrales confluyen en la arteria basilar."},
+ {id:15,cat:"willis",q:"La arteria carótida interna se origina de la:",o:["Aorta ascendente","Carótida común","Arteria subclavia","Arteria basilar"],c:1,e:"La carótida interna nace de la bifurcación de la carótida común."},
+ {id:16,cat:"willis",q:"La arteria cerebral posterior (ACP) pertenece al sistema:",o:["Carotídeo","Vertebro-basilar","Venoso dural","Meníngeo"],c:1,e:"La ACP es rama terminal de la basilar (sistema vertebro-basilar)."},
+ {id:17,cat:"willis",q:"La arteria cerebelosa posteroinferior (PICA) se origina de la:",o:["Arteria basilar","Arteria vertebral","Carótida interna","Cerebral media"],c:1,e:"La PICA nace de la arteria vertebral e irriga la parte inferior del cerebelo."},
+ {id:18,cat:"willis",q:"La AICA y la SCA se originan de la:",o:["Arteria vertebral","Arteria basilar","Carótida interna","Comunicante posterior"],c:1,e:"La cerebelosa anteroinferior (AICA) y la superior (SCA) nacen de la basilar."},
+ {id:19,cat:"territorios",q:"La arteria cerebral ANTERIOR (ACA) irriga la:",o:["Cara lateral del hemisferio","Cara medial del hemisferio","Cara inferior del cerebelo","Base del tronco encefálico"],c:1,e:"La ACA irriga la superficie medial; su infarto afecta la pierna y el pie contralaterales."},
+ {id:20,cat:"territorios",q:"La arteria cerebral MEDIA (ACM) irriga la:",o:["Superficie medial del hemisferio","Superficie lateral del hemisferio","Superficie del lóbulo occipital","Superficie del tronco encefálico"],c:1,e:"La ACM irriga la cara lateral del hemisferio: motor/sensitivo de cara y brazo, y áreas del lenguaje en el hemisferio dominante."},
+ {id:21,cat:"territorios",q:"La arteria cerebral POSTERIOR (ACP) irriga el:",o:["Lóbulo frontal","Lóbulo occipital","Lóbulo de la ínsula","Giro precentral"],c:1,e:"La ACP irriga el lóbulo occipital; su lesión produce déficit visual (hemianopsia)."},
+ {id:22,cat:"territorios",q:"La debilidad predominante en la PIERNA contralateral sugiere infarto de la:",o:["ACM","ACA","ACP","PICA"],c:1,e:"El homúnculo de la pierna está en la cara medial (territorio de la ACA)."},
+ {id:23,cat:"territorios",q:"La hemiparesia con afasia (cara/brazo y lenguaje) sugiere infarto de la:",o:["ACP derecha","ACM izquierda","ACA derecha","Cerebelosa superior"],c:1,e:"La ACM irriga áreas faciobraquiales y del lenguaje; su infarto en el hemisferio dominante da hemiparesia + afasia."},
+ {id:24,cat:"territorios",q:"La hemianopsia (pérdida de campo visual) orienta a compromiso de la:",o:["ACA","ACM","ACP","Basilar"],c:2,e:"La corteza visual occipital depende de la ACP; su lesión causa déficit del campo visual."},
+ {id:25,cat:"meninges",q:"El orden de las meninges de superficial a profunda es:",o:["Piamadre, aracnoides, duramadre","Duramadre, aracnoides, piamadre","Aracnoides, duramadre, piamadre","Duramadre, piamadre, aracnoides"],c:1,e:"De fuera a dentro: duramadre, aracnoides y piamadre."},
+ {id:26,cat:"meninges",q:"El líquido cefalorraquídeo (LCR) circula en el espacio:",o:["Epidural","Subaracnoideo","Subdural","Extradural"],c:1,e:"El LCR ocupa el espacio subaracnoideo, entre aracnoides y piamadre."},
+ {id:27,cat:"meninges",q:"Los senos venosos durales se localizan:",o:["En el espacio subaracnoideo","Entre las capas de la duramadre","Dentro del parénquima cerebral","Por debajo de la piamadre"],c:1,e:"Los senos durales corren entre las capas perióstica y meníngea de la duramadre."},
+ {id:28,cat:"meninges",q:"El seno sagital superior recorre el borde de la:",o:["Tienda del cerebelo","Hoz del cerebro","Diafragma selar","Hoz del cerebelo"],c:1,e:"El seno sagital superior discurre por el borde superior de la hoz del cerebro."},
+ {id:29,cat:"meninges",q:"La reunión de los senos venosos principales se denomina:",o:["Seno cavernoso","Confluencia de los senos","Golfo de la yugular","Seno esfenoparietal"],c:1,e:"El seno sagital superior y el recto confluyen en la confluencia de los senos (prensa de Herófilo)."},
+ {id:30,cat:"meninges",q:"El drenaje venoso del encéfalo termina en las venas:",o:["Yugulares internas","Cavas superiores","Cerebrales medias","Maxilares"],c:0,e:"Los senos durales drenan en las venas yugulares internas."},
+ {id:31,cat:"caso",q:"Un déficit neurológico focal de inicio SÚBITO por oclusión arterial corresponde a:",o:["ACV isquémico","Crisis migrañosa","Crisis epiléptica","Tumor de lento crecimiento"],c:0,e:"El ACV isquémico produce un déficit focal súbito por interrupción del flujo en un territorio arterial."},
+ {id:32,cat:"caso",q:"Un paciente con hemiparesia derecha y afasia probablemente tiene compromiso de la:",o:["ACP derecha","ACM izquierda","ACA derecha","Cerebelosa izquierda"],c:1,e:"El lenguaje suele estar en el hemisferio izquierdo; la ACM izquierda explica hemiparesia derecha + afasia."},
+ {id:33,cat:"caso",q:"La utilidad del círculo de Willis ante una oclusión es:",o:["Aumentar la presión arterial","Ofrecer circulación colateral","Reabsorber el LCR","Producir mielina"],c:1,e:"Las anastomosis del polígono de Willis permiten flujo colateral cuando se ocluye una arteria principal."},
+ {id:34,cat:"caso",q:"Un ACV producido por rotura vascular con sangrado se denomina:",o:["Isquémico","Hemorrágico","Embólico","Lacunar"],c:1,e:"El ACV hemorrágico se debe a rotura de un vaso con sangrado intracraneal, a diferencia del isquémico."}
+];
+
+/* Navegación */
+document.querySelectorAll('nav.fases .tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav.fases .tab').forEach(x=>x.classList.remove('activa'));
+    document.querySelectorAll('.fase').forEach(x=>x.classList.remove('activa'));
+    b.classList.add('activa');
+    document.getElementById(b.dataset.f).classList.add('activa');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(b.dataset.f==='notas') cargarMisNotas();
+  };
+});
+
+/* Checklists */
+document.querySelectorAll('.check').forEach(box=>{
+  const barra=box.nextElementSibling.querySelector('i');
+  const txt=box.nextElementSibling.nextElementSibling;
+  const inputs=box.querySelectorAll('input');
+  function upd(){let n=0;inputs.forEach(i=>{const l=i.parentElement;i.checked?l.classList.add('done'):l.classList.remove('done');if(i.checked)n++;});
+    barra.style.width=Math.round(n/inputs.length*100)+'%';txt.textContent=`${n} de ${inputs.length} estructuras identificadas`;}
+  inputs.forEach(i=>i.onchange=()=>{upd();actualizarChecklist();if(ESTUDIANTE)guardarAvance();});upd();
+});
+actualizarChecklist();
+
+/* Utilidades */
+function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sanea(c){return c.trim().toLowerCase();}
+let ESTUDIANTE=null, RONDA=[], respondidas={}, aciertos=0, acumRespondidas=0, acumAciertos=0;
+let temaStats={};
+const TEMAS_LABEL={lobulos:'Lóbulos y surcos',willis:'Círculo de Willis',territorios:'Territorios vasculares',meninges:'Meninges y venoso',caso:'Caso: ACV'};
+function renderTemas(){
+  const box=document.getElementById('temasBox'); if(!box) return;
+  const keys=Object.keys(TEMAS_LABEL);
+  const conDatos=keys.filter(k=>temaStats[k]&&temaStats[k].total);
+  const card=document.getElementById('temasCard'); if(card) card.style.display=conDatos.length?'block':'none';
+  box.innerHTML=keys.map(k=>{
+    const s=temaStats[k]||{ok:0,total:0};
+    const pct=s.total?Math.round(s.ok/s.total*100):0;
+    const col=s.total?(pct>=80?'var(--verde)':pct>=60?'var(--ambar)':'var(--rojo)'):'#ccc';
+    return `<div style="margin:9px 0">
+      <div style="display:flex;justify-content:space-between;font-size:.87rem"><span>${TEMAS_LABEL[k]}</span><span style="font-weight:700">${s.total?pct+'% ('+s.ok+'/'+s.total+')':'—'}</span></div>
+      <div style="height:9px;background:#eaeef0;border-radius:5px;overflow:hidden;margin-top:3px"><i style="display:block;height:100%;width:${pct}%;background:${col};transition:.3s"></i></div>
+    </div>`;
+  }).join('');
+}
+
+/* Login (compartido con Semana 1 vía la misma clave) */
+const login=document.getElementById('login');
+const zonaQuiz=document.getElementById('zonaQuiz');
+async function entrar(){
+  const nombre=document.getElementById('inNombre').value.trim();
+  const correo=document.getElementById('inCorreo').value.trim();
+  const err=document.getElementById('loginErr');
+  if(nombre.length<3){err.textContent='Escribe tu nombre completo.';return;}
+  const reMail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!reMail.test(correo)){err.textContent='Escribe un correo válido.';return;}
+  if(DOMINIO_INSTITUCIONAL && !correo.toLowerCase().endsWith(DOMINIO_INSTITUCIONAL.toLowerCase())){
+    err.textContent='Usa tu correo institucional ('+DOMINIO_INSTITUCIONAL+').';return;}
+  err.textContent='';
+  let esDoc=false;
+  if(FB_OK){
+    const btn=document.getElementById('btnEntrar');btn.disabled=true;err.style.color='var(--gris)';err.textContent='Verificando acceso…';
+    try{ const {data:doc}=await sb.from('docentes').select('correo').eq('correo',correo.toLowerCase()).maybeSingle(); esDoc=!!doc; }catch(e){console.warn('docente',e);}
+    if(!esDoc){
+      try{
+        const {data:aut}=await sb.from('autorizados').select('correo').eq('correo',correo.toLowerCase()).maybeSingle();
+        if(!aut){err.style.color='';err.textContent='Este correo no está autorizado para esta actividad. Contacta a tu docente.';btn.disabled=false;return;}
+      }catch(e){console.warn('autoriz',e);}
+    }
+    btn.disabled=false;err.style.color='';err.textContent='';
+  }
+  ESTUDIANTE={nombre,correo,id:sanea(correo)};
+  try{localStorage.setItem('soi2_estudiante',JSON.stringify({nombre,correo}));}catch(e){}
+  login.style.display='none'; zonaQuiz.style.display='block';
+  const rol=esDoc?' · <b>docente</b>':'';
+  const avisoCierre=moduloCerrado()?'<div class="aviso" style="margin-top:10px">🔒 Este módulo está cerrado. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>':'';
+  document.getElementById('saludo').innerHTML=`<span>👋 Hola, <b>${nombre}</b>${rol}</span><button id="salir">No soy yo / Salir</button>`;
+  document.getElementById('saludo').insertAdjacentHTML('afterend',avisoCierre);
+  document.getElementById('salir').onclick=()=>{try{localStorage.removeItem('soi2_estudiante');}catch(e){}location.reload();};
+  if(!esDoc) registrarInicio();
+  cargarMisNotas();
+  try{ const _al=document.getElementById('arcadeLink'); if(_al) _al.href=arcadeURL(); }catch(_){}
+  nuevaRonda();
+}
+document.getElementById('btnEntrar').onclick=entrar;
+document.getElementById('inCorreo').addEventListener('keydown',e=>{if(e.key==='Enter')entrar();});
+try{
+  const g=JSON.parse(localStorage.getItem('soi2_estudiante')||'null');
+  if(g&&g.nombre&&g.correo){ document.getElementById('inNombre').value=g.nombre; document.getElementById('inCorreo').value=g.correo; entrar(); }
+}catch(e){}
+
+/* Encuesta */
+const encuestaVal={satisfaccion:0,utilidad:0};
+document.querySelectorAll('.stars').forEach(cont=>{
+  const name=cont.dataset.name;
+  for(let n=1;n<=5;n++){
+    const b=document.createElement('button');b.type='button';b.textContent=n;
+    b.onclick=()=>{encuestaVal[name]=n;cont.querySelectorAll('button').forEach((x,k)=>x.classList.toggle('sel',k<n));};
+    cont.appendChild(b);
+  }
+});
+document.getElementById('btnEncuesta').onclick=async()=>{
+  const err=document.getElementById('encErr');
+  if(!ESTUDIANTE){err.textContent='Primero identifícate.';return;}
+  if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se puede enviar la encuesta.';return;}
+  if(!encuestaVal.satisfaccion){err.textContent='Marca al menos tu nivel de satisfacción.';return;}
+  err.textContent='';
+  const dudas=document.getElementById('inDudas').value.trim();
+  const comentario=document.getElementById('inComentario').value.trim();
+  if(FB_OK){ try{ await sb.from(TABLA).upsert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,satisfaccion:encuestaVal.satisfaccion,utilidad:encuestaVal.utilidad||null,dudas:dudas||null,comentario:comentario||null,encuesta_fecha:new Date().toISOString(),ultima_actividad:new Date().toISOString()},{onConflict:'correo'}); }catch(e){console.warn('encuesta',e);} }
+  document.getElementById('encuestaMsg').style.display='block';
+  document.getElementById('btnEncuesta').disabled=true;
+};
+
+/* Quiz */
+const quizCont=document.getElementById('quiz');
+const marcador=document.getElementById('marcador');
+function nuevaRonda(){
+  if(moduloCerrado()){
+    quizCont.innerHTML='<div class="aviso">🔒 <b>Este módulo está cerrado.</b> Ya no se pueden responder más preguntas ni completar esta actividad. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>';
+    marcador.textContent='Módulo cerrado';
+    document.getElementById('nuevaRonda').disabled=true; document.getElementById('numP').disabled=true;
+    document.getElementById('verResultado').style.display='none';
+    return;
+  }
+  const n=parseInt(document.getElementById('numP').value,10);
+  let sel=barajar(POOL);
+  if(n>0) sel=sel.slice(0,n);
+  RONDA=sel.map(p=>{const orden=barajar(p.o.map((_,i)=>i));return {...p,o:orden.map(i=>p.o[i]),c:orden.indexOf(p.c)};});
+  respondidas={};aciertos=0;
+  document.getElementById('resultado').style.display='none';
+  renderQuiz();actualizarMarcador();
+  quizCont.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderQuiz(){
+  quizCont.innerHTML='';
+  RONDA.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='pregunta';
+    const catLbl={lobulos:'🧠 Lóbulos y surcos',willis:'🩸 Círculo de Willis',territorios:'🗺️ Territorios',meninges:'🧫 Meninges y venoso',caso:'🩺 Caso: ACV'}[p.cat];
+    card.innerHTML=`<div class="qh"><span>Pregunta ${i+1} de ${RONDA.length}</span><span>${catLbl}</span></div><div class="q">${p.q}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts=card.querySelector('.opts'), fb=card.querySelector('.fb');
+    p.o.forEach((op,j)=>{
+      const b=document.createElement('button');b.textContent=op;
+      b.onclick=()=>{
+        if(respondidas[i]!==undefined) return;
+        respondidas[i]=j;
+        opts.querySelectorAll('button').forEach((bb,k)=>{bb.disabled=true;if(k===p.c)bb.classList.add('bien');if(k===j&&j!==p.c)bb.classList.add('mal');});
+        const ok=j===p.c;if(ok){aciertos++;acumAciertos++;}
+        acumRespondidas++;
+        const tm=p.tema||p.cat; if(!temaStats[tm])temaStats[tm]={ok:0,total:0}; temaStats[tm].total++; if(ok)temaStats[tm].ok++; renderTemas();
+        fb.style.display='block';fb.className='fb '+(ok?'ok':'no');
+        fb.innerHTML=`<b>${ok?'✅ Correcto':'❌ Incorrecto'}</b>${p.e}`;
+        actualizarMarcador();guardarAvance();
+      };
+      opts.appendChild(b);
+    });
+    quizCont.appendChild(card);
+  });
+}
+function actualizarMarcador(){const n=Object.keys(respondidas).length;marcador.textContent=`${n} / ${RONDA.length} · ${aciertos} aciertos`;}
+document.getElementById('nuevaRonda').onclick=nuevaRonda;
+document.getElementById('numP').onchange=()=>{ if(ESTUDIANTE) nuevaRonda(); };
+document.getElementById('verResultado').onclick=()=>{
+  const n=Object.keys(respondidas).length, res=document.getElementById('resultado');
+  const pct=n?Math.round(aciertos/n*100):0;
+  document.getElementById('scoreTxt').textContent=pct+'%';
+  let msg;
+  if(n<RONDA.length) msg=`Llevas ${n} de ${RONDA.length} en esta ronda (${aciertos} correctas). ¡Termínala!`;
+  else if(pct>=85) msg=`¡Excelente! ${aciertos}/${RONDA.length}. Lanza una nueva ronda para repasar otras.`;
+  else if(pct>=60) msg=`Bien: ${aciertos}/${RONDA.length}. Repite con Nueva ronda para afianzar.`;
+  else msg=`${aciertos}/${RONDA.length}. Repasa la guía y reintenta.`;
+  document.getElementById('scoreMsg').textContent=msg;
+  res.style.display='block';res.scrollIntoView({behavior:'smooth'});
+  guardarAvance(true); cargarMisNotas();
+};
+
+/* Supabase */
+let rondasCompletadas=0; let avanceCargado=false; // no guardar hasta cargar el avance previo (evita sobrescribir con ceros)
+async function registrarInicio(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const {data}=await sb.from(TABLA).select('*').eq('correo',ESTUDIANTE.correo).maybeSingle();
+    if(data){
+      acumRespondidas=data.respondidas_total||0; acumAciertos=data.aciertos_total||0;
+      rondasCompletadas=data.rondas_completadas||0; baseSegundos=data.segundos_activos||0;
+      (data.videos_lista||[]).forEach(id=>videosVistos.add(id)); temaStats=data.temas||{}; renderTemas(); actualizarMarcador();
+    }
+    const payload={correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre, ultima_actividad:new Date().toISOString()};
+    if(!data||!data.primera_actividad) payload.primera_actividad=new Date().toISOString();
+    await sb.from(TABLA).upsert(payload,{onConflict:'correo'}); avanceCargado=true;
+    guardarAvance();
+  }catch(e){console.warn('registrarInicio',e); avanceCargado=true;}
+}
+async function guardarAvance(finRonda=false){ if(!avanceCargado) return;
+  if(!FB_OK||!ESTUDIANTE) return;
+  if(moduloCerrado()) return;
+  if(finRonda) rondasCompletadas++;
+  actualizarChecklist();
+  const pct=acumRespondidas?Math.round(acumAciertos/acumRespondidas*100):0;
+  try{
+    await sb.from(TABLA).upsert({
+      correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre,
+      respondidas_total:acumRespondidas, aciertos_total:acumAciertos, porcentaje:pct,
+      ronda_respondidas:Object.keys(respondidas).length, ronda_total:RONDA.length, ronda_aciertos:aciertos,
+      rondas_completadas:rondasCompletadas,
+      segundos_activos:baseSegundos+segundosSesion,
+      videos_vistos:videosVistos.size, videos_lista:[...videosVistos],
+      checklist_marcados:checklistMarcados, checklist_total:checklistTotal,
+      temas:temaStats,
+      ultima_actividad:new Date().toISOString()
+    },{onConflict:'correo'});
+  }catch(e){console.warn('guardarAvance',e);}
+}
+
+/* ===== Galería · Foto de la práctica (subir · ver · votar) ===== */
+function escHtmlC(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function resizeImgC(file,max=900,q=0.62){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>{ let w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;} else {w=Math.round(w*max/h);h=max;} } const c=document.createElement('canvas');c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); c.toBlob(b=>b?res(b):rej(new Error('No se pudo procesar la imagen')),'image/jpeg',q); }; img.onerror=()=>rej(new Error('Archivo de imagen no válido')); img.src=URL.createObjectURL(file); }); }
+/* Miniatura pequeña y liviana para la galería/dashboard (evita descargar la foto completa solo para mostrarla en una tarjeta chica) */
+function resizeThumbC(fileOrImg,max=280,q=0.55){ return new Promise((res,rej)=>{ const img=new Image(); img.onload=()=>{ let w=img.width,h=img.height; if(w>max||h>max){ if(w>h){h=Math.round(h*max/w);w=max;} else {w=Math.round(w*max/h);h=max;} } const c=document.createElement('canvas');c.width=w;c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); c.toBlob(b=>b?res(b):rej(new Error('No se pudo procesar la miniatura')),'image/jpeg',q); }; img.onerror=()=>rej(new Error('Archivo de imagen no válido')); img.src=URL.createObjectURL(fileOrImg); }); }
+const GALERIA_PAUSADA_C=true; /* 18-ago-2026: galería de votación pausada temporalmente por sobreuso de egress en Supabase Storage. Las fotos se siguen guardando (y el docente las ve en el dashboard); solo se apaga la vista pública que recargaba las imágenes repetidamente. */
+let FOTOSC=[], VOTOSC=[];
+async function cargarFotosC(){ if(!FB_OK) return; try{ if(GALERIA_PAUSADA_C){ renderFotosC(); cargarMisNotas(); return; } const [d,v]=await Promise.all([ sb.from('fotos_cerebro').select('*'), sb.from('foto_votos_cerebro').select('*') ]); FOTOSC=d.data||[]; VOTOSC=v.data||[]; renderFotosC(); cargarMisNotas(); }catch(e){console.warn('cargarFotosC',e);} }
+function renderFotosC(){ const cont=document.getElementById('galFotoC'); if(!cont) return; const gi=document.getElementById('galInfoC'); if(GALERIA_PAUSADA_C){ if(gi) gi.textContent='galería pausada'; cont.innerHTML='<p class="mini">📷 La galería de fotos y votación está pausada temporalmente para reducir el consumo de datos. Tu foto de la práctica igual se guarda si la subes; el docente la verá y calificará normalmente.</p>'; return; } const lista=FOTOSC.slice(); const cnt={}; VOTOSC.forEach(v=>cnt[v.foto_id]=(cnt[v.foto_id]||0)+1); lista.sort((a,b)=>(cnt[b.id]||0)-(cnt[a.id]||0)); const yo=ESTUDIANTE?ESTUDIANTE.correo:null; const mis=new Set(VOTOSC.filter(v=>v.correo===yo).map(v=>v.foto_id)); if(gi) gi.textContent=lista.length+' foto(s)'; cont.innerHTML=lista.map((x,i)=>{ const n=cnt[x.id]||0, propio=x.correo===yo, vote=mis.has(x.id); const corona=(i===0&&n>0)?'<div class="corona">🏆 Más votada</div>':''; const dis=(!ESTUDIANTE||propio||vote)?'disabled':''; const lbl=vote?'✓ Votado':(propio?'Tu foto':'👍 Votar'); return `<div class="dib">${corona}<img loading="lazy" src="${x.thumb_url||x.url}" data-full="${x.url}" alt="foto de ${escHtmlC(x.nombre)}"><div class="meta"><div class="n">${escHtmlC(x.nombre)}</div><div class="t">Foto de la práctica</div><div class="votar"><button data-id="${x.id}" ${dis} class="${vote?'voted':''}">${lbl}</button><span class="votos">${n} voto${n===1?'':'s'}</span></div></div></div>`; }).join('')||'<p class="mini">Aún no hay fotos. ¡Sé el primero en subir la tuya!</p>'; cont.querySelectorAll('.dib img').forEach(im=>im.onclick=()=>window.open(im.dataset.full,'_blank','noopener')); cont.querySelectorAll('.votar button[data-id]').forEach(b=>b.onclick=()=>votarFotoC(b.dataset.id)); }
+async function votarFotoC(id){ if(!ESTUDIANTE||!FB_OK) return; if(moduloCerrado()) return; try{ const r=await sb.from('foto_votos_cerebro').insert({foto_id:id,correo:ESTUDIANTE.correo}); if(r.error && !(''+r.error.message).toLowerCase().includes('duplicate')) throw r.error; cargarFotosC(); }catch(e){console.warn('votarFotoC',e);} }
+(function(){ const b=document.getElementById('btnSubirFotoC'); if(!b) return; b.onclick=async()=>{ const err=document.getElementById('fotoCErr'); if(!FB_OK){err.textContent='Sin conexión a la base de datos.';return;} if(!ESTUDIANTE){err.textContent='Primero identifícate para subir.';return;} if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se pueden subir fotos.';return;} const f=document.getElementById('fileFotoC').files[0]; if(!f){err.textContent='Selecciona la foto.';return;} if(!f.type.startsWith('image/')){err.textContent='El archivo debe ser una imagen.';return;} err.style.color='var(--rojo)';err.textContent=''; const spin=document.getElementById('subiendoFotoC'); b.disabled=true; if(spin)spin.style.display='inline'; try{ const blob=await resizeImgC(f); const thumbBlob=await resizeThumbC(f); const base=`fotos_cerebro/${ESTUDIANTE.id.replace(/[^a-z0-9]/g,'_')}_${Date.now()}`; const path=base+'.jpg'; const thumbPath=base+'_thumb.jpg'; const cacheOpt={contentType:'image/jpeg', cacheControl:'2592000'}; const up=await sb.storage.from('dibujos').upload(path,blob,cacheOpt); if(up.error) throw up.error; const upT=await sb.storage.from('dibujos').upload(thumbPath,thumbBlob,cacheOpt); const url=sb.storage.from('dibujos').getPublicUrl(path).data.publicUrl; const thumb_url=upT.error?null:sb.storage.from('dibujos').getPublicUrl(thumbPath).data.publicUrl; const ins=await sb.from('fotos_cerebro').insert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,tema:'foto_practica',path,url,thumb_path:upT.error?null:thumbPath,thumb_url}); if(ins.error) throw ins.error; document.getElementById('fileFotoC').value=''; err.style.color='var(--verde)';err.textContent='¡Subida! Ya aparece en la galería. 🎉'; setTimeout(()=>{err.textContent='';err.style.color='var(--rojo)';},3000); cargarFotosC(); }catch(e){console.warn('subirFotoC',e);err.textContent='No se pudo subir: '+(e.message||e);} finally{ if(spin)spin.style.display='none'; b.disabled=false; } }; })();
+if(FB_OK){ cargarFotosC(); sb.channel('galeria-cerebro').on('postgres_changes',{event:'*',schema:'public',table:'fotos_cerebro'},()=>cargarFotosC()).on('postgres_changes',{event:'*',schema:'public',table:'foto_votos_cerebro'},()=>cargarFotosC()).subscribe(); }
+</script>
+<a href="recursos.html" style="position:fixed;right:16px;bottom:16px;z-index:500;background:#0f7391;color:#fff;text-decoration:none;padding:11px 16px;border-radius:999px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.28);font-family:system-ui,sans-serif;font-size:.9rem">📚 Recursos</a>
+</body>
+</html>

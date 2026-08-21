@@ -1,0 +1,8 @@
+[build]
+  publish = "public"
+
+# La página de inicio del sitio es el portafolio
+[[redirects]]
+  from = "/"
+  to = "/portafolio.html"
+  status = 200

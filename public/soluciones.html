@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solución de dudas · Anatomía SOI II</title>
+<style>
+:root{--tinta:#20313a;--gris:#5c6b72;--linea:#e2e8ea;
+  --cor:#b3202c;--resp:#0f7391;--dig:#c2410c;--ren:#7b1fa2;--cer:#c2185b;--cue:#00695c;}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--tinta);background:#0d1b22}
+.hero{background:linear-gradient(160deg,#0a1f2b,#123243);color:#fff;padding:40px 20px 26px;text-align:center}
+.hero h1{margin:0 0 8px;font-size:1.8rem}
+.hero p{margin:0;opacity:.85;font-size:.95rem;max-width:640px;margin:0 auto}
+.hero a.volver{display:inline-block;margin-top:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;text-decoration:none;padding:8px 16px;border-radius:999px;font-size:.85rem;font-weight:600}
+main{max-width:900px;margin:0 auto;padding:24px 16px 60px}
+.sec{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);margin-bottom:22px;overflow:hidden}
+.sec .cab{padding:18px 22px;color:#fff;display:flex;align-items:center;gap:12px}
+.sec .cab .em{font-size:1.9rem;line-height:1}
+.sec .cab h2{margin:0;font-size:1.25rem}
+.sec .cab .wk{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;opacity:.85;display:block}
+.sec.cor .cab{background:linear-gradient(135deg,#7d1620,var(--cor))}
+.sec.resp .cab{background:linear-gradient(135deg,#0a4f66,var(--resp))}
+.sec.dig .cab{background:linear-gradient(135deg,#9a3412,var(--dig))}
+.sec.ren .cab{background:linear-gradient(135deg,#4a148c,var(--ren))}
+.sec.cer .cab{background:linear-gradient(135deg,#880e4f,var(--cer))}
+.sec.cue .cab{background:linear-gradient(135deg,#004d40,var(--cue))}
+.cuerpo{padding:8px 22px 20px}
+details{border-bottom:1px solid var(--linea);padding:2px 0}
+details:last-of-type{border-bottom:0}
+summary{cursor:pointer;list-style:none;padding:13px 30px 13px 4px;font-weight:600;font-size:.98rem;position:relative;color:var(--tinta)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:6px;top:11px;font-size:1.3rem;font-weight:400;color:var(--gris);transition:transform .2s}
+details[open] summary::after{content:"–"}
+.cor summary:hover{color:var(--cor)} .resp summary:hover{color:var(--resp)}
+.dig summary:hover{color:var(--dig)} .ren summary:hover{color:var(--ren)}
+.cer summary:hover{color:var(--cer)} .cue summary:hover{color:var(--cue)}
+.resp-body{padding:2px 4px 14px;font-size:.93rem;line-height:1.6;color:#333}
+.resp-body p{margin:0 0 9px}
+.resp-body b{color:var(--tinta)}
+.tip{background:#f3f7f9;border-left:3px solid var(--resp);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.88rem;margin:8px 0}
+.cor .tip{border-color:var(--cor)} .dig .tip{border-color:var(--dig)} .ren .tip{border-color:var(--ren)}
+.cer .tip{border-color:var(--cer)} .cue .tip{border-color:var(--cue)}
+.vids{padding:4px 22px 22px}
+.vids h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--gris);margin:6px 0 12px}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.vcard .vwrap{position:relative;padding-bottom:56.25%;height:0;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.vcard .vwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vcard .vt{margin-top:8px;font-size:.86rem;font-weight:600;color:var(--tinta)}
+.intro{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 20px;color:#cfe0e6;font-size:.9rem;margin-bottom:22px}
+footer{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;padding:10px 20px 40px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>💡 Solución de dudas</h1>
+  <p>Respuestas claras y concretas a las preguntas más frecuentes de las prácticas, con videos del Dr. Ricardo Aldana. Toca cada pregunta para desplegar la respuesta.</p>
+  <a class="volver" href="index.html">← Volver al portafolio</a>
+</div>
+<main>
+  <div class="intro">Este apartado reúne las dudas que surgieron en los quizzes y comentarios de cada semana. Está pensado para repasar antes o después de la práctica. Si tu duda no está aquí, déjala en el espacio de comentarios de cada módulo y la resolveremos.</div>
+
+  <!-- ================= CORAZÓN ================= -->
+  <div class="sec cor">
+    <div class="cab"><div class="em">🫀</div><div><span class="wk">Semana 1</span><h2>Corazón, grandes vasos y pericardio</h2></div></div>
+    <div class="cuerpo">
+      <details><summary>¿Dónde está el cono arterioso (infundíbulo)?</summary>
+        <div class="resp-body"><p>Es la porción <b>superior y lisa del ventrículo derecho</b>, con forma de embudo, que conduce la sangre hacia el <b>tronco pulmonar</b>. Está en la parte anterosuperior del VD, por delante y a la izquierda de la entrada. A diferencia del resto del ventrículo (trabeculado), su pared interna es lisa, y se separa de la porción de entrada por la <b>cresta supraventricular</b>.</p></div>
+      </details>
+      <details><summary>¿Dónde está el triángulo de Koch y por qué importa?</summary>
+        <div class="resp-body"><p>Está en el <b>piso de la aurícula derecha</b>. Sus límites son el <b>tendón de Todaro</b> (posterosuperior), el borde de la <b>valva septal de la tricúspide</b> (anteroinferior) y el <b>orificio del seno coronario</b> (base). En su vértice se ubica el <b>nodo auriculoventricular (AV)</b>.</p><p class="tip">Es una referencia clínica clave: delimita la zona del nodo AV que debe respetarse en procedimientos como ablaciones.</p></div>
+      </details>
+      <details><summary>Pectíneos vs. trabéculas vs. papilares vs. cuerdas tendinosas</summary>
+        <div class="resp-body">
+          <p><b>Músculos pectíneos:</b> relieves musculares paralelos (como un peine) en las paredes de las <b>aurículas</b> y las orejuelas.</p>
+          <p><b>Trabéculas carnosas:</b> relieves musculares irregulares en las paredes de los <b>ventrículos</b>.</p>
+          <p><b>Músculos papilares:</b> proyecciones cónicas del miocardio ventricular de las que nacen las cuerdas.</p>
+          <p><b>Cuerdas tendinosas:</b> "cuerdas" fibrosas que unen los papilares con los bordes de las valvas AV (tricúspide y mitral) para impedir que se everten en la sístole.</p>
+          <p class="tip">Regla rápida: <b>pectíneos = aurículas</b>; <b>trabéculas, papilares y cuerdas = ventrículos</b>.</p>
+        </div>
+      </details>
+      <details><summary>¿Cómo se "autoestimula" el nodo sinusal?</summary>
+        <div class="resp-body"><p>Sus células tienen <b>automatismo</b>: no tienen un potencial de reposo estable, sino una <b>despolarización diastólica lenta</b> (corriente "funny" I<sub>f</sub> de Na⁺, sumada a entrada de Ca²⁺) que las lleva espontáneamente al umbral y dispara el impulso, sin necesidad de un estímulo externo. Por eso es el <b>marcapasos</b> del corazón (~60–100/min). El sistema nervioso autónomo solo <b>modula</b> esa frecuencia, no la genera.</p></div>
+      </details>
+      <details><summary>Circulación mayor vs. menor</summary>
+        <div class="resp-body"><p><b>Menor (pulmonar):</b> VD → tronco pulmonar → pulmones (se oxigena) → venas pulmonares → aurícula izquierda.</p><p><b>Mayor (sistémica):</b> VI → aorta → todo el cuerpo → venas cavas → aurícula derecha.</p></div>
+      </details>
+      <details><summary>¿Qué es el esqueleto fibroso del corazón?</summary>
+        <div class="resp-body"><p>Son los <b>cuatro anillos fibrosos</b> que rodean los orificios valvulares (más los trígonos fibrosos). Cumple dos funciones: da <b>inserción</b> a las valvas y al miocardio, y <b>aísla eléctricamente</b> las aurículas de los ventrículos, obligando a que el impulso pase solo por el nodo AV y el haz de His.</p></div>
+      </details>
+      <details><summary>Arterias coronarias y sus ramas principales</summary>
+        <div class="resp-body"><p><b>Coronaria izquierda</b> → descendente anterior (interventricular anterior) + circunfleja.</p><p><b>Coronaria derecha</b> → rama marginal + descendente posterior (interventricular posterior, en la dominancia derecha, que es la más común).</p></div>
+      </details>
+    </div>
+    <div class="vids"><h3>🎬 Video de apoyo</h3>
+      <div class="vgrid">
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/IiiUZhmvxgU" title="Dudas Corazón" loading="lazy" allowfullscreen></iframe></div><div class="vt">Dudas Corazón — Dr. Ricardo Aldana</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RESPIRATORIO ================= -->
+  <div class="sec resp">
+    <div class="cab"><div class="em">🫁</div><div><span class="wk">Semana 2</span><h2>Vía respiratoria baja y tórax</h2></div></div>
+    <div class="cuerpo">
+      <details><summary>Costillas típicas vs. atípicas</summary>
+        <div class="resp-body"><p><b>Típicas (3ª–9ª):</b> cabeza con <b>dos carillas</b> (articulan con su vértebra y la de arriba), cuello, tubérculo, ángulo y surco costal.</p><p><b>Atípicas:</b> la <b>1ª</b> (corta y ancha, una sola carilla, surcos para vena y arteria subclavias y tubérculo del escaleno anterior); la <b>2ª</b> (tuberosidad para el serrato anterior); la <b>10ª</b> (una sola carilla); la <b>11ª y 12ª</b> (flotantes, sin cuello ni tubérculo).</p></div>
+      </details>
+      <details><summary>Articulaciones del tórax</summary>
+        <div class="resp-body"><p><b>Costovertebrales:</b> la cabeza con el cuerpo vertebral y el tubérculo con la apófisis transversa (sinoviales).</p><p><b>Costocondrales:</b> costilla con su cartílago (cartilaginosas).</p><p><b>Esternocostales:</b> cartílagos 1–7 con el esternón (la 1ª es una sincondrosis; el resto, sinoviales).</p></div>
+      </details>
+      <details><summary>¿Cómo identificar el hilio pulmonar?</summary>
+        <div class="resp-body"><p>Es la región <b>medial</b> por donde entran y salen el bronquio, la arteria pulmonar y las venas pulmonares. Disposición general: la <b>arteria</b> queda superior/anterior, las <b>venas</b> inferiores/anteriores.</p><p class="tip">Diferencia útil: en el <b>derecho</b> el bronquio va arriba (epiarterial → "bronquio arriba"); en el <b>izquierdo</b> la arteria va arriba.</p></div>
+      </details>
+      <details><summary>¿Cómo diferencio el pulmón derecho del izquierdo (cara medial)?</summary>
+        <div class="resp-body"><p><b>Derecho:</b> 3 lóbulos; impresiones de la vena cava superior, la aurícula derecha y el arco de la ácigos; más ancho y corto.</p><p><b>Izquierdo:</b> 2 lóbulos; <b>escotadura cardíaca</b> + <b>língula</b>; impresión del arco aórtico y de la aorta descendente.</p><p class="tip">Truco: el pulmón que tiene la <b>escotadura del corazón</b> es el izquierdo.</p></div>
+      </details>
+      <details><summary>¿Qué es el sistema ácigos?</summary>
+        <div class="resp-body"><p>Es un sistema de venas a los lados de la columna que drena las paredes del tórax: la <b>ácigos</b> (derecha, desemboca en la vena cava superior) y la <b>hemiácigos</b> y <b>hemiácigos accesoria</b> (izquierda, drenan en la ácigos). Funciona como una <b>vía colateral</b> que comunica la cava superior con la inferior.</p></div>
+      </details>
+      <details><summary>Nervio laríngeo recurrente: ¿por qué es distinto a cada lado?</summary>
+        <div class="resp-body"><p>Es rama del <b>vago</b>. El <b>derecho</b> rodea la arteria <b>subclavia</b>; el <b>izquierdo</b> rodea el <b>arco aórtico</b> (por eso desciende más). Luego ambos ascienden por el surco traqueoesofágico hasta la laringe.</p></div>
+      </details>
+      <details><summary>Consejo para ubicarse y diferenciar los lados en el Anatomage</summary>
+        <div class="resp-body"><p>Primero fija la <b>línea media</b> (columna y esternón) y ubícate desde ahí. Usa referencias <b>asimétricas fijas</b>: el <b>ápex del corazón</b> y el <b>arco aórtico</b> apuntan a la <b>izquierda</b>; la <b>vena cava</b> y el <b>hígado</b> están a la <b>derecha</b>.</p><p class="tip">Recuerda la convención radiológica: en muchos cortes, la izquierda del paciente aparece a <b>tu derecha</b> en la pantalla.</p></div>
+      </details>
+    </div>
+    <div class="vids"><h3>🎬 Video de apoyo</h3>
+      <div class="vgrid">
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/bDsXZoXG05A" title="Tórax y diafragma" loading="lazy" allowfullscreen></iframe></div><div class="vt">Tórax y diafragma — Dr. Ricardo Aldana</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DIGESTIVO ================= -->
+  <div class="sec dig">
+    <div class="cab"><div class="em">🩻</div><div><span class="wk">Semana 3</span><h2>Sistema digestivo: abdomen</h2></div></div>
+    <div class="cuerpo">
+      <details><summary>Arterias del estómago: ¿de dónde nace cada una?</summary>
+        <div class="resp-body"><p>El estómago tiene un <b>doble arco</b> arterial:</p><p><b>Curvatura menor:</b> gástrica izquierda (del <b>tronco celíaco</b>) + gástrica derecha (de la hepática propia/común).</p><p><b>Curvatura mayor:</b> gastroomental derecha (de la gastroduodenal) + gastroomental izquierda y <b>gástricas cortas</b> (de la <b>esplénica</b>).</p><p class="tip">Las ramas <b>esofágicas/cardioesofágicas</b> vienen de la <b>gástrica izquierda</b>. Regla: fondo y curvatura mayor izquierda → de la <b>esplénica</b>; curvatura menor → gástricas izquierda y derecha.</p></div>
+      </details>
+      <details><summary>¿Cómo funciona el sistema porta?</summary>
+        <div class="resp-body"><p>La <b>vena porta</b> lleva sangre venosa rica en nutrientes desde el tubo digestivo, el bazo y el páncreas <b>hacia el hígado</b>. Se forma detrás del cuello del páncreas por la unión de la <b>mesentérica superior + esplénica</b> (la mesentérica inferior suele drenar en la esplénica).</p><p class="tip">No es retorno directo al corazón: la sangre pasa <b>primero por el hígado</b> y luego, por las venas hepáticas, a la cava inferior.</p></div>
+      </details>
+      <details><summary>Peritoneo: saco mayor vs. saco menor</summary>
+        <div class="resp-body"><p><b>Saco mayor:</b> la cavidad peritoneal general.</p><p><b>Saco menor (transcavidad de los epiplones):</b> un receso <b>detrás del estómago</b>. Se comunica con el saco mayor por el <b>foramen epiploico (de Winslow)</b>, limitado por delante por el ligamento hepatoduodenal (que lleva la tríada portal).</p></div>
+      </details>
+      <details><summary>¿Por qué el líquido peritoneal se acumula en ciertos recesos?</summary>
+        <div class="resp-body"><p>Por la <b>gravedad</b> y la forma de los espacios peritoneales. Acostado boca arriba, el punto más bajo es el <b>receso hepatorrenal (de Morrison)</b>; en la pelvis, el <b>fondo de saco rectovesical</b> (hombre) o <b>rectouterino de Douglas</b> (mujer). Por eso ahí tiende a colectarse líquido o pus.</p></div>
+      </details>
+      <details><summary>¿Dónde está el triángulo de Calot?</summary>
+        <div class="resp-body"><p>El triángulo <b>hepatocístico (de Calot)</b> está limitado por el <b>conducto cístico</b> (inferolateral), el <b>conducto hepático común</b> (medial) y el <b>borde inferior del hígado</b> (superior). En su interior pasa la <b>arteria cística</b>.</p><p class="tip">Es la referencia de seguridad en la colecistectomía (para ligar la arteria y el conducto correctos).</p></div>
+      </details>
+    </div>
+    <div class="vids"><h3>🎬 Videos de apoyo</h3>
+      <div class="vgrid">
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/injbVgzNXl4" title="Tronco celíaco en 5 minutos" loading="lazy" allowfullscreen></iframe></div><div class="vt">Tronco celíaco en 5 min — Dr. Ricardo Aldana</div></div>
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/vO3d4gmmk5w" title="Peritoneo" loading="lazy" allowfullscreen></iframe></div><div class="vt">Peritoneo — Dr. Ricardo Aldana</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RENAL ================= -->
+  <div class="sec ren">
+    <div class="cab"><div class="em">🫘</div><div><span class="wk">Semana 4</span><h2>Anatomía renal</h2></div></div>
+    <div class="cuerpo">
+      <details><summary>Suprarrenales: irrigación y drenaje venoso (¿son las "capsulares"?)</summary>
+        <div class="resp-body"><p>Las glándulas suprarrenales reciben <b>tres arterias</b>: suprarrenal <b>superior</b> (de la frénica inferior), <b>media</b> (directa de la aorta) e <b>inferior</b> (de la arteria renal). "Capsulares" es el nombre antiguo de estas mismas arterias.</p><p class="tip">El drenaje venoso <b>no es simétrico</b>: la vena suprarrenal <b>derecha</b> drena directo a la <b>cava inferior</b> (es corta); la <b>izquierda</b> drena a la <b>vena renal izquierda</b>. Suele haber una vena principal por glándula.</p></div>
+      </details>
+      <details><summary>Anatomía básica de la vejiga</summary>
+        <div class="resp-body"><p>Órgano <b>subperitoneal</b> en la pelvis. Su cara <b>superior</b> está cubierta por peritoneo; la <b>base (fondo)</b> posteroinferior contiene el <b>trígono vesical</b> (área lisa entre los dos orificios ureterales y el orificio uretral interno). El <b>cuello</b> se continúa con la uretra y la pared está formada por el músculo <b>detrusor</b>.</p></div>
+      </details>
+      <details><summary>Me confundo ubicando las arterias renales</summary>
+        <div class="resp-body"><p>Las <b>arterias renales</b> salen de la <b>aorta</b> a la altura de L1–L2. La <b>derecha es más larga</b> y pasa por detrás de la vena cava inferior. Cada arteria se divide en ramas <b>anteriores y una posterior</b> (segmentarias). Referencia: la <b>vena</b> renal va por delante de la arteria, y la izquierda cruza por delante de la aorta.</p></div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ================= CEREBRO (SN I) ================= -->
+  <div class="sec cer">
+    <div class="cab"><div class="em">🧠</div><div><span class="wk">Semana 5</span><h2>Cerebro: superficie, irrigación y drenaje venoso</h2></div></div>
+    <div class="cuerpo">
+      <details><summary>Los surcos son muchos y difíciles de memorizar, ¿algún truco?</summary>
+        <div class="resp-body"><p>No intentes memorizarlos todos sueltos: agrúpalos por <b>lóbulo</b> y ubícalos siempre respecto a dos referencias fijas, el <b>surco central</b> (separa frontal de parietal) y el <b>surco lateral o de Silvio</b> (separa temporal de frontal/parietal). A partir de ahí, todo lo demás se nombra en relación con esos dos: pre-central, post-central, etc.</p><p class="tip">Dibuja de memoria esos dos surcos primero; el resto del mapa se arma solo alrededor de ellos.</p></div>
+      </details>
+      <details><summary>¿Qué son las meninges y cómo se organizan?</summary>
+        <div class="resp-body"><p>Son tres capas que envuelven el encéfalo: <b>duramadre</b> (externa, gruesa, forma pliegues como la hoz del cerebro y la tienda del cerebelo), <b>aracnoides</b> (intermedia, con el espacio subaracnoideo debajo, lleno de LCR) y <b>piamadre</b> (interna, adherida directamente a la superficie del cerebro, sigue todos los surcos).</p><p class="tip">Regla rápida: la <b>duramadre protege</b>, la <b>aracnoides "flota"</b> con el LCR, y la <b>piamadre se pega</b> a la superficie.</p></div>
+      </details>
+      <details><summary>Irrigación cerebral: ¿por dónde empiezo a entenderla?</summary>
+        <div class="resp-body"><p>Parte de las <b>dos fuentes</b>: las <b>carótidas internas</b> (irrigan la mayor parte de los hemisferios, vía cerebral anterior y media) y el <b>sistema vertebrobasilar</b> (irriga tronco encefálico, cerebelo y lóbulos occipitales, vía cerebral posterior). Ambas se conectan en la base del cráneo formando el <b>círculo de Willis</b>, una red de seguridad que permite compensar si se ocluye una arteria.</p><p class="tip">Para un ACV, siempre pregúntate: ¿el territorio afectado corresponde a cerebral anterior, media o posterior? Eso ya te dice qué arteria buscar.</p></div>
+      </details>
+      <details><summary>En el surco precentral está la región motora, ¿el resto del lóbulo frontal es solo "personalidad"?</summary>
+        <div class="resp-body"><p>No exactamente. El <b>giro precentral</b> (corteza motora primaria) sí controla el movimiento voluntario. Pero el resto del lóbulo frontal tiene varias funciones además de la personalidad: el <b>área motora suplementaria y premotora</b> (planificación del movimiento), el <b>área de Broca</b> (producción del lenguaje, en el hemisferio dominante) y la <b>corteza prefrontal</b> (juicio, toma de decisiones, control de impulsos — la más asociada a "personalidad" y comportamiento social).</p><p class="tip">Piensa el lóbulo frontal como un gradiente: de atrás (motor puro) hacia adelante (cada vez más "ejecutivo" y de personalidad).</p></div>
+      </details>
+    </div>
+    <div class="vids"><h3>🎬 Video de apoyo</h3>
+      <div class="vgrid">
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/sSwPwSzAP_g" title="Círculo de Willis" loading="lazy" allowfullscreen></iframe></div><div class="vt">Círculo de Willis</div></div>
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/wJkrVCClE8M" title="Meninges" loading="lazy" allowfullscreen></iframe></div><div class="vt">Meninges</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CUELLO ================= -->
+  <div class="sec cue">
+    <div class="cab"><div class="em">🦢</div><div><span class="wk">Semana 7</span><h2>Anatomía del cuello</h2></div></div>
+    <div class="cuerpo">
+      <details><summary>¿Cómo diferencio los triángulos mayores y menores del cuello?</summary>
+        <div class="resp-body"><p>Primero fija los <b>dos triángulos grandes</b>: <b>anterior</b> (delante del ECM) y <b>posterior</b> (detrás del ECM). Luego, dentro de cada uno, ubica los <b>pequeños</b>: en el anterior están el <b>submandibular</b> (glándula submandibular, arteria/vena facial) y el <b>carotídeo</b> (carótida externa, vago, yugular interna); en el posterior, el <b>occipital</b> (nervio accesorio) y el <b>supraclavicular</b> (vena subclavia).</p><p class="tip">Truco: el <b>ECM</b> es la "columna vertebral" de esta división — todo se ubica delante o detrás de él.</p></div>
+      </details>
+      <details><summary>¿La glándula tiroides tiene relación con el cartílago tiroides?</summary>
+        <div class="resp-body"><p>A pesar del nombre parecido, no. La tiroides se relaciona directamente con la <b>tráquea</b> (sus lóbulos la abrazan a la altura de los anillos 2-4), no con el cartílago tiroides, que está más arriba, en la laringe.</p><p class="tip">Esto explica por qué el bocio se palpa más abajo en el cuello, cerca de la horquilla esternal, y no a la altura de la "nuez".</p></div>
+      </details>
+      <details><summary>¿Por qué se protege tanto el nervio laríngeo recurrente en la cirugía de tiroides?</summary>
+        <div class="resp-body"><p>Porque asciende <b>pegado</b> a la tiroides, en el <b>surco traqueoesofágico</b>, y es el que inerva los músculos de la laringe encargados de mover las cuerdas vocales. Si se lesiona durante una tiroidectomía, el resultado es un cambio de voz (ronquera) o incluso parálisis de cuerda vocal.</p><p class="tip">Junto con las <b>glándulas paratiroides</b> (en la cara posterior de los lóbulos, reguladoras del calcio), son las dos estructuras que más cuidado exigen en cirugía tiroidea.</p></div>
+      </details>
+      <details><summary>Espacio interescalénico: ¿qué pasa por ahí?</summary>
+        <div class="resp-body"><p>Entre los músculos <b>escaleno anterior y medio</b> pasan el <b>plexo braquial</b> y la <b>arteria subclavia</b>. La <b>vena</b> subclavia, en cambio, pasa por <b>delante</b> del escaleno anterior, junto con el nervio frénico que lo recorre por su cara anterior.</p><p class="tip">Es una zona clave en anestesia (bloqueos del plexo braquial) y en el síndrome del opérculo torácico.</p></div>
+      </details>
+    </div>
+    <div class="vids"><h3>🎬 Videos de apoyo</h3>
+      <div class="vgrid">
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/qajPa667ZMI" title="Miología y triángulos del cuello" loading="lazy" allowfullscreen></iframe></div><div class="vt">Miología y triángulos del cuello</div></div>
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/ZLrsHfDRijg" title="Esplacnología del cuello" loading="lazy" allowfullscreen></iframe></div><div class="vt">Esplacnología del cuello</div></div>
+        <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/zozD2x2Ll4Q" title="Ultrasonido en el cuello" loading="lazy" allowfullscreen></iframe></div><div class="vt">Ultrasonido en el cuello</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align:center;color:rgba(255,255,255,.55);font-size:.85rem;margin-top:6px">¿Sigue una duda sin resolver? Escríbela en el comentario de tu módulo y la incluimos aquí.</p>
+</main>
+<footer>Recurso educativo · SOI II · Facultad de Medicina · Videos: Dr. Ricardo Aldana</footer>
+</body>
+</html>

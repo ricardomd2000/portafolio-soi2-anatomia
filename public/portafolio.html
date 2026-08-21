@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio de Anatomía · SOI II</title>
+<style>
+:root{--tinta:#20313a;--gris:#5c6b72;--linea:#e2e8ea;}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--tinta);
+  background:#0d1b22;min-height:100vh}
+.hero{background:linear-gradient(160deg,#0a1f2b,#123243);color:#fff;padding:48px 20px 30px;text-align:center}
+.hero h1{margin:0 0 8px;font-size:2rem;letter-spacing:.3px}
+.hero p{margin:0;opacity:.85;font-size:1rem}
+.hero .sub{margin-top:6px;font-size:.85rem;opacity:.7}
+main{max-width:940px;margin:0 auto;padding:26px 18px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:8px}
+.sem{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;flex-direction:column}
+.sem .cab{padding:26px 22px;color:#fff;position:relative}
+.sem.s1 .cab{background:linear-gradient(135deg,#7d1620,#b3202c)}
+.sem.s2 .cab{background:linear-gradient(135deg,#0a4f66,#0f7391)}
+.sem .cab .em{font-size:2.4rem;line-height:1}
+.sem .cab h2{margin:8px 0 2px;font-size:1.3rem}
+.sem .cab .wk{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;opacity:.85}
+.sem .cuerpo{padding:20px 22px;flex:1;display:flex;flex-direction:column}
+.sem .cuerpo p{margin:0 0 14px;color:var(--gris);font-size:.92rem}
+.sem ul{list-style:none;padding:0;margin:0 0 18px}
+.sem ul li{padding:4px 0 4px 22px;position:relative;font-size:.88rem}
+.sem ul li::before{content:"›";position:absolute;left:4px;font-weight:700}
+.sem.s1 ul li::before{color:#b3202c}
+.sem.s2 ul li::before{color:#0f7391}
+.entrar{margin-top:auto;display:block;text-align:center;text-decoration:none;color:#fff;font-weight:600;
+  padding:13px;border-radius:11px;font-size:1rem}
+.sem.s1 .entrar{background:#b3202c}
+.sem.s2 .entrar{background:#0f7391}
+.sem.s3 .cab{background:linear-gradient(135deg,#9a3412,#c2410c)}
+.sem.s3 ul li::before{color:#c2410c}
+.sem.s3 .entrar{background:#c2410c}
+.sem.s4 .cab{background:linear-gradient(135deg,#4a148c,#7b1fa2)}
+.sem.s4 ul li::before{color:#7b1fa2}
+.sem.s4 .entrar{background:#7b1fa2}
+.sem.s5 .cab{background:linear-gradient(135deg,#880e4f,#c2185b)}
+.sem.s5 ul li::before{color:#c2185b}
+.sem.s5 .entrar{background:#c2185b}
+.entrar:hover{opacity:.92}
+.doc{margin-top:30px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px 20px;color:#cfe0e6}
+.doc h3{margin:0 0 10px;font-size:1rem;color:#fff}
+.doc a{display:inline-block;margin:5px 10px 5px 0;color:#fff;text-decoration:none;background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);padding:8px 14px;border-radius:9px;font-size:.86rem}
+.doc a:hover{background:rgba(255,255,255,.22)}
+.doc .mini{font-size:.76rem;opacity:.6;margin-top:8px}
+footer{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;padding:10px 20px 40px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🫀🫁 Portafolio de Anatomía</h1>
+  <p>Sistemas Orgánicos Integrados II · Laboratorio de Anatomía</p>
+  <div class="sub">Prepárate, practica y repasa cada semana. Tu avance se registra con tu correo.</div>
+  <a href="recursos.html" style="display:inline-block;margin-top:14px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.45);color:#fff;text-decoration:none;padding:9px 18px;border-radius:999px;font-weight:600;font-size:.9rem">📚 Recursos de apoyo (atlas, libros y videos)</a>
+</div>
+<main>
+  <div class="grid">
+    <div class="sem s1">
+      <div class="cab"><div class="em">🫀</div><div class="wk">Semana 1</div><h2>Corazón, grandes vasos y pericardio</h2></div>
+      <div class="cuerpo">
+        <p>Anatomía del corazón e integración con el caso de falla cardíaca.</p>
+        <ul>
+          <li>Configuración externa e interna</li>
+          <li>Cavidades, válvulas y grandes vasos</li>
+          <li>Atlas de laboratorio + banco de preguntas</li>
+        </ul>
+        <a class="entrar" href="corazon.html">Entrar a Semana 1 →</a>
+      </div>
+    </div>
+    <div class="sem s2">
+      <div class="cab"><div class="em">🫁</div><div class="wk">Semana 2</div><h2>Vía respiratoria baja y tórax</h2></div>
+      <div class="cuerpo">
+        <p>Tráquea, bronquios, pulmones, pleura y pared torácica; integración con el caso de tórax inestable.</p>
+        <ul>
+          <li>Pared torácica y mecánica ventilatoria</li>
+          <li>Vía aérea, pulmones, hilios y pleura</li>
+          <li>Recursos Lecturio + banco de preguntas</li>
+        </ul>
+        <a class="entrar" href="respiratorio.html">Entrar a Semana 2 →</a>
+      </div>
+    </div>
+    <div class="sem s3">
+      <div class="cab"><div class="em">🩻</div><div class="wk">Semana 3</div><h2>Sistema digestivo: abdomen</h2></div>
+      <div class="cuerpo">
+        <p>Irrigación abdominal, vena cava y porta, peritoneo y estómago; integración con el caso de gastritis.</p>
+        <ul>
+          <li>Aorta abdominal, tronco celíaco y mesentéricas</li>
+          <li>Vena cava/porta, peritoneo y estómago</li>
+          <li>Videos + banco de preguntas</li>
+        </ul>
+        <a class="entrar" href="digestivo.html">Entrar a Semana 3 →</a>
+      </div>
+    </div>
+    <div class="sem s4">
+      <div class="cab"><div class="em">🫘</div><div class="wk">Semana 4</div><h2>Anatomía renal: riñón, uréter y vejiga</h2></div>
+      <div class="cuerpo">
+        <p>Riñón, nefrona, vascularización y vía urinaria; integración con el caso de falla renal aguda.</p>
+        <ul>
+          <li>Nefrona, corteza/médula y aparato yuxtaglomerular</li>
+          <li>Vascularización renal y vía urinaria</li>
+          <li>Video + banco de preguntas</li>
+        </ul>
+        <a class="entrar" href="renal.html">Entrar a Semana 4 →</a>
+      </div>
+    </div>
+    <div class="sem s5">
+      <div class="cab"><div class="em">🧠</div><div class="wk">Semana 5</div><h2>Cerebro: superficie, irrigación y venoso</h2></div>
+      <div class="cuerpo">
+        <p>Sistema Nervioso I: lóbulos y surcos, círculo de Willis y meninges; integración con el caso de ACV.</p>
+        <ul>
+          <li>Lóbulos, surcos y territorios vasculares</li>
+          <li>Círculo de Willis, meninges y senos venosos</li>
+          <li>Videos + banco de preguntas</li>
+        </ul>
+        <a class="entrar" href="cerebro.html">Entrar a Semana 5 →</a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>Recurso educativo · SOI II · Facultad de Medicina</footer>
+</body>
+</html>

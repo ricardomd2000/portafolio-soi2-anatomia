@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis notas · Anatomía SOI II</title>
+<style>
+:root{--tinta:#20313a;--gris:#5c6b72;--linea:#e2e8ea;--rojo:#b3202c;--verde:#2e7d5b;}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--tinta);background:#0d1b22;min-height:100vh}
+.hero{background:linear-gradient(160deg,#0a1f2b,#123243);color:#fff;padding:40px 20px 26px;text-align:center}
+.hero h1{margin:0 0 8px;font-size:1.8rem}
+.hero p{margin:0 auto;opacity:.85;font-size:.95rem;max-width:640px}
+.hero a.volver{display:inline-block;margin-top:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;text-decoration:none;padding:8px 16px;border-radius:999px;font-size:.85rem;font-weight:600}
+main{max-width:700px;margin:0 auto;padding:24px 16px 60px}
+.box{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);padding:22px 24px;margin-bottom:18px}
+label{display:block;font-weight:600;margin:6px 0 6px;font-size:.9rem}
+input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+input:focus{outline:none;border-color:#c2185b}
+button{margin-top:14px;background:#c2185b;color:#fff;border:0;border-radius:10px;padding:12px 20px;font-size:1rem;font-weight:600;cursor:pointer}
+button:hover{opacity:.92}
+.err{color:var(--rojo);font-size:.85rem;min-height:18px;margin-top:6px}
+.mod{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22);margin-bottom:18px;overflow:hidden}
+.mod .cab{padding:16px 20px;color:#fff}
+.mod.s5 .cab{background:linear-gradient(135deg,#880e4f,#c2185b)}
+.mod.s6 .cab{background:linear-gradient(135deg,#1a237e,#3949ab)}
+.mod.s7 .cab{background:linear-gradient(135deg,#004d40,#00695c)}
+.mod .cab h2{margin:0;font-size:1.1rem}
+.mod .cuerpo{padding:16px 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.mn{background:#f7f4f6;border:1px solid var(--linea);border-radius:10px;padding:12px;text-align:center}
+.mn .l{font-size:.72rem;color:var(--gris);text-transform:uppercase;letter-spacing:.4px}
+.mn .v{font-size:1.2rem;font-weight:800;margin-top:4px}
+.mod.s5 .mn .v{color:#c2185b}
+.mod.s6 .mn .v{color:#3949ab}
+.mod.s7 .mn .v{color:#00695c}
+.mini{font-size:.8rem;color:var(--gris)}
+.saludo{background:#e9f4ee;border:1px solid var(--verde);color:#1c5c40;padding:8px 14px;border-radius:10px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
+.saludo button{background:none;border:0;color:var(--rojo);cursor:pointer;font-size:.82rem;text-decoration:underline;margin:0;padding:0}
+footer{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;padding:10px 20px 40px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🎓 Mis notas · SOI II</h1>
+  <p>Consulta el avance de tu quiz y la nota de la actividad de cada módulo disponible (Cerebro externo, Cerebro interno y Cuello).</p>
+  <a class="volver" href="index.html">← Volver al portafolio</a>
+</div>
+<main>
+  <div class="box" id="cajaLogin">
+    <label>Correo institucional</label>
+    <input id="inCorreo" type="email" placeholder="tu.correo@unisabana.edu.co" autocomplete="email">
+    <div class="err" id="err"></div>
+    <button id="btnVer">Ver mis notas</button>
+  </div>
+
+  <div id="saludoWrap" style="display:none">
+    <div class="saludo"><span>👋 Notas de <b id="saludoNombre"></b></span><button id="salir">Cambiar correo</button></div>
+  </div>
+
+  <div class="mod s5" id="modCerebro" style="display:none">
+    <div class="cab"><h2>🧠 Cerebro (Semana 5 · ACV)</h2></div>
+    <div class="cuerpo">
+      <div class="grid">
+        <div class="mn"><div class="l">Quiz</div><div class="v" id="mnQuizC">—</div></div>
+        <div class="mn"><div class="l">Juego arcade</div><div class="v" id="mnArcadeC">—</div></div>
+        <div class="mn"><div class="l">Foto/dibujo</div><div class="v" id="mnFotoC">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod s6" id="modS6" style="display:none">
+    <div class="cab"><h2>🧠 Cerebro interno (Semana 6)</h2></div>
+    <div class="cuerpo">
+      <div class="grid">
+        <div class="mn"><div class="l">Quiz</div><div class="v" id="mnQuizS6">—</div></div>
+        <div class="mn"><div class="l">Foto de laboratorio</div><div class="v" id="mnFotoS6">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mod s7" id="modS7" style="display:none">
+    <div class="cab"><h2>🦢 Anatomía del cuello (Semana 7)</h2></div>
+    <div class="cuerpo">
+      <div class="grid">
+        <div class="mn"><div class="l">Quiz</div><div class="v" id="mnQuizS7">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="mini" id="pieAviso" style="display:none;text-align:center">Se actualiza solo cada vez que entras a esta página.</p>
+  <div id="vacio" class="mini" style="display:none;text-align:center;color:#cfe0e6;margin-top:20px">No encontramos registros con ese correo todavía. Entra primero a alguno de los módulos para registrar tu avance.</div>
+</main>
+<footer>Recurso educativo · SOI II · Facultad de Medicina</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA_S5, TABLA_S6, TABLA_S7, DOMINIO_INSTITUCIONAL } from './supabase-config.js';
+const sb=createClient(SUPABASE_URL, SUPABASE_KEY);
+const $=id=>document.getElementById(id);
+
+async function verNotas(correo){
+  correo=correo.toLowerCase().trim();
+  const [rs5,rs6,rs7,fc,f6] = await Promise.all([
+    sb.from(TABLA_S5).select('nombre,respondidas_total,aciertos_total,porcentaje,arcade_puntaje').eq('correo',correo).maybeSingle(),
+    sb.from(TABLA_S6).select('nombre,respondidas_total,aciertos_total,porcentaje').eq('correo',correo).maybeSingle(),
+    sb.from(TABLA_S7).select('nombre,respondidas_total,aciertos_total,porcentaje').eq('correo',correo).maybeSingle(),
+    sb.from('fotos_cerebro').select('nota').eq('correo',correo).order('creado',{ascending:false}).limit(1),
+    sb.from('fotos_s6').select('nota').eq('correo',correo).order('creado',{ascending:false}).limit(1)
+  ]);
+  const d5=rs5.data, d6=rs6.data, d7=rs7.data;
+  if(!d5 && !d6 && !d7){ $('vacio').style.display='block'; $('modCerebro').style.display='none'; $('modS6').style.display='none'; $('modS7').style.display='none'; $('saludoWrap').style.display='none'; $('pieAviso').style.display='none'; return; }
+  $('vacio').style.display='none'; $('pieAviso').style.display='block';
+  $('saludoWrap').style.display='block';
+  $('saludoNombre').textContent=(d5&&d5.nombre)||(d6&&d6.nombre)||(d7&&d7.nombre)||correo;
+
+  if(d5){
+    $('modCerebro').style.display='block';
+    $('mnQuizC').textContent=(d5.respondidas_total>0)?`${d5.aciertos_total||0}/${d5.respondidas_total} (${d5.porcentaje||0}%)`:'Sin hacer';
+    $('mnArcadeC').textContent=d5.arcade_puntaje?`${d5.arcade_puntaje} pts`:'Sin jugar';
+    const foto=(fc.data&&fc.data[0])||null;
+    $('mnFotoC').textContent= foto ? (foto.nota!=null?`${foto.nota}/5`:'Pendiente de calificar') : 'Sin subir';
+  } else { $('modCerebro').style.display='none'; }
+
+  if(d6){
+    $('modS6').style.display='block';
+    $('mnQuizS6').textContent=(d6.respondidas_total>0)?`${d6.aciertos_total||0}/${d6.respondidas_total} (${d6.porcentaje||0}%)`:'Sin hacer';
+    const foto6=(f6.data&&f6.data[0])||null;
+    $('mnFotoS6').textContent= foto6 ? (foto6.nota!=null?`${foto6.nota}/5`:'Pendiente de calificar') : 'Sin subir';
+  } else { $('modS6').style.display='none'; }
+
+  if(d7){
+    $('modS7').style.display='block';
+    $('mnQuizS7').textContent=(d7.respondidas_total>0)?`${d7.aciertos_total||0}/${d7.respondidas_total} (${d7.porcentaje||0}%)`:'Sin hacer';
+  } else { $('modS7').style.display='none'; }
+}
+
+$('btnVer').onclick=async()=>{
+  const correo=$('inCorreo').value.trim(); const err=$('err');
+  const reMail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!reMail.test(correo)){ err.textContent='Escribe un correo válido.'; return; }
+  if(DOMINIO_INSTITUCIONAL && !correo.toLowerCase().endsWith(DOMINIO_INSTITUCIONAL.toLowerCase())){
+    err.textContent='Usa tu correo institucional ('+DOMINIO_INSTITUCIONAL+').'; return; }
+  err.textContent='';
+  $('cajaLogin').style.display='none';
+  try{ localStorage.setItem('soi2_notas_correo', correo); }catch(e){}
+  verNotas(correo);
+};
+$('inCorreo').addEventListener('keydown',e=>{ if(e.key==='Enter') $('btnVer').click(); });
+$('salir').onclick=()=>{
+  try{ localStorage.removeItem('soi2_notas_correo'); }catch(e){}
+  $('cajaLogin').style.display='block'; $('saludoWrap').style.display='none';
+  $('modCerebro').style.display='none'; $('modS6').style.display='none'; $('modS7').style.display='none';
+  $('vacio').style.display='none'; $('pieAviso').style.display='none';
+  $('inCorreo').value='';
+};
+try{
+  const g=localStorage.getItem('soi2_notas_correo');
+  if(g){ $('inCorreo').value=g; $('cajaLogin').style.display='none'; verNotas(g); }
+}catch(e){}
+</script>
+</body>
+</html>

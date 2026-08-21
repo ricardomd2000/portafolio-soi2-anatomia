@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Código Rojo · Reanimando a Juan García</title>
+<style>
+  :root{
+    --bg-0:#0a1120; --bg-1:#0f1a30; --panel:#132140; --panel-2:#182a52;
+    --line:#24365f; --ink:#e8eefc; --muted:#93a6cc; --dim:#5f7299;
+    --sat:#34d399; --hr:#fbbf24; --rr:#38bdf8; --bp:#c084fc;
+    --alert:#ff4d5e; --ok:#34d399; --gold:#ffd66b;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+    --sans:"Segoe UI",Roboto,system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--sans); color:var(--ink); min-height:100vh;
+    background:
+      radial-gradient(1200px 700px at 80% -10%, #14264a 0%, transparent 55%),
+      radial-gradient(900px 600px at -10% 110%, #16223f 0%, transparent 50%),
+      linear-gradient(160deg,var(--bg-0),var(--bg-1));
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 18px 60px}
+
+  /* ---------- MONITOR ---------- */
+  .monitor{
+    border:1px solid var(--line); border-radius:16px; overflow:hidden;
+    background:linear-gradient(180deg,#0c1730,#0a1428);
+    box-shadow:0 12px 40px -18px #000, inset 0 1px 0 #ffffff10;
+  }
+  .monitor-top{display:flex;align-items:center;gap:14px;padding:10px 16px;border-bottom:1px solid var(--line);background:#0b152b}
+  .status-dot{width:11px;height:11px;border-radius:50%;background:var(--alert);box-shadow:0 0 14px var(--alert);animation:pulse 1.1s infinite}
+  .status-dot.stable{background:var(--ok);box-shadow:0 0 14px var(--ok);animation:none}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .patient{font-weight:700;letter-spacing:.3px}
+  .patient small{display:block;color:var(--muted);font-weight:400;font-size:.72rem;letter-spacing:.5px}
+  .timer{margin-left:auto;font-family:var(--mono);font-size:1.15rem;color:var(--gold);letter-spacing:1px}
+  .timer.crit{color:var(--alert)}
+  .code-red{font-family:var(--mono);font-size:.72rem;letter-spacing:3px;color:var(--alert);border:1px solid var(--alert);padding:3px 8px;border-radius:6px}
+  .code-red.stable{color:var(--ok);border-color:var(--ok)}
+
+  .ecg{display:block;width:100%;height:86px;background:#081020}
+  .vitals{display:grid;grid-template-columns:repeat(4,1fr)}
+  .vital{padding:12px 14px;border-right:1px solid var(--line);border-top:1px solid var(--line)}
+  .vital:last-child{border-right:none}
+  .vital .lab{font-size:.66rem;letter-spacing:1.5px;color:var(--dim);text-transform:uppercase}
+  .vital .val{font-family:var(--mono);font-size:1.9rem;font-weight:700;line-height:1.05;margin-top:2px;transition:color .5s}
+  .vital .u{font-size:.7rem;color:var(--muted);margin-left:3px;font-family:var(--sans)}
+  .v-hr .val{color:var(--hr)} .v-rr .val{color:var(--rr)} .v-bp .val{color:var(--bp)} .v-sat .val{color:var(--alert)}
+  .v-sat .val.ok{color:var(--sat)}
+  @media(max-width:620px){.vitals{grid-template-columns:repeat(2,1fr)} .vital:nth-child(2){border-right:none}}
+
+  /* ---------- PROGRESS ---------- */
+  .rail{display:flex;gap:8px;margin:18px 0 6px;flex-wrap:wrap}
+  .node{flex:1;min-width:120px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:#0e1a34;position:relative;opacity:.55;transition:.3s}
+  .node.active{opacity:1;border-color:var(--rr);box-shadow:0 0 0 1px var(--rr),0 8px 24px -14px var(--rr)}
+  .node.done{opacity:1;border-color:var(--ok)}
+  .node .k{font-family:var(--mono);font-size:.68rem;color:var(--dim);letter-spacing:1px}
+  .node .n{font-weight:700;font-size:.82rem;margin-top:2px}
+  .node .digit{position:absolute;top:8px;right:10px;font-family:var(--mono);font-weight:700;color:var(--gold);font-size:1.05rem}
+  .node.done .k{color:var(--ok)}
+
+  /* ---------- CARD / STAGE ---------- */
+  .card{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,var(--panel),#101d3a);
+        box-shadow:0 18px 50px -24px #000;overflow:hidden}
+  .card-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+  .badge{font-family:var(--mono);font-size:.7rem;letter-spacing:2px;color:var(--rr);border:1px solid var(--rr);border-radius:6px;padding:3px 8px}
+  .card-title{font-size:1.15rem;font-weight:800;letter-spacing:.2px}
+  .card-sub{color:var(--muted);font-size:.82rem;margin-top:2px}
+  .card-body{padding:20px}
+
+  .prompt{font-size:1.02rem;line-height:1.5;margin:0 0 16px}
+  .prompt b{color:var(--gold)}
+  .step-count{font-family:var(--mono);font-size:.7rem;color:var(--dim);letter-spacing:1px;margin-bottom:10px}
+
+  .opts{display:grid;gap:10px}
+  .opt{text-align:left;font:inherit;color:var(--ink);background:#0e1c39;border:1px solid var(--line);border-radius:11px;padding:13px 15px;cursor:pointer;transition:.15s;line-height:1.4}
+  .opt:hover{border-color:var(--rr);background:#132449}
+  .opt:disabled{cursor:default}
+  .opt.correct{border-color:var(--ok);background:#0f2e28;color:#c8ffe9}
+  .opt.wrong{border-color:var(--alert);background:#341620;color:#ffd2d8;animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  .feedback{margin-top:14px;font-size:.9rem;line-height:1.5;padding:12px 14px;border-radius:10px;display:none}
+  .feedback.show{display:block}
+  .feedback.good{background:#0f2a24;border:1px solid #1f5b48;color:#bff3e0}
+  .feedback.bad{background:#2c141b;border:1px solid #6a2733;color:#ffcdd4}
+
+  /* order challenge */
+  .tray{min-height:52px;border:1px dashed var(--line);border-radius:11px;padding:10px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;background:#0b1730}
+  .tray:empty::before{content:"Toca los elementos en orden…";color:var(--dim);font-size:.85rem}
+  .pool{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font:inherit;color:var(--ink);background:#12234a;border:1px solid var(--line);border-radius:9px;padding:9px 13px;cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--rr);background:#172c58}
+  .chip.used{opacity:.28;pointer-events:none}
+  .chip.seq{background:#13314d;border-color:var(--rr)}
+  .chip .idx{font-family:var(--mono);color:var(--gold);margin-right:7px;font-size:.8rem}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{font:inherit;font-weight:700;border:none;border-radius:11px;padding:12px 20px;cursor:pointer;letter-spacing:.3px}
+  .btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);color:#fff;box-shadow:0 10px 26px -12px #2563eb}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+  .btn:disabled{opacity:.4;cursor:default;filter:none}
+
+  /* hotspot svg */
+  .hs-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0a1428}
+  .hs-region{cursor:pointer;transition:.15s}
+  .hs-region:hover{filter:brightness(1.25)}
+  .hs-label{font-family:var(--mono);font-size:11px;fill:#cdd9f2;pointer-events:none}
+  .hs-tag{font-size:12px;fill:#9fb2d6;pointer-events:none}
+
+  /* digit reveal */
+  .digit-pop{display:flex;align-items:center;gap:14px;background:#0f2a24;border:1px solid #1f5b48;border-radius:12px;padding:14px 16px;margin-top:16px}
+  .digit-pop .big{font-family:var(--mono);font-size:2.2rem;font-weight:800;color:var(--gold)}
+
+  /* final code */
+  .codebox{display:flex;gap:10px;justify-content:center;margin:18px 0}
+  .codebox input{width:52px;height:64px;text-align:center;font-family:var(--mono);font-size:1.8rem;font-weight:800;color:var(--gold);
+    background:#0b1730;border:1px solid var(--line);border-radius:12px;outline:none}
+  .codebox input:focus{border-color:var(--rr);box-shadow:0 0 0 2px #2563eb55}
+
+  /* screens */
+  .screen{padding:28px 24px}
+  .screen h1{font-size:1.9rem;margin:0 0 6px;letter-spacing:.3px}
+  .screen .eyebrow{font-family:var(--mono);color:var(--alert);letter-spacing:3px;font-size:.75rem;margin-bottom:10px}
+  .case{background:#0d1a34;border:1px solid var(--line);border-left:4px solid var(--alert);border-radius:12px;padding:16px 18px;margin:16px 0;line-height:1.6}
+  .case dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:12px 0 0;font-size:.9rem}
+  .case dt{color:var(--dim);font-family:var(--mono);font-size:.78rem;white-space:nowrap}
+  .case dd{margin:0}
+  .mission{color:var(--muted);line-height:1.6}
+  .mission b{color:var(--ink)}
+
+  .win h1{color:var(--ok)}
+  .win .eyebrow{color:var(--ok)}
+  .summary{display:grid;gap:8px;margin:16px 0}
+  .summary .s{background:#0d1a34;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.9rem;line-height:1.5}
+  .summary .s b{color:var(--gold)}
+
+  .footnote{color:var(--dim);font-size:.75rem;text-align:center;margin-top:26px;line-height:1.6}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- MONITOR -->
+  <div class="monitor" id="monitor">
+    <div class="monitor-top">
+      <span class="status-dot" id="statusDot"></span>
+      <div class="patient">Juan García · 35 a · Trauma<small id="statusText">SALA DE REANIMACIÓN · PRIORIDAD I</small></div>
+      <span class="code-red" id="codeRed">CÓDIGO ROJO</span>
+      <span class="timer" id="timer">25:00</span>
+    </div>
+    <canvas class="ecg" id="ecg"></canvas>
+    <div class="vitals">
+      <div class="vital v-hr"><div class="lab">FC</div><div class="val" id="v-hr">120<span class="u">lpm</span></div></div>
+      <div class="vital v-rr"><div class="lab">FR</div><div class="val" id="v-rr">28<span class="u">rpm</span></div></div>
+      <div class="vital v-bp"><div class="lab">PA</div><div class="val" id="v-bp">90/60<span class="u">mmHg</span></div></div>
+      <div class="vital v-sat"><div class="lab">SpO₂</div><div class="val" id="v-sat">88<span class="u">%</span></div></div>
+    </div>
+  </div>
+
+  <!-- PROGRESS RAIL -->
+  <div class="rail" id="rail"></div>
+
+  <!-- STAGE -->
+  <div class="card" id="stage"></div>
+
+  <div class="footnote">
+    Actividad de integración morfofisiológica · Vía aérea inferior, mecánica ventilatoria, histología e inflamación aguda<br>
+    Caso: tórax inestable. Uso educativo · 2.º semestre de Medicina.
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- DATA ----------------
+  var MODULES = [
+    {
+      key:"MÓD 01", name:"Reconocimiento", tag:"ANATOMÍA", digit:"4",
+      sub:"Identifica la vía y define la lesión de la pared torácica.",
+      steps:[
+        { type:"order",
+          prompt:"El aire de Juan debe recorrer la vía aérea inferior hasta el sitio de intercambio. <b>Ordena el recorrido</b> desde la tráquea hasta el alvéolo.",
+          items:["Tráquea","Bronquio principal","Bronquiolo terminal","Bronquiolo respiratorio","Conducto alveolar","Alvéolo"],
+          answer:[0,1,2,3,4,5],
+          good:"Correcto. La porción conductora termina en el bronquiolo terminal; la respiratoria empieza en el bronquiolo respiratorio, donde ya aparecen alvéolos." },
+        { type:"mcq",
+          prompt:"En Juan, un segmento de la parrilla costal izquierda se mueve por su cuenta. <b>¿Qué define un tórax inestable (flail chest)?</b>",
+          options:[
+            "Una sola fractura costal sin desplazamiento",
+            "Fractura en ≥2 puntos de ≥3 costillas consecutivas, creando un segmento sin continuidad con la caja torácica",
+            "Fractura exclusiva del cuerpo del esternón",
+            "Luxación de la articulación esternoclavicular"],
+          answer:1,
+          good:"Así es: el segmento pierde continuidad ósea y se mueve de forma independiente, base de la respiración paradójica." },
+        { type:"mcq",
+          prompt:"<b>¿Cuál es el principal músculo de la inspiración</b>, cuya contracción desciende y aumenta el volumen torácico?",
+          options:["Intercostales internos","Diafragma","Recto del abdomen","Escalenos (solo accesorios)"],
+          answer:1,
+          good:"El diafragma es el motor de la inspiración tranquila; al descender aumenta el volumen torácico y cae la presión intrapleural." }
+      ]
+    },
+    {
+      key:"MÓD 02", name:"El fuelle roto", tag:"MECÁNICA VENTILATORIA", digit:"7",
+      sub:"Explica por qué la mecánica falla y la SpO₂ cae.",
+      steps:[
+        { type:"mcq",
+          prompt:"Durante la <b>inspiración</b> en un tórax inestable, el segmento costal fracturado (respiración paradójica):",
+          options:[
+            "Se expande hacia afuera junto con el resto del tórax",
+            "Se hunde hacia adentro mientras el resto del tórax se expande",
+            "Permanece completamente inmóvil",
+            "Se desplaza hacia la cabeza"],
+          answer:1,
+          good:"Exacto. La presión negativa inspiratoria succiona el segmento inestable hacia adentro, reduciendo la ventilación efectiva." },
+        { type:"mcq",
+          prompt:"La <b>SpO₂ de 88%</b> y la hipoxemia se explican principalmente por:",
+          options:[
+            "Exceso de surfactante en el alvéolo",
+            "Menor expansión y ventilación alveolar del lado afectado, con alteración de la relación ventilación/perfusión (V/Q)",
+            "Un aumento excesivo del volumen corriente",
+            "Broncodilatación exagerada"],
+          answer:1,
+          good:"Correcto: cae la ventilación alveolar, el desajuste V/Q genera hipoxemia pese a que la perfusión persiste." },
+        { type:"mcq",
+          prompt:"El volumen de aire que entra y sale en una <b>respiración tranquila normal</b> se llama:",
+          options:["Volumen residual","Capacidad vital","Volumen corriente (tidal)","Volumen de reserva espiratorio"],
+          answer:2,
+          good:"El volumen corriente. En Juan está disminuido y por eso taquipnea compensadora (FR 28)." }
+      ]
+    },
+    {
+      key:"MÓD 03", name:"Nivel micro", tag:"HISTOLOGÍA", digit:"2",
+      sub:"Localiza dónde ocurre y dónde falla el intercambio.",
+      steps:[
+        { type:"hotspot",
+          prompt:"El O₂ difunde desde el aire alveolar hasta el eritrocito. <b>Haz clic en la célula que forma el revestimiento delgado del alvéolo</b> (la superficie de intercambio).",
+          answer:"pneumoI",
+          good:"El neumocito tipo I: célula aplanada que reviste ~95% de la superficie alveolar y forma la cara alveolar de la barrera." },
+        { type:"mcq",
+          prompt:"¿Qué célula alveolar, redondeada y de citoplasma basófilo, <b>produce el surfactante pulmonar</b>?",
+          options:["Neumocito tipo I","Neumocito tipo II","Macrófago alveolar","Célula caliciforme"],
+          answer:1,
+          good:"El neumocito tipo II. El surfactante baja la tensión superficial y evita el colapso alveolar." },
+        { type:"mcq",
+          prompt:"El epitelio que reviste <b>tráquea y bronquios</b> se clasifica como:",
+          options:[
+            "Plano simple",
+            "Cilíndrico pseudoestratificado ciliado con células caliciformes",
+            "Cúbico simple",
+            "Plano estratificado queratinizado"],
+          answer:1,
+          good:"Correcto: el epitelio respiratorio, con su aparato mucociliar, filtra y depura el aire de la porción conductora." }
+      ]
+    },
+    {
+      key:"MÓD 04", name:"Alarma molecular", tag:"INFLAMACIÓN AGUDA", digit:"9",
+      sub:"Descifra la respuesta inmune al trauma pulmonar.",
+      steps:[
+        { type:"mcq",
+          prompt:"El trauma pulmonar libera señales de peligro (DAMPs) que disparan la inflamación. <b>¿Cuál de estos NO es un DAMP, sino una citocina?</b>",
+          options:["HSP70","ADN mitocondrial","IL-6","Proteína surfactante D"],
+          answer:2,
+          good:"IL-6 es una citocina proinflamatoria. Los DAMPs (HSP70, ADN mitocondrial, surfactante A/D, hialuronano) son las alarmas del daño tisular." },
+        { type:"mcq",
+          prompt:"Los DAMPs son reconocidos por receptores de reconocimiento de patrones. En la lesión pulmonar destacan:",
+          options:["TLR2 y TLR4","Insulina y glucagón","Canales de sodio","Receptores de acetilcolina"],
+          answer:0,
+          good:"Los TLR2 y TLR4 activan la respuesta innata y encienden el programa inflamatorio (incluido el inflamasoma NLR)." },
+        { type:"mcq",
+          prompt:"¿Qué par de <b>citocinas proinflamatorias tempranas</b> (primeras 24 h) orquesta la respuesta sistémica?",
+          options:["IL-10 y TGF-β","IL-6 y TNF-α","Insulina e IL-4","Melatonina y leptina"],
+          answer:1,
+          good:"IL-6 y TNF-α: entre las primeras detectables en plasma; median fiebre, taquicardia y la respuesta de fase aguda." },
+        { type:"mcq",
+          prompt:"Días después del trauma grave, Juan tiene <b>mayor riesgo de neumonía</b>. ¿Por qué?",
+          options:[
+            "Porque la inflamación desaparece por completo y ya no defiende",
+            "Porque tras la inflamación sistémica sigue una fase de inmunosupresión que, sumada al daño de barreras físicas, aumenta el riesgo de infección",
+            "Porque produce demasiado surfactante",
+            "Porque los neumocitos tipo I se multiplican sin control"],
+          answer:1,
+          good:"Correcto: la fase de supresión inmunitaria post-trauma más la ruptura de barreras deja al huésped vulnerable a la neumonía." }
+      ]
+    },
+    {
+      key:"MÓD 05", name:"Integración", tag:"DIAGNÓSTICO Y MANEJO", digit:"1",
+      sub:"Reconstruye la fisiopatología completa del caso.",
+      steps:[
+        { type:"order",
+          prompt:"<b>Ordena la cascada fisiopatológica</b> de Juan, del evento inicial a la complicación tardía.",
+          items:[
+            "Trauma torácico: fracturas costales múltiples (tórax inestable)",
+            "Respiración paradójica: cae la ventilación alveolar",
+            "Alteración V/Q → hipoxemia (SpO₂ 88%)",
+            "Daño tisular → DAMPs → TLR2/4 → inflamación aguda (IL-6, TNF-α)",
+            "Inmunosupresión post-trauma → riesgo de neumonía"],
+          answer:[0,1,2,3,4],
+          good:"Cadena completa: de la biomecánica de la pared torácica al intercambio gaseoso, y de ahí a la respuesta inmune y sus consecuencias." }
+      ]
+    }
+  ];
+
+  var FINAL_CODE = MODULES.map(function(m){return m.digit;}).join(""); // 47291
+
+  // vitals per number of solved modules (0..5)
+  var VITALS = {
+    hr:[120,112,105,99,95,92],
+    rr:[28,25,22,19,17,16],
+    sys:[90,96,104,110,115,118],
+    dia:[60,64,68,72,74,76],
+    sat:[88,90,92,94,96,97]
+  };
+
+  // ---------------- STATE ----------------
+  var state = { screen:"intro", current:0, step:0, solved:[false,false,false,false,false], seq:[] };
+  var stage = document.getElementById("stage");
+  var rail  = document.getElementById("rail");
+
+  // ---------------- MONITOR / ECG ----------------
+  var canvas = document.getElementById("ecg");
+  var ctx = canvas.getContext("2d");
+  var trace = [];
+  function resizeCanvas(){
+    var r = canvas.getBoundingClientRect();
+    canvas.width = r.width * (window.devicePixelRatio||1);
+    canvas.height = r.height * (window.devicePixelRatio||1);
+    ctx.setTransform(window.devicePixelRatio||1,0,0,window.devicePixelRatio||1,0,0);
+  }
+  window.addEventListener("resize", resizeCanvas);
+
+  var beatPhase = 0;
+  function ecgSample(phase){
+    // phase 0..1 within a beat; produce a simple PQRST-like spike
+    var p = phase;
+    if(p<0.10) return Math.sin(p/0.10*Math.PI)*0.12;      // P
+    if(p<0.16) return 0;
+    if(p<0.19) return -0.18;                               // Q
+    if(p<0.23) return 1.0;                                 // R
+    if(p<0.27) return -0.35;                               // S
+    if(p<0.45) return 0;
+    if(p<0.62) return Math.sin((p-0.45)/0.17*Math.PI)*0.22;// T
+    return 0;
+  }
+  function drawECG(){
+    var w = canvas.getBoundingClientRect().width;
+    var h = canvas.getBoundingClientRect().height;
+    ctx.clearRect(0,0,w,h);
+    // grid
+    ctx.strokeStyle="#12203c"; ctx.lineWidth=1;
+    for(var x=0;x<w;x+=26){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(var y=0;y<h;y+=26){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    var solvedN = state.solved.filter(Boolean).length;
+    var hr = VITALS.hr[solvedN];
+    var stable = solvedN>=5 && state.screen==="win";
+    var color = stable ? "#34d399" : (solvedN>=3 ? "#7dd3fc" : "#ff6b78");
+    // scroll trace
+    var beatsPerSec = hr/60;
+    var speed = beatsPerSec/60; // beats advanced per frame (~60fps)
+    beatPhase += speed;
+    if(beatPhase>=1) beatPhase-=1;
+    trace.push(ecgSample(beatPhase));
+    var maxPts = Math.floor(w/2);
+    while(trace.length>maxPts) trace.shift();
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.lineJoin="round";
+    ctx.shadowColor=color; ctx.shadowBlur=8;
+    ctx.beginPath();
+    var mid=h*0.62, amp=h*0.42;
+    for(var i=0;i<trace.length;i++){
+      var px=i*2, py=mid - trace[i]*amp;
+      if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.shadowBlur=0;
+    requestAnimationFrame(drawECG);
+  }
+
+  function updateVitals(){
+    var n = state.solved.filter(Boolean).length;
+    document.getElementById("v-hr").innerHTML = VITALS.hr[n]+'<span class="u">lpm</span>';
+    document.getElementById("v-rr").innerHTML = VITALS.rr[n]+'<span class="u">rpm</span>';
+    document.getElementById("v-bp").innerHTML = VITALS.sys[n]+"/"+VITALS.dia[n]+'<span class="u">mmHg</span>';
+    var satEl = document.getElementById("v-sat");
+    satEl.innerHTML = VITALS.sat[n]+'<span class="u">%</span>';
+    satEl.className = "val" + (VITALS.sat[n]>=94 ? " ok":"");
+    var stable = (n>=5 && state.screen==="win");
+    document.getElementById("statusDot").className = "status-dot"+(stable?" stable":"");
+    var cr = document.getElementById("codeRed");
+    cr.textContent = stable ? "ESTABILIZADO" : "CÓDIGO ROJO";
+    cr.className = "code-red"+(stable?" stable":"");
+    document.getElementById("statusText").textContent = stable
+      ? "PACIENTE ESTABILIZADO · TRASLADO A UCI" : "SALA DE REANIMACIÓN · PRIORIDAD I";
+  }
+
+  // ---------------- TIMER (ambient) ----------------
+  var remaining = 25*60;
+  var timerEl = document.getElementById("timer");
+  function fmt(s){var m=Math.floor(s/60),ss=s%60;return (m<10?"0":"")+m+":"+(ss<10?"0":"")+ss;}
+  var timerInt=null;
+  function startTimer(){
+    if(timerInt) return;
+    timerInt=setInterval(function(){
+      if(state.screen==="win"){return;}
+      if(remaining>0){remaining--;timerEl.textContent=fmt(remaining);
+        if(remaining<=300)timerEl.classList.add("crit");
+      } else {timerEl.textContent="00:00";}
+    },1000);
+  }
+
+  // ---------------- RAIL ----------------
+  function renderRail(){
+    rail.innerHTML="";
+    MODULES.forEach(function(m,i){
+      var d=document.createElement("div");
+      var cls="node";
+      if(state.solved[i]) cls+=" done";
+      else if(i===state.current && state.screen==="play") cls+=" active";
+      d.className=cls;
+      d.innerHTML='<div class="k">'+m.key+'</div><div class="n">'+m.name+'</div>'+
+        (state.solved[i]?'<div class="digit">'+m.digit+'</div>':'');
+      rail.appendChild(d);
+    });
+  }
+
+  // ---------------- SCREENS ----------------
+  function renderIntro(){
+    state.screen="intro"; renderRail(); updateVitals();
+    stage.innerHTML =
+      '<div class="screen">'+
+        '<div class="eyebrow">SALA DE REANIMACIÓN · 03:14</div>'+
+        '<h1>Código Rojo: reanimando a Juan García</h1>'+
+        '<div class="case">'+
+          '<b>Juan García, 35 años.</b> Accidente de moto en la autopista Norte, impacto frontal a alta velocidad. '+
+          'Llega consciente, con dolor torácico intenso y dificultad para respirar.'+
+          '<dl>'+
+            '<dt>FC</dt><dd>120 lpm</dd>'+
+            '<dt>FR</dt><dd>28 rpm, superficial y rápida</dd>'+
+            '<dt>PA</dt><dd>90/60 mmHg</dd>'+
+            '<dt>SpO₂</dt><dd>88% (aire ambiente)</dd>'+
+            '<dt>Examen</dt><dd>Deformidad en hemitórax izquierdo, fractura costal múltiple con desplazamiento, crepitación subcutánea</dd>'+
+            '<dt>Rx</dt><dd>Fracturas costales múltiples anterior y lateral izquierdas</dd>'+
+            '<dt>Gases</dt><dd>Hipoxemia significativa</dd>'+
+          '</dl>'+
+        '</div>'+
+        '<p class="mission">Ustedes son el <b>equipo de trauma</b>. Para estabilizar a Juan deben resolver <b>5 retos</b> que integran anatomía, mecánica ventilatoria, histología e inflamación aguda. '+
+        'Cada reto superado <b>libera un dígito</b> del código de estabilización y mejora sus signos vitales. Al reunir los 5 dígitos, ingresen el código y estabilícenlo.</p>'+
+        '<div class="row"><button class="btn primary" id="startBtn">Entrar a la sala →</button></div>'+
+      '</div>';
+    document.getElementById("startBtn").onclick=function(){
+      startTimer(); state.current=0; state.step=0; renderPlay();
+    };
+  }
+
+  function renderPlay(){
+    state.screen="play"; state.seq=[]; renderRail(); updateVitals();
+    var mod = MODULES[state.current];
+    var step = mod.steps[state.step];
+    var body="";
+    body += '<div class="card-head"><span class="badge">'+mod.tag+'</span>'+
+            '<div><div class="card-title">'+mod.key+' · '+mod.name+'</div>'+
+            '<div class="card-sub">'+mod.sub+'</div></div></div>';
+    body += '<div class="card-body">';
+    body += '<div class="step-count">Reto '+(state.step+1)+' de '+mod.steps.length+'</div>';
+    body += '<p class="prompt">'+step.prompt+'</p>';
+
+    if(step.type==="mcq"){
+      body += '<div class="opts" id="opts">';
+      step.options.forEach(function(o,idx){
+        body += '<button class="opt" data-i="'+idx+'">'+o+'</button>';
+      });
+      body += '</div>';
+      body += '<div class="feedback" id="fb"></div>';
+    }
+    else if(step.type==="order"){
+      body += '<div class="tray" id="tray"></div>';
+      body += '<div class="pool" id="pool"></div>';
+      body += '<div class="row">'+
+                '<button class="btn ghost" id="resetOrder">Reiniciar</button>'+
+                '<button class="btn primary" id="checkOrder" disabled>Confirmar orden</button>'+
+              '</div>';
+      body += '<div class="feedback" id="fb"></div>';
+    }
+    else if(step.type==="hotspot"){
+      body += barrierSVG();
+      body += '<div class="feedback" id="fb"></div>';
+    }
+    body += '</div>';
+    stage.className="card"; stage.innerHTML=body;
+
+    if(step.type==="mcq") wireMCQ(step);
+    else if(step.type==="order") wireOrder(step);
+    else if(step.type==="hotspot") wireHotspot(step);
+  }
+
+  // ---- MCQ ----
+  function wireMCQ(step){
+    var opts=document.querySelectorAll("#opts .opt");
+    var fb=document.getElementById("fb");
+    opts.forEach(function(b){
+      b.onclick=function(){
+        var i=parseInt(b.getAttribute("data-i"),10);
+        if(i===step.answer){
+          b.classList.add("correct");
+          opts.forEach(function(x){x.disabled=true;});
+          fb.className="feedback good show"; fb.innerHTML="✔ "+step.good;
+          nextStep();
+        } else {
+          b.classList.add("wrong"); b.disabled=true;
+          fb.className="feedback bad show";
+          fb.innerHTML="✘ No es la mejor respuesta. Reconsidéralo con el equipo y vuelve a intentarlo.";
+        }
+      };
+    });
+  }
+
+  // ---- ORDER ----
+  function wireOrder(step){
+    var pool=document.getElementById("pool");
+    var tray=document.getElementById("tray");
+    var checkBtn=document.getElementById("checkOrder");
+    var resetBtn=document.getElementById("resetOrder");
+    var fb=document.getElementById("fb");
+    var order=step.items.map(function(_,i){return i;});
+    // shuffle display
+    var shuffled=order.slice();
+    for(var i=shuffled.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=t;}
+    state.seq=[];
+    function renderPool(){
+      pool.innerHTML="";
+      shuffled.forEach(function(idx){
+        var c=document.createElement("button");
+        c.className="chip"+(state.seq.indexOf(idx)>-1?" used":"");
+        c.textContent=step.items[idx];
+        c.onclick=function(){ if(state.seq.indexOf(idx)===-1){state.seq.push(idx);draw();} };
+        pool.appendChild(c);
+      });
+    }
+    function draw(){
+      tray.innerHTML="";
+      state.seq.forEach(function(idx,pos){
+        var c=document.createElement("button");
+        c.className="chip seq";
+        c.innerHTML='<span class="idx">'+(pos+1)+'</span>'+step.items[idx];
+        c.onclick=function(){ state.seq.splice(pos,1); draw(); };
+        tray.appendChild(c);
+      });
+      renderPool();
+      checkBtn.disabled = state.seq.length!==step.items.length;
+    }
+    resetBtn.onclick=function(){state.seq=[];fb.className="feedback";draw();};
+    checkBtn.onclick=function(){
+      var ok=state.seq.length===step.answer.length && state.seq.every(function(v,k){return v===step.answer[k];});
+      if(ok){
+        checkBtn.disabled=true; resetBtn.disabled=true;
+        document.querySelectorAll("#tray .chip").forEach(function(x){x.style.borderColor="#1f5b48";x.style.background="#0f2e28";});
+        fb.className="feedback good show"; fb.innerHTML="✔ "+step.good;
+        nextStep();
+      } else {
+        fb.className="feedback bad show";
+        fb.innerHTML="✘ El orden no es correcto. Revisen la secuencia y ajústenla.";
+      }
+    };
+    draw();
+  }
+
+  // ---- HOTSPOT ----
+  function wireHotspot(step){
+    var fb=document.getElementById("fb");
+    var regions=document.querySelectorAll(".hs-region");
+    regions.forEach(function(r){
+      r.onclick=function(){
+        var id=r.getAttribute("data-id");
+        if(id===step.answer){
+          r.style.filter="brightness(1.5)";
+          regions.forEach(function(x){x.style.pointerEvents="none";});
+          fb.className="feedback good show"; fb.innerHTML="✔ "+step.good;
+          nextStep();
+        } else {
+          fb.className="feedback bad show";
+          fb.innerHTML="✘ Esa no es la superficie de intercambio delgada. Prueba con otra estructura.";
+        }
+      };
+    });
+  }
+
+  function barrierSVG(){
+    return ''+
+    '<div class="hs-wrap"><svg viewBox="0 0 640 300" width="100%" xmlns="http://www.w3.org/2000/svg">'+
+      '<rect width="640" height="300" fill="#0a1428"/>'+
+      // Alveolar air (top)
+      '<g class="hs-region" data-id="air">'+
+        '<rect x="0" y="0" width="640" height="70" fill="#101d38"/>'+
+        '<text class="hs-tag" x="16" y="26">Luz alveolar (aire)</text>'+
+        '<circle cx="520" cy="34" r="9" fill="none" stroke="#7dd3fc" stroke-dasharray="3 3"/>'+
+        '<text class="hs-label" x="500" y="55">O₂</text>'+
+      '</g>'+
+      // surfactant film
+      '<g class="hs-region" data-id="surf">'+
+        '<rect x="0" y="70" width="640" height="12" fill="#243b63"/>'+
+        '<text class="hs-tag" x="16" y="80" font-size="10">Surfactante</text>'+
+      '</g>'+
+      // neumocito I (target) - thin flat layer
+      '<g class="hs-region" data-id="pneumoI">'+
+        '<rect x="0" y="82" width="640" height="30" fill="#2b6cb0"/>'+
+        '<ellipse cx="150" cy="97" rx="22" ry="7" fill="#1e4e82"/>'+
+        '<text class="hs-label" x="250" y="102" fill="#eaf2ff">Neumocito tipo I (revestimiento delgado)</text>'+
+      '</g>'+
+      // neumocito II (cuboidal bump)
+      '<g class="hs-region" data-id="pneumoII">'+
+        '<rect x="60" y="52" width="60" height="30" rx="6" fill="#3a7d5c"/>'+
+        '<circle cx="90" cy="67" r="7" fill="#1e4a35"/>'+
+        '<text class="hs-tag" x="128" y="60" font-size="10">Neumocito II</text>'+
+      '</g>'+
+      // fused basement membrane
+      '<g class="hs-region" data-id="bm">'+
+        '<rect x="0" y="112" width="640" height="16" fill="#6b4a86"/>'+
+        '<text class="hs-tag" x="16" y="124" font-size="10" fill="#e6d9f5">Membrana basal fusionada</text>'+
+      '</g>'+
+      // endothelium
+      '<g class="hs-region" data-id="endo">'+
+        '<rect x="0" y="128" width="640" height="28" fill="#8a3d55"/>'+
+        '<text class="hs-label" x="16" y="147" fill="#ffe1ea">Endotelio capilar</text>'+
+      '</g>'+
+      // capillary lumen with RBC
+      '<g class="hs-region" data-id="lumen">'+
+        '<rect x="0" y="156" width="640" height="144" fill="#3a0f1a"/>'+
+        '<text class="hs-tag" x="16" y="182" fill="#ffb3c0">Luz capilar</text>'+
+        '<ellipse cx="330" cy="220" rx="46" ry="26" fill="#c0263e"/>'+
+        '<ellipse cx="330" cy="220" rx="24" ry="12" fill="#8f1a2d"/>'+
+        '<text class="hs-label" x="300" y="266" fill="#ffd7de">Eritrocito</text>'+
+      '</g>'+
+    '</svg></div>';
+  }
+
+  // ---------------- FLOW ----------------
+  function nextStep(){
+    var mod=MODULES[state.current];
+    setTimeout(function(){
+      if(state.step < mod.steps.length-1){
+        state.step++; renderPlay();
+      } else {
+        // module solved
+        state.solved[state.current]=true;
+        updateVitals(); renderRail();
+        renderDigitReveal(mod);
+      }
+    }, 900);
+  }
+
+  function renderDigitReveal(mod){
+    var last = state.solved.every(Boolean);
+    var body='';
+    body+='<div class="card-head"><span class="badge" style="border-color:#34d399;color:#34d399">MÓDULO COMPLETADO</span>'+
+          '<div class="card-title">'+mod.key+' · '+mod.name+'</div></div>';
+    body+='<div class="card-body">';
+    body+='<div class="digit-pop"><div class="big">'+mod.digit+'</div>'+
+          '<div>Dígito liberado. Signos vitales mejorando.<br><span style="color:var(--muted);font-size:.85rem">Dígitos reunidos: '+
+          MODULES.map(function(m,i){return state.solved[i]?m.digit:"•";}).join(" ")+'</span></div></div>';
+    if(!last){
+      body+='<div class="row"><button class="btn primary" id="cont">Siguiente reto →</button></div>';
+    } else {
+      body+='<p class="prompt" style="margin-top:18px">Tienen los <b>5 dígitos</b>. Ingresen el <b>código de estabilización</b> para completar la reanimación.</p>';
+      body+='<div class="codebox" id="codebox">';
+      for(var i=0;i<5;i++) body+='<input maxlength="1" inputmode="numeric" data-p="'+i+'">';
+      body+='</div>';
+      body+='<div class="feedback" id="fb"></div>';
+      body+='<div class="row" style="justify-content:center"><button class="btn primary" id="submitCode">Estabilizar paciente</button></div>';
+    }
+    body+='</div>';
+    stage.innerHTML=body;
+    if(!last){
+      document.getElementById("cont").onclick=function(){state.current++;state.step=0;renderPlay();};
+    } else {
+      wireCodebox();
+    }
+  }
+
+  function wireCodebox(){
+    var inputs=document.querySelectorAll("#codebox input");
+    inputs.forEach(function(inp,i){
+      inp.oninput=function(){
+        inp.value=inp.value.replace(/[^0-9]/g,"");
+        if(inp.value && i<inputs.length-1) inputs[i+1].focus();
+      };
+      inp.onkeydown=function(e){ if(e.key==="Backspace" && !inp.value && i>0) inputs[i-1].focus(); };
+    });
+    document.getElementById("submitCode").onclick=function(){
+      var code=Array.prototype.map.call(inputs,function(x){return x.value;}).join("");
+      var fb=document.getElementById("fb");
+      if(code===FINAL_CODE){ renderWin(); }
+      else {
+        fb.className="feedback bad show";
+        fb.innerHTML="✘ Código incorrecto. Revisen el dígito que liberó cada módulo (en el panel superior).";
+      }
+    };
+  }
+
+  function renderWin(){
+    state.screen="win"; updateVitals(); renderRail();
+    stage.innerHTML=
+      '<div class="screen win">'+
+        '<div class="eyebrow">REANIMACIÓN COMPLETADA</div>'+
+        '<h1>Paciente estabilizado ✔</h1>'+
+        '<p class="mission">Juan está estabilizado y en traslado a UCI. Reconstruyeron la historia morfofisiológica completa del tórax inestable:</p>'+
+        '<div class="summary">'+
+          '<div class="s"><b>Anatomía.</b> El segmento costal fracturado pierde continuidad con la caja torácica; la vía aérea inferior conduce el aire de la tráquea al alvéolo.</div>'+
+          '<div class="s"><b>Mecánica.</b> La respiración paradójica reduce el volumen corriente y la ventilación alveolar → desajuste V/Q → hipoxemia (SpO₂ 88%).</div>'+
+          '<div class="s"><b>Histología.</b> El intercambio ocurre en la barrera alveolo-capilar (neumocito I + membrana basal fusionada + endotelio); el neumocito II sostiene el surfactante.</div>'+
+          '<div class="s"><b>Inflamación.</b> Los DAMPs (HSP70, ADN mitocondrial, surfactante A/D) activan TLR2/4 → IL-6 y TNF-α → respuesta sistémica y, luego, inmunosupresión con riesgo de neumonía.</div>'+
+        '</div>'+
+        '<p class="mission" style="margin-top:6px">Tiempo restante en el reloj: <b>'+timerEl.textContent+'</b>.</p>'+
+        '<div class="row"><button class="btn ghost" id="again">Reiniciar caso</button></div>'+
+      '</div>';
+    document.getElementById("again").onclick=function(){
+      state={screen:"intro",current:0,step:0,solved:[false,false,false,false,false],seq:[]};
+      remaining=25*60; timerEl.textContent="25:00"; timerEl.classList.remove("crit");
+      renderIntro();
+    };
+  }
+
+  // ---------------- INIT ----------------
+  resizeCanvas();
+  requestAnimationFrame(drawECG);
+  renderIntro();
+})();
+</script>
+</body>
+</html>

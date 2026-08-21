@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vía Respiratoria Baja y Tórax · SOI II · Semana 2</title>
+<style>
+:root{
+  --rojo:#0f7391; --rojo-osc:#0a4f66; --rojo-cl:#3aa0bd;
+  --azul:#155e75; --crema:#f4f9fb; --tinta:#20313a; --gris:#5c6b72;
+  --verde:#2e7d5b; --ambar:#c77d0a; --linea:#d9e6ea;
+  --sombra:0 4px 18px rgba(15,80,102,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--crema);color:var(--tinta);line-height:1.6;font-size:16.5px}
+header.top{background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));
+  color:#fff;padding:34px 20px 26px;text-align:center;position:relative}
+header.top h1{margin:0 0 6px;font-size:1.7rem;letter-spacing:.3px}
+header.top p{margin:2px 0;opacity:.92;font-size:.95rem}
+.pill{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+  padding:3px 12px;border-radius:999px;font-size:.8rem;margin-top:10px}
+.volver{position:absolute;left:14px;top:14px;color:#fff;font-size:.82rem;text-decoration:none;background:rgba(255,255,255,.18);padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+#estado{display:none}
+nav.fases{position:sticky;top:0;z-index:50;background:#fff;display:flex;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);flex-wrap:wrap}
+nav.fases button{flex:1 1 33%;min-width:120px;border:0;background:#fff;cursor:pointer;
+  padding:14px 8px;font-size:.98rem;font-weight:600;color:var(--gris);
+  border-bottom:3px solid transparent;transition:.15s}
+nav.fases button .n{display:block;font-size:.72rem;font-weight:700;opacity:.6}
+nav.fases button:hover{background:var(--crema)}
+nav.fases button.activa{color:var(--rojo);border-bottom-color:var(--rojo)}
+main{max-width:920px;margin:0 auto;padding:26px 18px 70px}
+.fase{display:none;animation:fade .35s}
+.fase.activa{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2.sec{font-size:1.35rem;color:var(--rojo-osc);border-left:5px solid var(--rojo);padding-left:12px;margin:34px 0 14px}
+h3{color:var(--azul);margin:22px 0 8px;font-size:1.1rem}
+.intro{color:var(--gris);margin-top:-6px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:var(--sombra)}
+.card.plano{box-shadow:none}
+.tag{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 9px;border-radius:6px;margin-bottom:8px}
+.tag.a{background:#e6f3f7;color:var(--azul)}
+.tag.tiempo{background:#e9f4ee;color:var(--verde)}
+ul.limpia{list-style:none;padding-left:0;margin:8px 0}
+ul.limpia li{padding:5px 0 5px 26px;position:relative}
+ul.limpia li::before{content:"›";position:absolute;left:6px;color:var(--rojo);font-weight:700}
+.recursos{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.recursos a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--rojo);color:var(--rojo);
+  border-radius:10px;padding:11px 16px;text-decoration:none;font-weight:600;font-size:.92rem;cursor:pointer}
+.recursos a:hover{background:var(--rojo);color:#fff}
+.videos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:12px 0}
+.vid{border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#000;cursor:pointer;position:relative;aspect-ratio:16/9}
+.vid img{width:100%;height:100%;object-fit:cover;opacity:.85;transition:.2s}
+.vid:hover img{opacity:1}
+.vid .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vid .play::after{content:"";width:0;height:0;border-left:22px solid #fff;border-top:14px solid transparent;border-bottom:14px solid transparent;filter:drop-shadow(0 0 6px rgba(0,0,0,.5));margin-left:5px}
+.vid .lbl{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;font-size:.82rem;padding:16px 10px 8px;font-weight:600}
+.vid iframe{width:100%;height:100%;border:0}
+.check label{display:flex;align-items:flex-start;gap:10px;padding:7px 0;cursor:pointer}
+.check input{margin-top:5px;width:18px;height:18px;accent-color:var(--rojo);flex:0 0 auto}
+.check .done{text-decoration:line-through;color:var(--gris)}
+.progreso{height:9px;background:#eaeef0;border-radius:6px;overflow:hidden;margin:10px 0}
+.progreso i{display:block;height:100%;width:0;background:var(--verde);transition:.3s}
+.progtxt{font-size:.82rem;color:var(--gris)}
+.flujo{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.9rem;margin:10px 0}
+.flujo span{background:#fff;border:1px solid var(--linea);border-radius:8px;padding:6px 11px;font-weight:600}
+.flujo .fl{color:var(--rojo);font-weight:700}
+.gate{max-width:520px;margin:0 auto}
+.saludo{background:#e9f4ee;border:1px solid var(--verde);color:#1c5c40;padding:8px 14px;border-radius:10px;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.saludo button{background:none;border:0;color:var(--rojo);cursor:pointer;font-size:.82rem;text-decoration:underline}
+#login{position:fixed;inset:0;z-index:300;background:linear-gradient(135deg,var(--rojo-osc),var(--rojo));display:flex;align-items:center;justify-content:center;padding:20px}
+#login .box{background:#fff;border-radius:16px;max-width:440px;width:100%;padding:26px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+#login h2{margin:0 0 4px;color:var(--rojo-osc);font-size:1.3rem}
+#login label{display:block;font-weight:600;margin:12px 0 4px;font-size:.9rem}
+#login input{width:100%;padding:11px 13px;border:1px solid var(--linea);border-radius:10px;font-size:1rem}
+#login input:focus{outline:none;border-color:var(--rojo)}
+#login .err{color:#b3202c;font-size:.83rem;min-height:18px;margin-top:6px}
+.quiz-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:12px 0}
+.controles{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controles label{font-size:.85rem;color:var(--gris)}
+.controles select{padding:6px 10px;border:1px solid var(--linea);border-radius:8px;font-size:.9rem}
+.marcador{font-weight:700;color:var(--rojo-osc);font-size:.92rem}
+.pregunta{background:#fff;border:1px solid var(--linea);border-radius:14px;padding:18px;margin:14px 0;box-shadow:var(--sombra)}
+.pregunta .qh{display:flex;justify-content:space-between;gap:10px;font-size:.75rem;color:var(--gris);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+.pregunta .q{font-weight:600;margin-bottom:12px;font-size:1.02rem}
+.opts button{display:block;width:100%;text-align:left;border:1px solid var(--linea);background:#fff;border-radius:10px;padding:11px 14px;margin:7px 0;cursor:pointer;font-size:.96rem;transition:.12s;color:var(--tinta)}
+.opts button:hover:not(:disabled){border-color:var(--rojo);background:#f0f8fb}
+.opts button:disabled{cursor:default}
+.opts button.bien{background:#e7f6ee;border-color:var(--verde);color:#1c5c40;font-weight:600}
+.opts button.mal{background:#fdeceb;border-color:#b3202c;color:#7d1620}
+.fb{margin-top:10px;padding:11px 14px;border-radius:10px;font-size:.9rem;display:none}
+.fb.ok{background:#e7f6ee;color:#1c5c40;border:1px solid var(--verde)}
+.fb.no{background:#fdeceb;color:#7d1620;border:1px solid #e14b57}
+.fb b{display:block;margin-bottom:2px}
+.qacts{text-align:center;margin:22px 0}
+.btn{background:var(--rojo);color:#fff;border:0;border-radius:10px;padding:12px 24px;font-size:1rem;font-weight:600;cursor:pointer;margin:4px}
+.btn.sec{background:#fff;color:var(--rojo);border:1px solid var(--rojo)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.resultado{display:none;text-align:center;background:#fff;border:2px solid var(--rojo);border-radius:14px;padding:24px;margin:16px 0;box-shadow:var(--sombra)}
+.resultado .score{font-size:2.4rem;font-weight:800;color:var(--rojo)}
+.nota{background:#fff7e8;border-left:4px solid var(--ambar);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.9rem;margin:12px 0}
+.aviso{background:#eaf3f6;border-left:4px solid var(--azul);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.86rem;margin:12px 0;color:var(--azul)}
+.stars{display:flex;gap:6px;margin:2px 0 4px}
+.stars button{border:1px solid var(--linea);background:#fff;border-radius:8px;width:44px;height:40px;font-size:1.05rem;cursor:pointer;color:var(--gris);font-weight:700}
+.stars button.sel{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.enc label{display:block;font-weight:600;margin:14px 0 4px;font-size:.9rem}
+.enc textarea{width:100%;min-height:70px;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;font-size:.95rem;font-family:inherit;resize:vertical}
+.enc .ok{background:#e7f6ee;border:1px solid var(--verde);color:#1c5c40;padding:10px 14px;border-radius:10px;margin-top:12px;display:none}
+table.rubrica{width:100%;border-collapse:collapse;font-size:.86rem;margin:10px 0;background:#fff}
+table.rubrica th,table.rubrica td{border:1px solid var(--linea);padding:8px 10px;text-align:left;vertical-align:top}
+table.rubrica th{background:var(--rojo);color:#fff;font-weight:600}
+footer{text-align:center;color:var(--gris);font-size:.82rem;padding:26px 20px}
+.mini{font-size:.8rem;color:var(--gris)}
+</style>
+</head>
+<body>
+
+<div id="login"><div class="box">
+  <h2>🫁 Vía Respiratoria Baja y Tórax</h2>
+  <p class="mini" style="margin:0 0 6px">SOI II · Semana 2 — Identifícate para comenzar.</p>
+  <label>Nombre completo</label>
+  <input id="inNombre" type="text" placeholder="Ej: María Fernanda Gómez" autocomplete="name">
+  <label>Correo institucional</label>
+  <input id="inCorreo" type="email" placeholder="tu.correo@universidad.edu" autocomplete="email">
+  <div class="err" id="loginErr"></div>
+  <button class="btn" id="btnEntrar" style="width:100%">Entrar y comenzar</button>
+</div></div>
+
+<header class="top">
+  <a class="volver" href="portafolio.html">← Portafolio</a>
+  <span id="estado">Modo local</span>
+  <h1>Tráquea, Bronquios, Pulmones y Pleura</h1>
+  <p>Laboratorio de Anatomía · SOI II · Semana 2 · Integración con caso de tórax inestable</p>
+  <p class="mini">Paredes del tórax y vía aérea inferior</p>
+  <span class="pill">Prepárate → practica → repasa · preguntas nuevas cada vez</span>
+</header>
+
+<nav class="fases">
+  <button class="tab activa" data-f="prep"><span class="n">Fase 1 · Antes</span>🧠 Preparación</button>
+  <button class="tab" data-f="dur"><span class="n">Fase 2 · Laboratorio</span>🔬 Durante la práctica</button>
+  <button class="tab" data-f="rep"><span class="n">Fase 3 · Después</span>✅ Repaso y evaluación</button>
+</nav>
+
+<main>
+
+<!-- FASE 1 -->
+<section class="fase prep activa" id="prep">
+  <h2 class="sec">🧠 Antes de entrar al laboratorio</h2>
+  <p class="intro">Llega dominando la organización de la vía aérea inferior y la mecánica de la pared torácica; así la identificación en modelos y preparaciones te rendirá el doble.</p>
+
+  <div class="card">
+    <h3>Resultados de aprendizaje</h3>
+    <ul class="limpia">
+      <li>Ubicar la tráquea y describir su función y referencias (cricoides C6 → carina T4–T5).</li>
+      <li>Diferenciar bronquios primarios, secundarios (lobares) y terciarios (segmentarios).</li>
+      <li>Describir las caras de los pulmones y la organización segmentaria y su relevancia clínica.</li>
+      <li>Analizar las estructuras del hilio pulmonar y sus relaciones espaciales.</li>
+      <li>Describir las capas de la pleura, sus recesos, inervación e irrigación.</li>
+      <li>Reconocer la anatomía de la pared torácica y su rol en la mecánica ventilatoria.</li>
+      <li>Integrar la anatomía de la vía aérea inferior con el caso clínico de la semana.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Materiales para el laboratorio</h3>
+    <ul class="limpia">
+      <li>Modelos anatómicos de pulmones y árbol bronquial.</li>
+      <li>Preparaciones cadavéricas de tórax (según disponibilidad).</li>
+      <li>Atlas físico impreso y cuaderno para dibujar/rotular.</li>
+      <li>Guantes, bata y EPP según norma del laboratorio.</li>
+    </ul>
+    <div class="nota"><b>Nota:</b> para la práctica de signos vitales (semiología) lleva fonendoscopio y, si tienes, pulsioxímetro; camiseta de manga corta bajo el uniforme y cabello recogido.</div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos de apoyo (Lecturio · requieren inicio de sesión institucional)</h3>
+    <p class="mini">Ábrelos antes de venir. Se abren en una pestaña nueva con tu usuario de la biblioteca.</p>
+    <div class="recursos" id="recursos"></div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Videos complementarios (YouTube)</h3>
+    <p class="mini">Toca cada tarjeta para reproducir. Refuerzan la anatomía de la vía respiratoria.</p>
+    <div class="videos" id="vids-yt"></div>
+  </div>
+
+  <div class="card">
+    <h3>Roles del equipo</h3>
+    <ul class="limpia">
+      <li><b>Líder:</b> administra el tiempo y el orden de las estaciones.</li>
+      <li><b>Operador:</b> manipula modelos/preparaciones con cuidado.</li>
+      <li><b>Relator clínico:</b> conecta hallazgos con el caso de tórax inestable.</li>
+      <li><b>Auditor:</b> diligencia los checklists y controla la calidad.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section class="fase dur" id="dur">
+  <h2 class="sec">🔬 Durante la práctica</h2>
+  <p class="intro">Trabaja estación por estación. Marca cada estructura al identificarla con seguridad.</p>
+
+  <div class="card">
+    <span class="tag a">Estación A</span><span class="tag tiempo">Pared torácica</span>
+    <h3>Costillas, músculos y diafragma</h3>
+    <div class="check" data-chk="A">
+      <label><input type="checkbox"> Costillas verdaderas (1–7), falsas (8–10) y flotantes (11–12)</label>
+      <label><input type="checkbox"> Partes de una costilla: cabeza, cuello, tubérculo y cuerpo</label>
+      <label><input type="checkbox"> Surco costal y paquete VAN (vena–arteria–nervio, de arriba a abajo)</label>
+      <label><input type="checkbox"> Músculos intercostales: externo, interno e íntimo</label>
+      <label><input type="checkbox"> Diafragma: porciones esternal, costal y lumbar</label>
+      <label><input type="checkbox"> Hiatos del diafragma: aórtico (T12), esofágico (T10), cava (T8)</label>
+      <label><input type="checkbox"> Sistema ácigos (ácigos, hemiácigos, hemiácigos accesoria)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">El paquete VAN va en el surco costal (borde inferior de la costilla): por eso la toracocentesis se hace por el <b>borde superior</b> de la costilla inferior, para no lesionarlo.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación B</span><span class="tag tiempo">Vía aérea</span>
+    <h3>Tráquea y bronquios</h3>
+    <div class="check" data-chk="B">
+      <label><input type="checkbox"> Tráquea: 16–20 anillos en C y músculo traqueal posterior</label>
+      <label><input type="checkbox"> Carina (bifurcación traqueal, referencia clínica)</label>
+      <label><input type="checkbox"> Bronquio principal derecho: más ancho, corto y vertical</label>
+      <label><input type="checkbox"> Bronquio principal izquierdo: más largo y horizontal</label>
+      <label><input type="checkbox"> Bronquios lobares (secundarios) y segmentarios (terciarios)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">Por su trayecto vertical, los cuerpos extraños tienden a alojarse en el <b>bronquio principal derecho</b>.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación C</span><span class="tag tiempo">Pulmones e hilios</span>
+    <h3>Lóbulos, caras e hilio pulmonar</h3>
+    <div class="check" data-chk="C">
+      <label><input type="checkbox"> Pulmón derecho: 3 lóbulos (cisuras oblicua y horizontal)</label>
+      <label><input type="checkbox"> Pulmón izquierdo: 2 lóbulos (cisura oblicua) + língula</label>
+      <label><input type="checkbox"> Caras: costal, mediastínica y diafragmática</label>
+      <label><input type="checkbox"> Impresiones de órganos en la cara mediastínica</label>
+      <label><input type="checkbox"> Hilio: bronquio, arteria y venas pulmonares</label>
+      <label><input type="checkbox"> Relación en el hilio: derecho (bronquio arriba), izquierdo (arteria arriba)</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="aviso">Regla de los hilios — <b>derecho:</b> bronquio superior a la arteria; <b>izquierdo:</b> arteria superior al bronquio.</div>
+  </div>
+
+  <div class="card">
+    <span class="tag a">Estación D</span><span class="tag tiempo">Pleura</span>
+    <h3>Pleura y recesos</h3>
+    <div class="check" data-chk="D">
+      <label><input type="checkbox"> Pleura visceral (sobre el pulmón) y parietal (pared)</label>
+      <label><input type="checkbox"> Cavidad y líquido pleural (10–20 ml)</label>
+      <label><input type="checkbox"> Receso costodiafragmático (el más profundo)</label>
+      <label><input type="checkbox"> Receso costomediastínico</label>
+    </div>
+    <div class="progreso"><i></i></div><div class="progtxt"></div>
+    <div class="nota">El receso costodiafragmático es donde primero se acumula líquido en un <b>derrame pleural</b> (y sangre en un hemotórax).</div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Integración con el caso (tórax inestable)</h3>
+    <p><b>Caso:</b> Juan García, 35 años, trauma torácico de alta energía. Deformidad en hemitórax izquierdo, <b>fracturas costales múltiples con desplazamiento</b>, crepitación subcutánea, respiración superficial y rápida, SatO₂ 88%.</p>
+    <p><b>Vincula la anatomía con la clínica:</b></p>
+    <div class="flujo"><span>Fracturas costales múltiples</span><span class="fl">→</span><span>Segmento inestable (tórax inestable)</span><span class="fl">→</span><span>Movimiento paradójico</span><span class="fl">→</span><span>↓ ventilación</span><span class="fl">→</span><span>Hipoxemia (SatO₂ 88%)</span></div>
+    <div class="nota"><b>Conexiones:</b> el movimiento paradójico rompe la mecánica normal (diafragma + intercostales); el paquete VAN en el surco costal explica el riesgo de sangrado y la técnica de la toracocentesis; el receso costodiafragmático es el sitio de acumulación de sangre/líquido (hemotórax).</div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section class="fase rep" id="rep">
+  <h2 class="sec">✅ Repaso y evaluación</h2>
+  <p class="intro">Pon a prueba lo aprendido. <b>Cada ronda muestra preguntas distintas.</b></p>
+
+  <div class="card">
+    <h3 style="margin-top:0">🎮 Juego: «Código Rojo · Reanimando a Juan García»</h3>
+    <p class="mini">Aplica la anatomía en el caso de tórax inestable: toma decisiones para estabilizar al paciente.</p>
+    <div style="border:1px solid var(--linea);border-radius:12px;overflow:hidden;background:#0b0b0b">
+      <iframe src="juego_respiratorio.html" title="Juego caso respiratorio" loading="lazy" style="width:100%;height:600px;border:0;display:block"></iframe>
+    </div>
+    <p class="mini" style="margin:8px 0 0"><a href="juego_respiratorio.html" target="_blank" rel="noopener" style="color:var(--rojo);font-weight:600">↗ Abrir el juego en pantalla completa</a></p>
+  </div>
+
+  <h3>📝 Banco de preguntas</h3>
+  <div id="zonaQuiz" style="display:none">
+    <div class="saludo" id="saludo"></div>
+    <div class="quiz-top">
+      <div class="controles">
+        <label for="numP">Preguntas por ronda:</label>
+        <select id="numP">
+          <option value="10">10</option>
+          <option value="15" selected>15</option>
+          <option value="20">20</option>
+          <option value="0">Todas</option>
+        </select>
+        <button class="btn sec" id="nuevaRonda">🔀 Nueva ronda</button>
+      </div>
+      <div class="marcador" id="marcador">0 / 0 · 0 aciertos</div>
+    </div>
+    <div id="quiz"></div>
+    <div class="qacts"><button class="btn" id="verResultado">Ver resultado de la ronda</button></div>
+    <div class="resultado" id="resultado"><div class="score" id="scoreTxt">0%</div><p id="scoreMsg"></p></div>
+    <div class="card" id="temasCard" style="display:none">
+      <h3 style="margin-top:0">📊 Tu apropiación por tema</h3>
+      <p class="mini">Se actualiza con cada pregunta; acumula todas tus rondas. Verde ≥80%, ámbar ≥60%, rojo &lt;60%.</p>
+      <div id="temasBox"></div>
+    </div>
+  </div>
+
+  <div class="card enc" id="encuesta">
+    <h3>🗳️ Encuesta de satisfacción y dudas</h3>
+    <p style="margin-top:0">Al terminar, cuéntanos cómo te fue. Solo lo ve tu docente.</p>
+    <label>¿Qué tan satisfecho/a quedaste con la práctica? <span class="mini">(1 = poco · 5 = mucho)</span></label>
+    <div class="stars" data-name="satisfaccion"></div>
+    <label>¿Qué tan útil te resultó para prepararte? <span class="mini">(1–5)</span></label>
+    <div class="stars" data-name="utilidad"></div>
+    <label>¿Qué dudas te quedaron?</label>
+    <textarea id="inDudas" placeholder="Escribe aquí tus dudas sobre la anatomía o la práctica…"></textarea>
+    <label>Comentarios o sugerencias</label>
+    <textarea id="inComentario" placeholder="¿Qué mejorarías?"></textarea>
+    <div class="err" id="encErr" style="color:#b3202c;font-size:.83rem;min-height:16px"></div>
+    <button class="btn" id="btnEncuesta">Enviar encuesta</button>
+    <div class="ok" id="encuestaMsg">¡Gracias! Tu respuesta quedó registrada. 💙</div>
+  </div>
+
+  <div class="card">
+    <h3>🎫 Exit ticket</h3>
+    <ul class="limpia">
+      <li>Una estructura que hoy dejé de confundir: __________</li>
+      <li>En el caso, la dificultad respiratoria la conecto anatómicamente con: __________</li>
+      <li>Dónde se acumularía sangre/líquido en el tórax de este paciente: __________</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>Recurso de estudio · Vía respiratoria baja y tórax · SOI II Semana 2 · Uso educativo.</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { SUPABASE_URL, SUPABASE_KEY, TABLA_RESP, DOMINIO_INSTITUCIONAL } from './supabase-config.js';
+const TABLA=TABLA_RESP;
+let sb=null, FB_OK=false;
+const badge=document.getElementById('estado');
+if(SUPABASE_URL && !SUPABASE_URL.includes('PEGA_AQUI')){
+  try{ sb=createClient(SUPABASE_URL, SUPABASE_KEY); FB_OK=true; badge.textContent='🟢 Conectado'; }
+  catch(e){ badge.textContent='Modo local'; console.warn('Supabase no inició:',e); }
+}
+
+/* Cierre de módulo (calendario académico) */
+const CIERRE_MODULO = new Date('2026-08-18T00:00:00-05:00'); // cerrado
+function moduloCerrado(){ return Date.now() >= CIERRE_MODULO.getTime(); }
+
+/* Rastreador de uso (tiempo, recursos, checklists) */
+const videosVistos=new Set();
+let baseSegundos=0, segundosSesion=0, checklistMarcados=0, checklistTotal=0;
+let visible=true;
+document.addEventListener('visibilitychange',()=>{visible=document.visibilityState==='visible';});
+setInterval(()=>{ if(visible) segundosSesion++; },1000);
+setInterval(()=>{ if(FB_OK && ESTUDIANTE) guardarAvance(); },30000);
+function registrarRecurso(id){ if(!videosVistos.has(id)){ videosVistos.add(id); if(ESTUDIANTE) guardarAvance(); } }
+function actualizarChecklist(){ const ins=document.querySelectorAll('.check input'); checklistTotal=ins.length; checklistMarcados=[...ins].filter(i=>i.checked).length; }
+
+/* Recursos Lecturio (enlaces) */
+const RECURSOS=[
+  {id:"osteologia",t:"Osteología de la caja torácica",url:"https://unisabana.lecturio.com/#/lecture/c/7812/76419/249360"},
+  {id:"intercostal",t:"Espacio intercostal",url:"https://unisabana.lecturio.com/#/lecture/c/7812/76419/249361"},
+  {id:"diafragma",t:"Diafragma",url:"https://unisabana.lecturio.com/#/lecture/c/7812/76419/249364"},
+  {id:"pulmones",t:"Pulmones",url:"https://unisabana.lecturio.com/#/lecture/c/7812/76419/249368"}
+];
+const TOTAL_RECURSOS=RECURSOS.length;
+const contRec=document.getElementById('recursos');
+RECURSOS.forEach(r=>{
+  const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';
+  a.innerHTML='▶ '+r.t;
+  a.addEventListener('click',()=>registrarRecurso(r.id));
+  contRec.appendChild(a);
+});
+
+/* Videos complementarios (YouTube incrustado) */
+const YT=[
+  {id:"KR3fI4rm6RQ",t:"Video complementario 1"},
+  {id:"bDsXZoXG05A",t:"Video complementario 2"}
+];
+function tarjetaVideo(v){
+  const d=document.createElement('div');d.className='vid';
+  d.innerHTML=`<img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${v.t}"><div class="play"></div><div class="lbl">${v.t}</div>`;
+  d.onclick=()=>{d.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;d.style.cursor='default';registrarRecurso('yt_'+v.id);};
+  return d;
+}
+YT.forEach(v=>document.getElementById('vids-yt').appendChild(tarjetaVideo(v)));
+
+/* Banco de preguntas (conceptual) */
+const POOL=[
+ {id:1,cat:"torax",q:"Las costillas verdaderas son:",o:["1 a 7","8 a 10","11 y 12","1 a 10"],c:0,e:"Las costillas verdaderas (1–7) se unen directamente al esternón por sus cartílagos costales."},
+ {id:2,cat:"torax",q:"Las costillas flotantes son:",o:["8 a 10","11 y 12","1 a 2","5 a 7"],c:1,e:"Las flotantes (11–12) no tienen conexión anterior al esternón."},
+ {id:3,cat:"torax",q:"En el surco costal, el orden del paquete vasculonervioso de arriba a abajo es:",o:["Nervio, arteria, vena","Arteria, vena, nervio","Vena, arteria, nervio","Vena, nervio, arteria"],c:2,e:"De superior a inferior: Vena, Arteria, Nervio (VAN). Por eso la punción se hace por el borde superior de la costilla inferior."},
+ {id:4,cat:"torax",q:"La toracocentesis se realiza por el borde ___ de la costilla para no lesionar el paquete VAN:",o:["Inferior","Superior","Anterior","Posterior"],c:1,e:"El paquete va en el surco costal (borde inferior de la costilla); por eso se punciona por el borde superior de la costilla inferior."},
+ {id:5,cat:"torax",q:"El músculo intercostal que ayuda principalmente en la inspiración elevando las costillas es el:",o:["Intercostal externo","Intercostal interno","Intercostal íntimo","Transverso del tórax"],c:0,e:"Los intercostales externos elevan las costillas (inspiración); internos e íntimos participan en la espiración forzada."},
+ {id:6,cat:"torax",q:"El principal músculo de la respiración es:",o:["El pectoral mayor","El diafragma","El esternocleidomastoideo","El serrato anterior"],c:1,e:"El diafragma separa tórax y abdomen; al contraerse desciende y aumenta el volumen torácico (inspiración)."},
+ {id:7,cat:"torax",q:"El hiato esofágico del diafragma permite el paso del esófago y de:",o:["La aorta","Los troncos vagales","La vena cava inferior","El conducto torácico"],c:1,e:"Por el hiato esofágico pasan el esófago y los troncos vagales anterior y posterior."},
+ {id:8,cat:"torax",q:"La vena cava inferior atraviesa el diafragma por el hiato:",o:["Aórtico","Esofágico","De la vena cava","Pleural"],c:2,e:"El hiato de la vena cava (aproximadamente a nivel T8) da paso a la VCI."},
+ {id:9,cat:"torax",q:"Durante la inspiración, el diafragma:",o:["Se relaja y asciende","Se contrae y desciende","No se mueve","Se contrae y asciende"],c:1,e:"Al contraerse desciende, aumenta el volumen torácico y facilita la entrada de aire."},
+ {id:10,cat:"torax",q:"El sistema ácigos drena finalmente en:",o:["La vena cava inferior","La vena cava superior","La aorta","La arteria pulmonar"],c:1,e:"La red ácigos (ácigos, hemiácigos y hemiácigos accesoria) drena la pared torácica hacia la vena cava superior."},
+ {id:11,cat:"via",q:"La tráquea se extiende desde el cartílago cricoides hasta su bifurcación a la altura de:",o:["C6","El ángulo esternal (T4–T5)","T10","El proceso xifoides"],c:1,e:"Va del borde inferior del cricoides (C6) hasta la carina, a la altura del ángulo esternal (T4–T5)."},
+ {id:12,cat:"via",q:"Los anillos cartilaginosos de la tráquea tienen forma de:",o:["Anillo completo (O)","C (abiertos atrás)","Placa cuadrada","Espiral"],c:1,e:"Son 16–20 anillos en C; su parte posterior está cerrada por el músculo traqueal."},
+ {id:13,cat:"via",q:"La carina es:",o:["El primer anillo traqueal","La cresta en la bifurcación traqueal","Un músculo del diafragma","Un receso pleural"],c:1,e:"La carina es la cresta cartilaginosa en la bifurcación de la tráquea; referencia clave en broncoscopia y radiografía."},
+ {id:14,cat:"via",q:"En comparación con el izquierdo, el bronquio principal derecho es:",o:["Más largo y horizontal","Más ancho, corto y vertical","De igual calibre","Más estrecho"],c:1,e:"El derecho es más ancho, corto y vertical, por eso los cuerpos extraños tienden a alojarse allí."},
+ {id:15,cat:"via",q:"¿Por qué el bronquio principal izquierdo es más horizontal?",o:["Por el hígado","Para sortear el corazón y estructuras mediastínicas","Por el diafragma","Por la tráquea"],c:1,e:"Debe rodear el corazón y otras estructuras del mediastino, por eso es más largo y horizontal."},
+ {id:16,cat:"via",q:"Los bronquios secundarios se llaman también:",o:["Segmentarios","Lobares","Principales","Terminales"],c:1,e:"Los secundarios son los bronquios lobares; los terciarios son los segmentarios."},
+ {id:17,cat:"via",q:"Un cuerpo extraño aspirado tiende a alojarse con mayor frecuencia en el bronquio:",o:["Principal izquierdo","Principal derecho","Lingular","Lobar medio izquierdo"],c:1,e:"Por su trayecto ancho, corto y vertical, el bronquio principal derecho recibe más fácilmente cuerpos extraños."},
+ {id:18,cat:"pulmon",q:"El pulmón derecho tiene:",o:["Dos lóbulos","Tres lóbulos","Un lóbulo","Cuatro lóbulos"],c:1,e:"El derecho tiene 3 lóbulos (superior, medio e inferior) separados por las cisuras oblicua y horizontal."},
+ {id:19,cat:"pulmon",q:"El pulmón izquierdo tiene dos lóbulos porque:",o:["Es más pequeño por el corazón","Le falta la cisura oblicua","Tiene más segmentos","Está rotado"],c:0,e:"Es más pequeño por la presencia del corazón; tiene lóbulo superior e inferior separados por la cisura oblicua."},
+ {id:20,cat:"pulmon",q:"La língula es una proyección del:",o:["Lóbulo inferior derecho","Lóbulo superior izquierdo","Lóbulo medio derecho","Lóbulo inferior izquierdo"],c:1,e:"La língula, del lóbulo superior izquierdo, es análoga al lóbulo medio del pulmón derecho."},
+ {id:21,cat:"pulmon",q:"La cisura que solo tiene el pulmón derecho es la:",o:["Oblicua","Horizontal","Mediastínica","Diafragmática"],c:1,e:"La cisura horizontal separa el lóbulo superior del medio; solo existe en el pulmón derecho."},
+ {id:22,cat:"pulmon",q:"Las tres caras del pulmón son:",o:["Anterior, posterior y lateral","Costal, mediastínica y diafragmática","Apical, basal y media","Superior, media e inferior"],c:1,e:"Costal (contra las costillas), mediastínica (hacia el mediastino) y diafragmática (sobre el diafragma)."},
+ {id:23,cat:"pulmon",q:"En el hilio pulmonar DERECHO, la relación es:",o:["La arteria por encima del bronquio","El bronquio por encima de la arteria","La vena por encima del bronquio","No hay orden fijo"],c:1,e:"En el hilio derecho el bronquio principal está superior a la arteria pulmonar."},
+ {id:24,cat:"pulmon",q:"En el hilio pulmonar IZQUIERDO, la relación es:",o:["El bronquio por encima de la arteria","La arteria por encima del bronquio","La vena por encima de la arteria","Igual que el derecho"],c:1,e:"En el hilio izquierdo la arteria pulmonar está superior al bronquio principal."},
+ {id:25,cat:"pulmon",q:"Por el hilio pulmonar entran y salen:",o:["Solo el bronquio","Bronquio, arteria pulmonar, venas pulmonares, linfáticos y nervios","Solo vasos","Solo nervios"],c:1,e:"El hilio contiene el bronquio, la arteria pulmonar, las venas pulmonares, vasos linfáticos y nervios."},
+ {id:26,cat:"pulmon",q:"La circulación FUNCIONAL del pulmón está a cargo de:",o:["Las arterias bronquiales","Las arterias y venas pulmonares","La vena ácigos","Las arterias intercostales"],c:1,e:"Las arterias/venas pulmonares llevan y traen la sangre para la hematosis (circulación funcional)."},
+ {id:27,cat:"pulmon",q:"La circulación NUTRICIA del pulmón proviene de:",o:["Las venas pulmonares","Las arterias bronquiales","La arteria pulmonar","La vena cava"],c:1,e:"Las arterias bronquiales (ramas de la aorta torácica) nutren el tejido pulmonar."},
+ {id:28,cat:"pulmon",q:"Las arterias pulmonares llevan sangre:",o:["Oxigenada desde el VI","Desoxigenada desde el VD","Oxigenada desde el VD","Desoxigenada desde el VI"],c:1,e:"Las arterias pulmonares llevan sangre desoxigenada desde el ventrículo derecho hacia los pulmones."},
+ {id:29,cat:"pulmon",q:"La estimulación del nervio vago (parasimpático) sobre los bronquios produce:",o:["Broncodilatación","Broncoconstricción","No tiene efecto","Vasoconstricción pulmonar"],c:1,e:"El vago produce broncoconstricción y aumento de secreción mucosa; el simpático, broncodilatación."},
+ {id:30,cat:"pulmon",q:"La capa de pleura en contacto directo con el pulmón es la:",o:["Parietal","Visceral","Costal","Diafragmática"],c:1,e:"La pleura visceral recubre el pulmón; la parietal reviste la pared torácica."},
+ {id:31,cat:"pulmon",q:"El volumen normal de líquido pleural es aproximadamente:",o:["100–150 ml","10–20 ml","500 ml","1–2 ml"],c:1,e:"Hay unos 10–20 ml de líquido pleural que reduce la fricción durante la respiración."},
+ {id:32,cat:"pulmon",q:"El receso pleural más profundo, donde primero se acumula líquido en un derrame, es el:",o:["Costomediastínico","Costodiafragmático","Costovertebral","Cardiofrénico"],c:1,e:"El receso costodiafragmático es el más profundo y el primer sitio de acumulación de líquido/sangre."},
+ {id:33,cat:"pulmon",q:"La pleura parietal se caracteriza (a diferencia de la visceral) por:",o:["No producir líquido","Ser sensible al dolor (inervación somática)","Cubrir el pulmón","No tener inervación"],c:1,e:"La pleura parietal tiene inervación somática y es sensible al dolor; la visceral es prácticamente insensible."},
+ {id:34,cat:"via",q:"El músculo traqueal se localiza en la pared ___ de la tráquea:",o:["Anterior","Posterior","Lateral derecha","Lateral izquierda"],c:1,e:"Cierra por detrás los anillos en C, en la pared posterior (en contacto con el esófago)."},
+ {id:35,cat:"torax",q:"Los músculos escalenos contribuyen a la inspiración porque:",o:["Descienden el diafragma","Elevan las dos primeras costillas","Deprimen el esternón","Cierran la glotis"],c:1,e:"Los escalenos elevan las 2 primeras costillas (músculos accesorios de la inspiración)."},
+ {id:36,cat:"caso",q:"En el paciente con fracturas costales múltiples y segmento inestable, el 'movimiento paradójico' consiste en que la zona lesionada:",o:["Se expande en inspiración","Se hunde en inspiración y sobresale en espiración","No se mueve","Se mueve igual que el resto"],c:1,e:"El segmento inestable se hunde en la inspiración y protruye en la espiración, contrario al resto de la pared: es el tórax inestable (flail chest)."},
+ {id:37,cat:"caso",q:"La hipoxemia (SatO₂ 88%) del caso se explica principalmente por:",o:["Broncoespasmo","Alteración de la mecánica ventilatoria por el segmento inestable y el dolor","Anemia","Obstrucción de la vía aérea alta"],c:1,e:"El movimiento paradójico y el dolor limitan la expansión pulmonar, reduciendo la ventilación y el intercambio gaseoso."},
+ {id:38,cat:"caso",q:"Si este paciente desarrollara un hemotórax, la sangre se acumularía primero en el:",o:["Receso costomediastínico","Receso costodiafragmático","Hilio pulmonar","Mediastino superior"],c:1,e:"Por gravedad, la sangre se deposita primero en el receso costodiafragmático (el más declive/profundo)."},
+ {id:39,cat:"caso",q:"Al hacer una toracocentesis a este paciente, para no lesionar el paquete intercostal se punciona:",o:["Por el borde inferior de la costilla","Por el borde superior de la costilla inferior del espacio","En pleno surco costal","A través del cartílago"],c:1,e:"Se entra por el borde superior de la costilla inferior del espacio, lejos del paquete VAN que corre por el surco (borde inferior de la costilla superior)."},
+ {id:40,cat:"caso",q:"La crepitación subcutánea del caso corresponde a:",o:["Líquido en la pleura","Aire en el tejido subcutáneo (enfisema subcutáneo)","Fractura de esternón","Sangre en el pericardio"],c:1,e:"La crepitación por enfisema subcutáneo indica aire que ha escapado a los tejidos, frecuente en trauma torácico con lesión pleuropulmonar."}
+];
+
+/* Navegación */
+document.querySelectorAll('nav.fases .tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav.fases .tab').forEach(x=>x.classList.remove('activa'));
+    document.querySelectorAll('.fase').forEach(x=>x.classList.remove('activa'));
+    b.classList.add('activa');
+    document.getElementById(b.dataset.f).classList.add('activa');
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+
+/* Checklists */
+document.querySelectorAll('.check').forEach(box=>{
+  const barra=box.nextElementSibling.querySelector('i');
+  const txt=box.nextElementSibling.nextElementSibling;
+  const inputs=box.querySelectorAll('input');
+  function upd(){let n=0;inputs.forEach(i=>{const l=i.parentElement;i.checked?l.classList.add('done'):l.classList.remove('done');if(i.checked)n++;});
+    barra.style.width=Math.round(n/inputs.length*100)+'%';txt.textContent=`${n} de ${inputs.length} estructuras identificadas`;}
+  inputs.forEach(i=>i.onchange=()=>{upd();actualizarChecklist();if(ESTUDIANTE)guardarAvance();});upd();
+});
+actualizarChecklist();
+
+/* Utilidades */
+function barajar(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function sanea(c){return c.trim().toLowerCase();}
+let ESTUDIANTE=null, RONDA=[], respondidas={}, aciertos=0, acumRespondidas=0, acumAciertos=0;
+let temaStats={};
+const TEMAS_LABEL={torax:'Pared torácica',via:'Vía aérea',pulmon:'Pulmón y pleura',caso:'Caso clínico'};
+function renderTemas(){
+  const box=document.getElementById('temasBox'); if(!box) return;
+  const keys=Object.keys(TEMAS_LABEL);
+  const conDatos=keys.filter(k=>temaStats[k]&&temaStats[k].total);
+  const card=document.getElementById('temasCard'); if(card) card.style.display=conDatos.length?'block':'none';
+  box.innerHTML=keys.map(k=>{
+    const s=temaStats[k]||{ok:0,total:0};
+    const pct=s.total?Math.round(s.ok/s.total*100):0;
+    const col=s.total?(pct>=80?'var(--verde)':pct>=60?'var(--ambar)':'var(--rojo)'):'#ccc';
+    return `<div style="margin:9px 0">
+      <div style="display:flex;justify-content:space-between;font-size:.87rem"><span>${TEMAS_LABEL[k]}</span><span style="font-weight:700">${s.total?pct+'% ('+s.ok+'/'+s.total+')':'—'}</span></div>
+      <div style="height:9px;background:#eaeef0;border-radius:5px;overflow:hidden;margin-top:3px"><i style="display:block;height:100%;width:${pct}%;background:${col};transition:.3s"></i></div>
+    </div>`;
+  }).join('');
+}
+
+/* Login (compartido con Semana 1 vía la misma clave) */
+const login=document.getElementById('login');
+const zonaQuiz=document.getElementById('zonaQuiz');
+async function entrar(){
+  const nombre=document.getElementById('inNombre').value.trim();
+  const correo=document.getElementById('inCorreo').value.trim();
+  const err=document.getElementById('loginErr');
+  if(nombre.length<3){err.textContent='Escribe tu nombre completo.';return;}
+  const reMail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!reMail.test(correo)){err.textContent='Escribe un correo válido.';return;}
+  if(DOMINIO_INSTITUCIONAL && !correo.toLowerCase().endsWith(DOMINIO_INSTITUCIONAL.toLowerCase())){
+    err.textContent='Usa tu correo institucional ('+DOMINIO_INSTITUCIONAL+').';return;}
+  err.textContent='';
+  let esDoc=false;
+  if(FB_OK){
+    const btn=document.getElementById('btnEntrar');btn.disabled=true;err.style.color='var(--gris)';err.textContent='Verificando acceso…';
+    try{ const {data:doc}=await sb.from('docentes').select('correo').eq('correo',correo.toLowerCase()).maybeSingle(); esDoc=!!doc; }catch(e){console.warn('docente',e);}
+    if(!esDoc){
+      try{
+        const {data:aut}=await sb.from('autorizados').select('correo').eq('correo',correo.toLowerCase()).maybeSingle();
+        if(!aut){err.style.color='';err.textContent='Este correo no está autorizado para esta actividad. Contacta a tu docente.';btn.disabled=false;return;}
+      }catch(e){console.warn('autoriz',e);}
+    }
+    btn.disabled=false;err.style.color='';err.textContent='';
+  }
+  ESTUDIANTE={nombre,correo,id:sanea(correo)};
+  try{localStorage.setItem('soi2_estudiante',JSON.stringify({nombre,correo}));}catch(e){}
+  login.style.display='none'; zonaQuiz.style.display='block';
+  const rol=esDoc?' · <b>docente</b>':'';
+  const avisoCierre=moduloCerrado()?'<div class="aviso" style="margin-top:10px">🔒 Este módulo está cerrado. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>':'';
+  document.getElementById('saludo').innerHTML=`<span>👋 Hola, <b>${nombre}</b>${rol}</span><button id="salir">No soy yo / Salir</button>`;
+  document.getElementById('saludo').insertAdjacentHTML('afterend',avisoCierre);
+  document.getElementById('salir').onclick=()=>{try{localStorage.removeItem('soi2_estudiante');}catch(e){}location.reload();};
+  if(!esDoc) registrarInicio();
+  nuevaRonda();
+}
+document.getElementById('btnEntrar').onclick=entrar;
+document.getElementById('inCorreo').addEventListener('keydown',e=>{if(e.key==='Enter')entrar();});
+try{
+  const g=JSON.parse(localStorage.getItem('soi2_estudiante')||'null');
+  if(g&&g.nombre&&g.correo){ document.getElementById('inNombre').value=g.nombre; document.getElementById('inCorreo').value=g.correo; entrar(); }
+}catch(e){}
+
+/* Encuesta */
+const encuestaVal={satisfaccion:0,utilidad:0};
+document.querySelectorAll('.stars').forEach(cont=>{
+  const name=cont.dataset.name;
+  for(let n=1;n<=5;n++){
+    const b=document.createElement('button');b.type='button';b.textContent=n;
+    b.onclick=()=>{encuestaVal[name]=n;cont.querySelectorAll('button').forEach((x,k)=>x.classList.toggle('sel',k<n));};
+    cont.appendChild(b);
+  }
+});
+document.getElementById('btnEncuesta').onclick=async()=>{
+  const err=document.getElementById('encErr');
+  if(!ESTUDIANTE){err.textContent='Primero identifícate.';return;}
+  if(moduloCerrado()){err.textContent='Este módulo está cerrado; ya no se puede enviar la encuesta.';return;}
+  if(!encuestaVal.satisfaccion){err.textContent='Marca al menos tu nivel de satisfacción.';return;}
+  err.textContent='';
+  const dudas=document.getElementById('inDudas').value.trim();
+  const comentario=document.getElementById('inComentario').value.trim();
+  if(FB_OK){ try{ await sb.from(TABLA).upsert({correo:ESTUDIANTE.correo,nombre:ESTUDIANTE.nombre,satisfaccion:encuestaVal.satisfaccion,utilidad:encuestaVal.utilidad||null,dudas:dudas||null,comentario:comentario||null,encuesta_fecha:new Date().toISOString(),ultima_actividad:new Date().toISOString()},{onConflict:'correo'}); }catch(e){console.warn('encuesta',e);} }
+  document.getElementById('encuestaMsg').style.display='block';
+  document.getElementById('btnEncuesta').disabled=true;
+};
+
+/* Quiz */
+const quizCont=document.getElementById('quiz');
+const marcador=document.getElementById('marcador');
+function nuevaRonda(){
+  if(moduloCerrado()){
+    quizCont.innerHTML='<div class="aviso">🔒 <b>Este módulo está cerrado.</b> Ya no se pueden responder más preguntas ni completar esta actividad. Puedes repasar en <a href="soluciones.html">Solución de dudas</a>.</div>';
+    marcador.textContent='Módulo cerrado';
+    document.getElementById('nuevaRonda').disabled=true; document.getElementById('numP').disabled=true;
+    document.getElementById('verResultado').style.display='none';
+    return;
+  }
+  const n=parseInt(document.getElementById('numP').value,10);
+  let sel=barajar(POOL);
+  if(n>0) sel=sel.slice(0,n);
+  RONDA=sel.map(p=>{const orden=barajar(p.o.map((_,i)=>i));return {...p,o:orden.map(i=>p.o[i]),c:orden.indexOf(p.c)};});
+  respondidas={};aciertos=0;
+  document.getElementById('resultado').style.display='none';
+  renderQuiz();actualizarMarcador();
+  quizCont.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderQuiz(){
+  quizCont.innerHTML='';
+  RONDA.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='pregunta';
+    const catLbl={torax:'🦴 Pared torácica',via:'🫁 Vía aérea',pulmon:'🫁 Pulmón y pleura',caso:'🩺 Caso clínico'}[p.cat];
+    card.innerHTML=`<div class="qh"><span>Pregunta ${i+1} de ${RONDA.length}</span><span>${catLbl}</span></div><div class="q">${p.q}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts=card.querySelector('.opts'), fb=card.querySelector('.fb');
+    p.o.forEach((op,j)=>{
+      const b=document.createElement('button');b.textContent=op;
+      b.onclick=()=>{
+        if(respondidas[i]!==undefined) return;
+        respondidas[i]=j;
+        opts.querySelectorAll('button').forEach((bb,k)=>{bb.disabled=true;if(k===p.c)bb.classList.add('bien');if(k===j&&j!==p.c)bb.classList.add('mal');});
+        const ok=j===p.c;if(ok){aciertos++;acumAciertos++;}
+        acumRespondidas++;
+        const tm=p.tema||p.cat; if(!temaStats[tm])temaStats[tm]={ok:0,total:0}; temaStats[tm].total++; if(ok)temaStats[tm].ok++; renderTemas();
+        fb.style.display='block';fb.className='fb '+(ok?'ok':'no');
+        fb.innerHTML=`<b>${ok?'✅ Correcto':'❌ Incorrecto'}</b>${p.e}`;
+        actualizarMarcador();guardarAvance();
+      };
+      opts.appendChild(b);
+    });
+    quizCont.appendChild(card);
+  });
+}
+function actualizarMarcador(){const n=Object.keys(respondidas).length;marcador.textContent=`${n} / ${RONDA.length} · ${aciertos} aciertos`;}
+document.getElementById('nuevaRonda').onclick=nuevaRonda;
+document.getElementById('numP').onchange=()=>{ if(ESTUDIANTE) nuevaRonda(); };
+document.getElementById('verResultado').onclick=()=>{
+  const n=Object.keys(respondidas).length, res=document.getElementById('resultado');
+  const pct=n?Math.round(aciertos/n*100):0;
+  document.getElementById('scoreTxt').textContent=pct+'%';
+  let msg;
+  if(n<RONDA.length) msg=`Llevas ${n} de ${RONDA.length} en esta ronda (${aciertos} correctas). ¡Termínala!`;
+  else if(pct>=85) msg=`¡Excelente! ${aciertos}/${RONDA.length}. Lanza una nueva ronda para repasar otras.`;
+  else if(pct>=60) msg=`Bien: ${aciertos}/${RONDA.length}. Repite con Nueva ronda para afianzar.`;
+  else msg=`${aciertos}/${RONDA.length}. Repasa la guía y reintenta.`;
+  document.getElementById('scoreMsg').textContent=msg;
+  res.style.display='block';res.scrollIntoView({behavior:'smooth'});
+  guardarAvance(true);
+};
+
+/* Supabase */
+let rondasCompletadas=0; let avanceCargado=false; // no guardar hasta cargar el avance previo (evita sobrescribir con ceros)
+async function registrarInicio(){
+  if(!FB_OK||!ESTUDIANTE) return;
+  try{
+    const {data}=await sb.from(TABLA).select('*').eq('correo',ESTUDIANTE.correo).maybeSingle();
+    if(data){
+      acumRespondidas=data.respondidas_total||0; acumAciertos=data.aciertos_total||0;
+      rondasCompletadas=data.rondas_completadas||0; baseSegundos=data.segundos_activos||0;
+      (data.videos_lista||[]).forEach(id=>videosVistos.add(id)); temaStats=data.temas||{}; renderTemas(); actualizarMarcador();
+    }
+    const payload={correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre, ultima_actividad:new Date().toISOString()};
+    if(!data||!data.primera_actividad) payload.primera_actividad=new Date().toISOString();
+    await sb.from(TABLA).upsert(payload,{onConflict:'correo'}); avanceCargado=true;
+    guardarAvance();
+  }catch(e){console.warn('registrarInicio',e); avanceCargado=true;}
+}
+async function guardarAvance(finRonda=false){ if(!avanceCargado) return;
+  if(!FB_OK||!ESTUDIANTE) return;
+  if(moduloCerrado()) return;
+  if(finRonda) rondasCompletadas++;
+  actualizarChecklist();
+  const pct=acumRespondidas?Math.round(acumAciertos/acumRespondidas*100):0;
+  try{
+    await sb.from(TABLA).upsert({
+      correo:ESTUDIANTE.correo, nombre:ESTUDIANTE.nombre,
+      respondidas_total:acumRespondidas, aciertos_total:acumAciertos, porcentaje:pct,
+      ronda_respondidas:Object.keys(respondidas).length, ronda_total:RONDA.length, ronda_aciertos:aciertos,
+      rondas_completadas:rondasCompletadas,
+      segundos_activos:baseSegundos+segundosSesion,
+      videos_vistos:videosVistos.size, videos_lista:[...videosVistos],
+      checklist_marcados:checklistMarcados, checklist_total:checklistTotal,
+      temas:temaStats,
+      ultima_actividad:new Date().toISOString()
+    },{onConflict:'correo'});
+  }catch(e){console.warn('guardarAvance',e);}
+}
+</script>
+<a href="recursos.html" style="position:fixed;right:16px;bottom:16px;z-index:500;background:#0f7391;color:#fff;text-decoration:none;padding:11px 16px;border-radius:999px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.28);font-family:system-ui,sans-serif;font-size:.9rem">📚 Recursos</a>
+</body>
+</html>

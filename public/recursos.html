@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursos de apoyo · Anatomía SOI</title>
+<style>
+:root{--tinta:#20313a;--gris:#5c6b72;--linea:#e2e8ea;--azul:#0a4f66;--azul2:#0f7391;--verde:#2e7d5b;--rojo:#b3202c;--sombra:0 4px 18px rgba(10,79,102,.10)}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--tinta);background:#eef4f6;line-height:1.55}
+header{background:linear-gradient(135deg,#0a2b38,#0f7391);color:#fff;padding:30px 20px 24px;text-align:center;position:relative}
+header h1{margin:0 0 4px;font-size:1.6rem}
+header p{margin:0;opacity:.9;font-size:.92rem}
+.volver{position:absolute;left:14px;top:14px;color:#fff;font-size:.82rem;text-decoration:none;background:rgba(255,255,255,.18);padding:6px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.3)}
+main{max-width:920px;margin:0 auto;padding:24px 18px 70px}
+.card{background:#fff;border:1px solid var(--linea);border-radius:16px;padding:22px;margin:16px 0;box-shadow:var(--sombra)}
+.card h2{margin:0 0 4px;font-size:1.2rem;color:var(--azul)}
+.card .sub{color:var(--gris);font-size:.88rem;margin:0 0 14px}
+.busq{display:flex;flex-wrap:wrap;gap:10px}
+.busq input{flex:1;min-width:220px;padding:12px 14px;border:1px solid var(--linea);border-radius:11px;font-size:1rem}
+.busq input:focus{outline:none;border-color:var(--azul2)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--azul2);color:var(--azul2);background:#fff;
+  border-radius:11px;padding:11px 16px;text-decoration:none;font-weight:600;font-size:.92rem;cursor:pointer}
+.chip:hover{background:var(--azul2);color:#fff}
+.chip.yt{border-color:#c4302b;color:#c4302b}
+.chip.yt:hover{background:#c4302b;color:#fff}
+.rec{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:6px}
+.rec a{display:flex;flex-direction:column;gap:4px;border:1px solid var(--linea);border-radius:12px;padding:14px 16px;
+  text-decoration:none;color:var(--tinta);background:#fbfdfe;transition:.12s}
+.rec a:hover{border-color:var(--azul2);box-shadow:var(--sombra)}
+.rec a b{color:var(--azul)}
+.rec a span{font-size:.8rem;color:var(--gris)}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+  background:#e6f3f7;color:var(--azul);padding:2px 8px;border-radius:6px;width:fit-content;margin-bottom:2px}
+.nota{background:#fff7e8;border-left:4px solid #c77d0a;padding:12px 15px;border-radius:0 8px 8px 0;font-size:.87rem;margin-top:14px;color:#7a5a00}
+footer{text-align:center;color:var(--gris);font-size:.8rem;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <a class="volver" href="portafolio.html">← Portafolio</a>
+  <h1>📚 Recursos de apoyo</h1>
+  <p>Videos, atlas y libros para estudiar anatomía · SOI</p>
+</header>
+<main>
+
+  <div class="card">
+    <h2>🎬 Buscar videos en los canales</h2>
+    <p class="sub">Escribe el tema (por ejemplo: <i>tronco celíaco</i>, <i>nefrona</i>, <i>hilio pulmonar</i>) y busca directamente en los canales de YouTube.</p>
+    <div class="busq">
+      <input id="q" type="search" placeholder="¿Qué quieres estudiar hoy?" autocomplete="off">
+    </div>
+    <div class="chips">
+      <a class="chip yt" id="btnCanal1">▶ Buscar en el canal del Dr. Ricardo Aldana</a>
+      <a class="chip yt" id="btnCanal2">▶ Buscar en el canal del Dr. Diego Aldana</a>
+      <a class="chip yt" id="btnYT">▶ Buscar en todo YouTube</a>
+    </div>
+    <div class="chips" style="margin-top:6px">
+      <a class="chip" id="canal1Home" target="_blank" rel="noopener">↗ Ver canal · Dr. Ricardo Aldana</a>
+      <a class="chip" id="canal2Home" target="_blank" rel="noopener">↗ Ver canal · Dr. Diego Aldana</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🖨️ Atlas para imprimir</h2>
+    <p class="sub">Acceso con tu <b>correo institucional</b> (ClinicalKey · Universidad de La Sabana).</p>
+    <div class="rec">
+      <a href="https://www-clinicalkey-es.ez.unisabana.edu.co/#!/browse/book/3-s2.0-C20230515307" target="_blank" rel="noopener"><span class="tag">Atlas</span><b>Gray · Atlas de Anatomía</b><span>ClinicalKey · La Sabana</span></a>
+      <a href="https://www-clinicalkey-es.ez.unisabana.edu.co/#!/browse/book/3-s2.0-C20220020936" target="_blank" rel="noopener"><span class="tag">Atlas</span><b>Netter · Atlas de Anatomía Humana</b><span>ClinicalKey · La Sabana</span></a>
+      <a href="https://www-clinicalkey-es.ez.unisabana.edu.co/#!/browse/book/3-s2.0-C2020000664X" target="_blank" rel="noopener"><span class="tag">Atlas</span><b>Sobotta · Atlas de Anatomía</b><span>ClinicalKey · La Sabana</span></a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📖 Libros y recursos de la Universidad</h2>
+    <p class="sub">Acceso con tu <b>correo institucional</b>.</p>
+    <div class="rec">
+      <a href="https://www-clinicalkey-es.ez.unisabana.edu.co/#!/browse/book/3-s2.0-C20210023117" target="_blank" rel="noopener"><span class="tag">Libro</span><b>Gray · Anatomía para estudiantes</b><span>ClinicalKey · La Sabana</span></a>
+      <a href="https://accessphysiotherapy-mhmedical-com.ez.unisabana.edu.co/multimedia.aspx#309" target="_blank" rel="noopener"><span class="tag">Disección</span><b>Atlas de disección (multimedia)</b><span>AccessPhysiotherapy · La Sabana</span></a>
+    </div>
+    <div class="nota"><b>Nota:</b> estos enlaces pasan por el acceso remoto de la biblioteca (<code>ez.unisabana.edu.co</code>). Si te pide iniciar sesión, usa tu correo <b>@unisabana.edu.co</b>.</div>
+  </div>
+
+</main>
+<footer>Recursos de apoyo · Laboratorio de Anatomía · SOI</footer>
+
+<script>
+/* Handles de los canales de YouTube — reemplazar por los reales (formato @handle) */
+const CANAL1={ nombre:"Dr. Ricardo Aldana", handle:"@ricardoandresmd" };
+const CANAL2={ nombre:"Dr. Diego Aldana",   handle:"@diegoaldanabaron777" };
+
+const q=document.getElementById('q');
+function term(){ return encodeURIComponent((q.value||'').trim()); }
+function abrir(u){ window.open(u,'_blank','noopener'); }
+function urlCanalBusqueda(c){ const t=term(); return `https://www.youtube.com/${c.handle}/search?query=${t}`; }
+function urlYT(){ return `https://www.youtube.com/results?search_query=${term()}`; }
+function urlCanalHome(c){ return `https://www.youtube.com/${c.handle}`; }
+
+document.getElementById('btnCanal1').onclick=()=>abrir(urlCanalBusqueda(CANAL1));
+document.getElementById('btnCanal2').onclick=()=>abrir(urlCanalBusqueda(CANAL2));
+document.getElementById('btnYT').onclick=()=>abrir(urlYT());
+document.getElementById('canal1Home').href=urlCanalHome(CANAL1);
+document.getElementById('canal2Home').href=urlCanalHome(CANAL2);
+document.getElementById('btnCanal1').textContent='▶ Buscar en el canal de '+CANAL1.nombre;
+document.getElementById('btnCanal2').textContent='▶ Buscar en el canal de '+CANAL2.nombre;
+q.addEventListener('keydown',e=>{ if(e.key==='Enter') abrir(urlCanalBusqueda(CANAL1)); });
+</script>
+</body>
+</html>
