@@ -6,7 +6,7 @@
 <title>Solución de dudas · Anatomía SOI II</title>
 <style>
 :root{--tinta:#20313a;--gris:#5c6b72;--linea:#e2e8ea;
-  --cor:#b3202c;--resp:#0f7391;--dig:#c2410c;--ren:#7b1fa2;--cer:#c2185b;--cue:#00695c;}
+  --cor:#b3202c;--resp:#0f7391;--dig:#c2410c;--ren:#7b1fa2;--cer:#c2185b;--s6:#3949ab;--cue:#00695c;}
 *{box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--tinta);background:#0d1b22}
 .hero{background:linear-gradient(160deg,#0a1f2b,#123243);color:#fff;padding:40px 20px 26px;text-align:center}
@@ -24,6 +24,7 @@ main{max-width:900px;margin:0 auto;padding:24px 16px 60px}
 .sec.dig .cab{background:linear-gradient(135deg,#9a3412,var(--dig))}
 .sec.ren .cab{background:linear-gradient(135deg,#4a148c,var(--ren))}
 .sec.cer .cab{background:linear-gradient(135deg,#880e4f,var(--cer))}
+.sec.s6 .cab{background:linear-gradient(135deg,#1a237e,var(--s6))}
 .sec.cue .cab{background:linear-gradient(135deg,#004d40,var(--cue))}
 .cuerpo{padding:8px 22px 20px}
 details{border-bottom:1px solid var(--linea);padding:2px 0}
@@ -34,13 +35,13 @@ summary::after{content:"+";position:absolute;right:6px;top:11px;font-size:1.3rem
 details[open] summary::after{content:"–"}
 .cor summary:hover{color:var(--cor)} .resp summary:hover{color:var(--resp)}
 .dig summary:hover{color:var(--dig)} .ren summary:hover{color:var(--ren)}
-.cer summary:hover{color:var(--cer)} .cue summary:hover{color:var(--cue)}
+.cer summary:hover{color:var(--cer)} .s6 summary:hover{color:var(--s6)} .cue summary:hover{color:var(--cue)}
 .resp-body{padding:2px 4px 14px;font-size:.93rem;line-height:1.6;color:#333}
 .resp-body p{margin:0 0 9px}
 .resp-body b{color:var(--tinta)}
 .tip{background:#f3f7f9;border-left:3px solid var(--resp);padding:8px 12px;border-radius:0 8px 8px 0;font-size:.88rem;margin:8px 0}
 .cor .tip{border-color:var(--cor)} .dig .tip{border-color:var(--dig)} .ren .tip{border-color:var(--ren)}
-.cer .tip{border-color:var(--cer)} .cue .tip{border-color:var(--cue)}
+.cer .tip{border-color:var(--cer)} .s6 .tip{border-color:var(--s6)} .cue .tip{border-color:var(--cue)}
 .vids{padding:4px 22px 22px}
 .vids h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--gris);margin:6px 0 12px}
 .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
@@ -198,6 +199,35 @@ footer{text-align:center;color:rgba(255,255,255,.4);font-size:.78rem;padding:10p
         <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/sSwPwSzAP_g" title="Círculo de Willis" loading="lazy" allowfullscreen></iframe></div><div class="vt">Círculo de Willis</div></div>
         <div class="vcard"><div class="vwrap"><iframe src="https://www.youtube.com/embed/wJkrVCClE8M" title="Meninges" loading="lazy" allowfullscreen></iframe></div><div class="vt">Meninges</div></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ================= CEREBRO INTERNO (SN II) ================= -->
+  <div class="sec s6">
+    <div class="cab"><div class="em">🧠</div><div><span class="wk">Semana 6</span><h2>Cerebro interno: núcleos basales, sustancia blanca y ventrículos</h2></div></div>
+    <div class="cuerpo">
+      <div style="background:linear-gradient(135deg,#e8eaf6,#c5cae9);border:2px solid #3949ab;border-radius:12px;padding:16px;margin:12px 0 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-weight:700;color:#1a237e;font-size:1.05rem;display:flex;align-items:center;gap:6px"><span>🎮</span> Plataforma Interactiva de Práctica y Repaso</div>
+          <div style="font-size:.88rem;color:#283593;margin-top:4px">Atlas de cortes con visor interactivo (Zoom/Pan), generador de exámenes y quiz de auto-evaluación.</div>
+        </div>
+        <a href="https://cerebrointerno.netlify.app/" target="_blank" rel="noopener noreferrer" style="background:#3949ab;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 10px rgba(57,73,171,.3)">Abrir Cerebro Interno ↗</a>
+      </div>
+      <details><summary>¿Cómo diferencio el núcleo lentiforme del cuerpo estriado?</summary>
+        <div class="resp-body"><p><b>Núcleo lentiforme:</b> es la masa en forma de lente o cuña formada por el <b>putamen + globo pálido</b> (segmentos externo e interno).</p><p><b>Cuerpo estriado (neoestriado):</b> corresponde a la unión funcional de <b>núcleo caudado + putamen</b>, conectados por puentes celulares de sustancia gris a través de la cápsula interna.</p><p class="tip">Regla rápida: <b>lentiforme</b> = putamen + globo pálido (anatómicamente juntos); <b>estriado</b> = caudado + putamen (origen embriológico y función común).</p></div>
+      </details>
+      <details><summary>Cápsula interna: ¿qué pasa por cada una de sus porciones?</summary>
+        <div class="resp-body"><p>Tiene forma de 'V' o boomerang abierta hacia lateral:</p><p><b>Brazo anterior:</b> fibras frontopontinas y talamocorticales anteriores (entre cabeza del caudado y lentiforme).</p><p><b>Rodilla:</b> fibras <b>corticonucleares (corticobulbares)</b> hacia los núcleos de los nervios craneales.</p><p><b>Brazo posterior:</b> fibras <b>corticoespinales (vía motora voluntaria)</b> y radiaciones somatosensitivas talamocorticales (entre tálamo y lentiforme).</p><p class="tip">Clínica: una lesión en el brazo posterior genera hemiplejía y hemianestesia contralateral pura.</p></div>
+      </details>
+      <details><summary>¿Qué estructuras separan el tálamo del núcleo lentiforme y del caudado?</summary>
+        <div class="resp-body"><p>El <b>brazo posterior de la cápsula interna</b> separa el tálamo (medial) del núcleo lentiforme (lateral). Hacia anterior, el <b>brazo anterior de la cápsula interna</b> separa la cabeza del caudado (medial) del putamen (lateral). Entre el tálamo y el caudado discurren la <b>estría terminal</b> y la <b>vena talamoestriada superior</b>.</p></div>
+      </details>
+      <details><summary>¿Cómo memorizar las partes del cuerpo calloso y el fórnix?</summary>
+        <div class="resp-body"><p><b>Cuerpo calloso (de adelante hacia atrás):</b> Pico (rostrum) → Rodilla (genu) → Cuerpo (truncus) → Rodete (splenium).</p><p><b>Fórnix:</b> Columnas (pilares anteriores) → Cuerpo → Crura (pilares posteriores) → Fimbrias del hipocampo (circuito de Papez, memoria).</p></div>
+      </details>
+      <details><summary>Circulación del LCR: ruta completa desde los ventrículos</summary>
+        <div class="resp-body"><p><b>Ventrículos laterales</b> (plexos coroideos) → <b>Forámenes interventriculares (de Monro)</b> → <b>Tercer ventrículo</b> → <b>Acueducto mesencefálico (de Silvio)</b> → <b>Cuarto ventrículo</b> → Forámenes laterales de Luschka (2) y medial de Magendie (1) → <b>Espacio subaracnoideo y cisternas</b> → Reabsorción en <b>vellosidades / granulaciones aracnoideas</b> (seno sagital superior).</p></div>
+      </details>
     </div>
   </div>
 
